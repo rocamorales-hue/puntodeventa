@@ -13,6 +13,8 @@
             --blanco: #ffffff;
             --borde: #e0d8c3;
             --rojo-eliminar: #e74c3c;
+            --azul-transfer: #2980b9;
+            --naranja-credito: #d35400;
         }
 
         * { box-sizing: border-box; }
@@ -168,7 +170,7 @@
             overflow-y: auto;
             margin-bottom: 15px;
             border-bottom: 1px solid var(--borde);
-            max-height: calc(100vh - 330px);
+            max-height: calc(100vh - 350px);
         }
 
         .item-carrito {
@@ -202,27 +204,30 @@
             justify-content: space-between;
             font-size: 22px;
             font-weight: bold;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
         .botones-pago {
-            display: flex;
-            gap: 10px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
         }
 
         .btn-pago {
-            flex: 1;
-            padding: 12px;
-            font-size: 15px;
+            padding: 10px;
+            font-size: 13px;
             font-weight: bold;
             border: none;
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: pointer;
             color: var(--blanco);
+            text-align: center;
         }
 
         .btn-efectivo { background-color: var(--verde-acento); }
         .btn-tarjeta { background-color: var(--cafe-medio); }
+        .btn-transferencia { background-color: var(--azul-transfer); }
+        .btn-credito { background-color: var(--naranja-credito); }
 
         /* Tarjetas de Reportes */
         .card-reporte {
@@ -269,7 +274,7 @@
             color: #555;
         }
 
-        /* Modal para ver el detalle del ticket */
+        /* Modal detalle ticket */
         #modal-ticket {
             display: none;
             position: fixed;
@@ -334,7 +339,7 @@
         </div>
     </div>
 
-    <!-- PANEL DERECHO: Pestañas de Carrito, Reportes e Historial -->
+    <!-- PANEL DERECHO: Carrito, Reportes e Historial -->
     <div class="panel-lateral">
         <div class="pestanas-lateral">
             <button class="tab-btn activo" onclick="cambiarTab('carrito')">🛒 Venta Actual</button>
@@ -357,6 +362,8 @@
                 <div class="botones-pago">
                     <button class="btn-pago btn-efectivo" onclick="procesarPago('Efectivo')">💵 Efectivo</button>
                     <button class="btn-pago btn-tarjeta" onclick="procesarPago('Tarjeta')">💳 Tarjeta</button>
+                    <button class="btn-pago btn-transferencia" onclick="procesarPago('Transferencia')">📱 Transfer.</button>
+                    <button class="btn-pago btn-credito" onclick="procesarPago('Crédito')">📝 Crédito</button>
                 </div>
             </div>
         </div>
@@ -387,7 +394,7 @@
         <!-- TAB 3: HISTORIAL DE TICKETS -->
         <div id="tab-historial" class="seccion-tab">
             <h3>Tickets de la Sesión</h3>
-            <p style="font-size: 11px; color: #7f8c8d;">Haz clic en cualquier ticket para ver qué incluyó.</p>
+            <p style="font-size: 11px; color: #7f8c8d;">Haz clic en cualquier ticket para ver detalles.</p>
             
             <div class="lista-tickets" id="contenedor-tickets">
                 <p style="text-align: center; color: #7f8c8d; margin-top: 20px;">No hay tickets registrados aún.</p>
@@ -404,7 +411,7 @@
         let estadisticasSesion = {
             totalVendido: 0,
             costoTotal: 0,
-            tickets: [] // Almacena los tickets agrupados
+            tickets: []
         };
 
         async function descargarMenu() {
@@ -537,7 +544,6 @@
             let itemsTicket = [];
 
             try {
-                // 1. Enviar cada producto del carrito a Google Sheets
                 for (const item of carrito) {
                     const subtotal = item.precio * item.cantidad;
                     const costoUnitario = item.costo || 0;
@@ -570,7 +576,6 @@
                     });
                 }
                 
-                // 2. Guardar el ticket agrupado localmente
                 estadisticasSesion.totalVendido += totalTicket;
                 estadisticasSesion.costoTotal += costoTicket;
                 
@@ -585,7 +590,7 @@
                 actualizarReportesUI();
                 actualizarTicketsUI();
 
-                alert(`¡Cobro exitoso!\nFolio: ${folioTemporal} | Total: $${totalTicket.toFixed(2)}`);
+                alert(`¡Cobro exitoso (${metodoPago})!\nFolio: ${folioTemporal} | Total: $${totalTicket.toFixed(2)}`);
                 carrito = [];
                 actualizarCarrito();
 
@@ -651,7 +656,7 @@
             const ticket = estadisticasSesion.tickets[index];
             document.getElementById('modal-titulo-folio').innerText = `Ticket: ${ticket.folio}`;
             
-            let htmlDetalle = `<p style="font-size: 12px; color: #666; margin-bottom: 10px;">Hora: ${ticket.hora} | Pago: ${ticket.metodoPago}</p>`;
+            let htmlDetalle = `<p style="font-size: 12px; color: #666; margin-bottom: 10px;">Hora: ${ticket.hora} | Método: ${ticket.metodoPago}</p>`;
             htmlDetalle += `<ul style="padding-left: 15px; font-size: 13px; margin-bottom: 15px;">`;
             
             ticket.items.forEach(item => {
@@ -679,7 +684,6 @@
             }
         }
 
-        // Iniciar aplicación
         descargarMenu();
     </script>
 </body>
