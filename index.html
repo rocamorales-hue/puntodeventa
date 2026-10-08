@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POS - Café Sierra Escondida</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; text-align: center; }
+        .btn-cobrar { 
+            padding: 15px 30px; 
+            background-color: #27ae60; 
+            color: white; 
+            border: none; 
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer; 
+            margin-top: 20px;
+        }
+        .btn-cobrar:hover { background-color: #2ecc71; }
+        #mensaje { margin-top: 20px; font-weight: bold; color: #333; }
+    </style>
+</head>
+<body>
+
+    <h1>Caja - Café Sierra Escondida</h1>
+    <p>Haz clic en el botón para enviar una venta de prueba a tu base de datos.</p>
+    
+    <button class="btn-cobrar" onclick="registrarVentaPrueba()">☕ Registrar Venta de Prueba</button>
+    <p id="mensaje"></p>
+
+    <script>
+        // Aquí está tu URL exacta
+        const API_URL = "https://script.google.com/macros/s/AKfycbyDXrMwhDytj4jHEWQuQnudSYAyTPXQjlqSFVUiuBFqcS9hqCmyHtr77QAitsBMzWvh/exec";
+
+        function registrarVentaPrueba() {
+            const mensajeDiv = document.getElementById('mensaje');
+            mensajeDiv.innerText = "Enviando datos a Google Sheets...";
+            mensajeDiv.style.color = "blue";
+            
+            // Un ejemplo de lo que compraría un cliente
+            const venta = {
+                producto: "Latte Mediano",
+                cantidad: 1,
+                precioUnitario: 65.00,
+                total: 65.00,
+                metodoPago: "Efectivo"
+            };
+
+            // Hacemos el envío de la información
+            fetch(API_URL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "text/plain;charset=utf-8",
+                },
+                body: JSON.stringify(venta)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.status === "success") {
+                    mensajeDiv.innerText = "✅ ¡Éxito! Venta guardada con el Folio: " + data.id;
+                    mensajeDiv.style.color = "green";
+                }
+            })
+            .catch(error => {
+                console.error("Error al registrar:", error);
+                mensajeDiv.innerText = "❌ Error al conectar con la base de datos.";
+                mensajeDiv.style.color = "red";
+            });
+        }
+    </script>
+
+</body>
+</html>
