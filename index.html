@@ -121,7 +121,7 @@
 
         /* Panel Derecho: Carrito, Reportes e Historial */
         .panel-lateral {
-            flex: 1.2;
+            flex: 1.3;
             background-color: var(--blanco);
             padding: 20px;
             display: flex;
@@ -236,23 +236,57 @@
         .card-reporte h4 { margin: 0 0 5px 0; color: var(--cafe-medio); font-size: 13px; }
         .card-reporte .valor { font-size: 20px; font-weight: bold; color: var(--verde-acento); }
 
-        /* Listado de Historial de Ventas */
-        .tabla-historial {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 12px;
-            margin-top: 10px;
+        /* Listado de Tickets */
+        .lista-tickets {
+            flex-grow: 1;
+            overflow-y: auto;
         }
 
-        .tabla-historial th, .tabla-historial td {
+        .tarjeta-ticket {
+            background: var(--crema);
             border: 1px solid var(--borde);
-            padding: 6px;
-            text-align: left;
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: background 0.1s;
         }
 
-        .tabla-historial th {
-            background-color: var(--crema);
-            color: var(--cafe-oscuro);
+        .tarjeta-ticket:hover {
+            background: #ede6d6;
+        }
+
+        .ticket-header {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+
+        .ticket-detalle {
+            font-size: 12px;
+            color: #555;
+        }
+
+        /* Modal para ver el detalle del ticket */
+        #modal-ticket {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .modal-contenido {
+            background: var(--blanco);
+            padding: 20px;
+            border-radius: 8px;
+            width: 350px;
+            max-height: 80vh;
+            overflow-y: auto;
         }
 
         #overlay-carga {
@@ -272,7 +306,16 @@
 
     <div id="overlay-carga">Sincronizando con Google Sheets... ☕</div>
 
-    <!-- PANEL IZQUIERDO: Catálogo y Búsqueda -->
+    <!-- MODAL DETALLE DE TICKET -->
+    <div id="modal-ticket" onclick="cerrarModal(event)">
+        <div class="modal-contenido" onclick="event.stopPropagation()">
+            <h3 id="modal-titulo-folio" style="margin-top: 0; border-bottom: 1px solid var(--borde); padding-bottom: 8px;">Detalle de Ticket</h3>
+            <div id="modal-cuerpo-detalle"></div>
+            <button onclick="document.getElementById('modal-ticket').style.display='none'" style="margin-top: 15px; width: 100%; padding: 8px; background: var(--cafe-medio); color: white; border: none; border-radius: 4px; cursor: pointer;">Cerrar</button>
+        </div>
+    </div>
+
+    <!-- PANEL IZQUIERDO: Catálogo y Filtros -->
     <div class="panel-principal">
         <div class="header-superior">
             <h2>☕ Café Sierra Escondida</h2>
@@ -296,7 +339,7 @@
         <div class="pestanas-lateral">
             <button class="tab-btn activo" onclick="cambiarTab('carrito')">🛒 Venta Actual</button>
             <button class="tab-btn" onclick="cambiarTab('reportes')">📊 Corte del Día</button>
-            <button class="tab-btn" onclick="cambiarTab('historial')">📋 Historial</button>
+            <button class="tab-btn" onclick="cambiarTab('historial')">📋 Tickets</button>
         </div>
 
         <!-- TAB 1: CARRITO -->
@@ -321,7 +364,7 @@
         <!-- TAB 2: REPORTES Y CORTE DE CAJA -->
         <div id="tab-reportes" class="seccion-tab">
             <h3>Corte de Caja en Sesión</h3>
-            <p style="font-size: 11px; color: #7f8c8d;">Cálculos basados en las ventas realizadas desde esta terminal.</p>
+            <p style="font-size: 11px; color: #7f8c8d;">Cálculos basados en las órdenes cobradas.</p>
 
             <div class="card-reporte">
                 <h4>Ventas Totales</h4>
@@ -341,26 +384,13 @@
             <button onclick="reiniciarCorte()" style="margin-top: auto; padding: 10px; background: #95a5a6; color: white; border: none; border-radius: 6px; cursor: pointer;">🔄 Reiniciar Corte</button>
         </div>
 
-        <!-- TAB 3: HISTORIAL DE VENTAS -->
+        <!-- TAB 3: HISTORIAL DE TICKETS -->
         <div id="tab-historial" class="seccion-tab">
-            <h3>Consulta de Ventas</h3>
-            <p style="font-size: 11px; color: #7f8c8d;">Listado de transacciones registradas en esta sesión.</p>
+            <h3>Tickets de la Sesión</h3>
+            <p style="font-size: 11px; color: #7f8c8d;">Haz clic en cualquier ticket para ver qué incluyó.</p>
             
-            <div style="flex-grow: 1; overflow-y: auto;">
-                <table class="tabla-historial">
-                    <thead>
-                        <tr>
-                            <th>Hora</th>
-                            <th>Producto</th>
-                            <th>Cant</th>
-                            <th>Total</th>
-                            <th>Pago</th>
-                        </tr>
-                    </thead>
-                    <tbody id="cuerpo-tabla-historial">
-                        <tr><td colspan="5" style="text-align: center; color: #7f8c8d;">No hay ventas registradas aún.</td></tr>
-                    </tbody>
-                </table>
+            <div class="lista-tickets" id="contenedor-tickets">
+                <p style="text-align: center; color: #7f8c8d; margin-top: 20px;">No hay tickets registrados aún.</p>
             </div>
         </div>
     </div>
@@ -374,7 +404,7 @@
         let estadisticasSesion = {
             totalVendido: 0,
             costoTotal: 0,
-            historialVentas: []
+            tickets: [] // Almacena los tickets agrupados
         };
 
         async function descargarMenu() {
@@ -496,21 +526,32 @@
             }
 
             const overlay = document.getElementById('overlay-carga');
-            overlay.innerText = "Registrando venta en Google Sheets... ☕";
+            overlay.innerText = "Registrando ticket en Google Sheets... ☕";
             overlay.style.display = 'flex';
 
-            let totalVentaTicket = 0;
-            let costoVentaTicket = 0;
-            const horaActual = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const folioTemporal = "V-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+            const horaActual = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            let totalTicket = 0;
+            let costoTicket = 0;
+            let itemsTicket = [];
 
             try {
+                // 1. Enviar cada producto del carrito a Google Sheets
                 for (const item of carrito) {
                     const subtotal = item.precio * item.cantidad;
                     const costoUnitario = item.costo || 0;
                     const costoSubtotal = costoUnitario * item.cantidad;
 
-                    totalVentaTicket += subtotal;
-                    costoVentaTicket += costoSubtotal;
+                    totalTicket += subtotal;
+                    costoTicket += costoSubtotal;
+
+                    itemsTicket.push({
+                        nombre: item.nombre,
+                        cantidad: item.cantidad,
+                        precio: item.precio,
+                        subtotal: subtotal
+                    });
 
                     const venta = {
                         producto: item.nombre,
@@ -522,30 +563,29 @@
                         costoTotal: costoSubtotal
                     };
 
-                    // Enviar a Google Sheets
                     await fetch(API_URL, {
                         method: "POST",
                         headers: { "Content-Type": "text/plain;charset=utf-8" },
                         body: JSON.stringify(venta)
                     });
-
-                    // Agregar al historial local de la sesión
-                    estadisticasSesion.historialVentas.unshift({
-                        hora: horaActual,
-                        producto: item.nombre,
-                        cantidad: item.cantidad,
-                        total: subtotal,
-                        pago: metodoPago
-                    });
                 }
                 
-                estadisticasSesion.totalVendido += totalVentaTicket;
-                estadisticasSesion.costoTotal += costoVentaTicket;
+                // 2. Guardar el ticket agrupado localmente
+                estadisticasSesion.totalVendido += totalTicket;
+                estadisticasSesion.costoTotal += costoTicket;
                 
-                actualizarReportesUI();
-                actualizarHistorialUI();
+                estadisticasSesion.tickets.unshift({
+                    folio: folioTemporal,
+                    hora: horaActual,
+                    total: totalTicket,
+                    metodoPago: metodoPago,
+                    items: itemsTicket
+                });
 
-                alert(`¡Venta cobrada con éxito!\nMétodo: ${metodoPago} | Total: $${totalVentaTicket.toFixed(2)}`);
+                actualizarReportesUI();
+                actualizarTicketsUI();
+
+                alert(`¡Cobro exitoso!\nFolio: ${folioTemporal} | Total: $${totalTicket.toFixed(2)}`);
                 carrito = [];
                 actualizarCarrito();
 
@@ -581,35 +621,61 @@
             document.getElementById('rep-utilidad').innerText = `$${utilidad.toFixed(2)}`;
         }
 
-        function actualizarHistorialUI() {
-            const cuerpoTabla = document.getElementById('cuerpo-tabla-historial');
+        function actualizarTicketsUI() {
+            const contenedor = document.getElementById('contenedor-tickets');
             
-            if(estadisticasSesion.historialVentas.length === 0) {
-                cuerpoTabla.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #7f8c8d;">No hay ventas registradas aún.</td></tr>';
+            if(estadisticasSesion.tickets.length === 0) {
+                contenedor.innerHTML = '<p style="text-align: center; color: #7f8c8d; margin-top: 20px;">No hay tickets registrados aún.</p>';
                 return;
             }
 
-            cuerpoTabla.innerHTML = '';
-            estadisticasSesion.historialVentas.forEach(v => {
-                cuerpoTabla.innerHTML += `
-                    <tr>
-                        <td>${v.hora}</td>
-                        <td>${v.producto}</td>
-                        <td>${v.cantidad}</td>
-                        <td>$${v.total.toFixed(2)}</td>
-                        <td>${v.pago}</td>
-                    </tr>
+            contenedor.innerHTML = '';
+            estadisticasSesion.tickets.forEach((t, index) => {
+                const div = document.createElement('div');
+                div.className = 'tarjeta-ticket';
+                div.onclick = () => abrirDetalleTicket(index);
+                div.innerHTML = `
+                    <div class="ticket-header">
+                        <span>🎫 ${t.folio}</span>
+                        <span style="color: var(--verde-acento);">$${t.total.toFixed(2)}</span>
+                    </div>
+                    <div class="ticket-detalle">
+                        🕒 ${t.hora} | 💳 ${t.metodoPago} | 📦 ${t.items.length} prod(s)
+                    </div>
                 `;
+                contenedor.appendChild(div);
             });
         }
 
+        function abrirDetalleTicket(index) {
+            const ticket = estadisticasSesion.tickets[index];
+            document.getElementById('modal-titulo-folio').innerText = `Ticket: ${ticket.folio}`;
+            
+            let htmlDetalle = `<p style="font-size: 12px; color: #666; margin-bottom: 10px;">Hora: ${ticket.hora} | Pago: ${ticket.metodoPago}</p>`;
+            htmlDetalle += `<ul style="padding-left: 15px; font-size: 13px; margin-bottom: 15px;">`;
+            
+            ticket.items.forEach(item => {
+                htmlDetalle += `<li><strong>${item.cantidad}x</strong> ${item.nombre} - $${item.subtotal.toFixed(2)}</li>`;
+            });
+            
+            htmlDetalle += `</ul>`;
+            htmlDetalle += `<div style="border-top: 1px solid var(--borde); pt: 5px; display: flex; justify-content: space-between; font-weight: bold; font-size: 15px;"><span>Total Cobrado:</span><span>$${ticket.total.toFixed(2)}</span></div>`;
+
+            document.getElementById('modal-cuerpo-detalle').innerHTML = htmlDetalle;
+            document.getElementById('modal-ticket').style.display = 'flex';
+        }
+
+        function cerrarModal(event) {
+            document.getElementById('modal-ticket').style.display = 'none';
+        }
+
         function reiniciarCorte() {
-            if(confirm("¿Estás seguro de reiniciar el corte y el historial de la sesión actual?")) {
+            if(confirm("¿Estás seguro de reiniciar el corte y los tickets de la sesión actual?")) {
                 estadisticasSesion.totalVendido = 0;
                 estadisticasSesion.costoTotal = 0;
-                estadisticasSesion.historialVentas = [];
+                estadisticasSesion.tickets = [];
                 actualizarReportesUI();
-                actualizarHistorialUI();
+                actualizarTicketsUI();
             }
         }
 
