@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>POS - Café Sierra Escondida</title>
+    <title>POS Pro - Café Sierra Escondida</title>
     <style>
         :root {
             --cafe-oscuro: #2c1e16;
@@ -12,7 +12,10 @@
             --verde-acento: #4a5d23;
             --blanco: #ffffff;
             --borde: #e0d8c3;
+            --rojo-eliminar: #e74c3c;
         }
+
+        * { box-sizing: border-box; }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -22,36 +25,73 @@
             color: var(--cafe-oscuro);
             display: flex;
             height: 100vh;
+            overflow: hidden;
         }
 
-        /* Panel de Productos */
-        .panel-productos {
+        /* Panel Izquierdo: Catálogo y Filtros */
+        .panel-principal {
             flex: 2;
+            display: flex;
+            flex-direction: column;
             padding: 20px;
-            overflow-y: auto;
             border-right: 2px solid var(--borde);
+            height: 100vh;
         }
 
-        .header-titulos {
-            margin-bottom: 20px;
+        .header-superior {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
             border-bottom: 2px solid var(--cafe-medio);
             padding-bottom: 10px;
         }
 
+        .buscador-filtros {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .buscador-filtros input, .buscador-filtros select {
+            padding: 10px;
+            border: 1px solid var(--borde);
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .buscador-filtros input {
+            flex: 2;
+            background: var(--blanco);
+        }
+
+        .buscador-filtros select {
+            flex: 1;
+            background: var(--blanco);
+        }
+
         .grid-productos {
+            flex-grow: 1;
+            overflow-y: auto;
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 15px;
+            gap: 12px;
+            padding-right: 5px;
         }
 
         .tarjeta-producto {
             background-color: var(--blanco);
             border: 1px solid var(--borde);
             border-radius: 8px;
-            padding: 15px;
+            padding: 12px;
             text-align: center;
             cursor: pointer;
             transition: transform 0.1s, box-shadow 0.1s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 110px;
         }
 
         .tarjeta-producto:hover {
@@ -60,61 +100,107 @@
             border-color: var(--cafe-medio);
         }
 
-        .tarjeta-producto h3 {
-            font-size: 14px;
-            margin: 0 0 10px 0;
+        .tarjeta-producto .cat {
+            font-size: 10px;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            font-weight: bold;
         }
 
-        .precio {
+        .tarjeta-producto h3 {
+            font-size: 13px;
+            margin: 4px 0;
+            color: var(--cafe-oscuro);
+        }
+
+        .tarjeta-producto .precio {
             font-weight: bold;
             color: var(--verde-acento);
+            font-size: 15px;
         }
 
-        /* Panel del Carrito */
-        .panel-carrito {
+        /* Panel Derecho: Carrito y Reportes */
+        .panel-lateral {
             flex: 1;
             background-color: var(--blanco);
             padding: 20px;
             display: flex;
             flex-direction: column;
+            height: 100vh;
+        }
+
+        .pestanas-lateral {
+            display: flex;
+            border-bottom: 2px solid var(--borde);
+            margin-bottom: 15px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            background: none;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            color: #7f8c8d;
+        }
+
+        .tab-btn.activo {
+            color: var(--cafe-oscuro);
+            border-bottom: 3px solid var(--verde-acento);
+        }
+
+        .seccion-tab {
+            display: none;
+            flex-direction: column;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .seccion-tab.activo {
+            display: flex;
         }
 
         .lista-carrito {
             flex-grow: 1;
             overflow-y: auto;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             border-bottom: 1px solid var(--borde);
+            max-height: calc(100vh - 330px);
         }
 
         .item-carrito {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 0;
+            padding: 8px 0;
             border-bottom: 1px dashed var(--borde);
+            font-size: 14px;
         }
 
         .btn-eliminar {
-            background: #e74c3c;
+            background: var(--rojo-eliminar);
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            padding: 5px 8px;
+            padding: 4px 8px;
+            font-size: 12px;
         }
 
         .seccion-pago {
             background-color: var(--crema);
             padding: 15px;
             border-radius: 8px;
+            margin-top: auto;
         }
 
         .total-container {
             display: flex;
             justify-content: space-between;
-            font-size: 24px;
+            font-size: 22px;
             font-weight: bold;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .botones-pago {
@@ -124,28 +210,38 @@
 
         .btn-pago {
             flex: 1;
-            padding: 15px;
-            font-size: 16px;
+            padding: 12px;
+            font-size: 15px;
             font-weight: bold;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             color: var(--blanco);
-            transition: opacity 0.2s;
         }
 
-        .btn-pago:hover { opacity: 0.9; }
         .btn-efectivo { background-color: var(--verde-acento); }
         .btn-tarjeta { background-color: var(--cafe-medio); }
-        
+
+        /* Panel de Reportes y Corte de Caja */
+        .card-reporte {
+            background: var(--crema);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .card-reporte h4 { margin: 0 0 5px 0; color: var(--cafe-medio); font-size: 14px; }
+        .card-reporte .valor { font-size: 22px; font-weight: bold; color: var(--verde-acento); }
+
         #overlay-carga {
-            display: none;
+            display: flex;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255,255,255,0.8);
+            background: rgba(255,255,255,0.9);
             justify-content: center;
             align-items: center;
-            font-size: 24px;
+            font-size: 20px;
             font-weight: bold;
             z-index: 1000;
         }
@@ -153,70 +249,149 @@
 </head>
 <body>
 
-    <!-- Overlay de carga mientras guarda en Sheets -->
-    <div id="overlay-carga">Registrando venta en la base de datos... ☕</div>
+    <div id="overlay-carga">Sincronizando con Google Sheets... ☕</div>
 
-    <!-- Panel de Productos -->
-    <div class="panel-productos">
-        <div class="header-titulos">
-            <h2>Café Sierra Escondida</h2>
-            <p>Selecciona los productos para agregarlos al pedido</p>
+    <!-- PANEL IZQUIERDO: Catálogo y Búsqueda -->
+    <div class="panel-principal">
+        <div class="header-superior">
+            <h2>☕ Café Sierra Escondida</h2>
+            <button onclick="descargarMenu()" style="padding: 8px 12px; cursor: pointer; background: var(--cafe-medio); color: white; border: none; border-radius: 6px;">🔄 Actualizar Menú</button>
+        </div>
+
+        <div class="buscador-filtros">
+            <input type="text" id="input-buscar" placeholder="🔍 Buscar bebida o producto..." oninput="filtrarProductos()">
+            <select id="select-categoria" onchange="filtrarProductos()">
+                <option value="TODAS">Todas las categorías</option>
+            </select>
         </div>
 
         <div class="grid-productos" id="grid-productos">
-            <!-- Los productos se cargan desde JavaScript -->
+            <!-- Cargado por JS -->
         </div>
     </div>
 
-    <!-- Panel del Carrito -->
-    <div class="panel-carrito">
-        <h2>Cuenta Actual</h2>
-        
-        <div class="lista-carrito" id="lista-carrito">
-            <!-- Los items del carrito aparecen aquí -->
+    <!-- PANEL DERECHO: Pestañas de Carrito y Reportes -->
+    <div class="panel-lateral">
+        <div class="pestanas-lateral">
+            <button class="tab-btn activo" onclick="cambiarTab('carrito')">🛒 Venta Actual</button>
+            <button class="tab-btn" onclick="cambiarTab('reportes')">📊 Corte del Día</button>
         </div>
 
-        <div class="seccion-pago">
-            <div class="total-container">
-                <span>Total:</span>
-                <span id="gran-total">$0.00</span>
+        <!-- TAB 1: CARRITO -->
+        <div id="tab-carrito" class="seccion-tab activo">
+            <div class="lista-carrito" id="lista-carrito">
+                <p style="text-align: center; color: #7f8c8d; margin-top: 20px;">El carrito está vacío</p>
             </div>
-            
-            <div class="botones-pago">
-                <button class="btn-pago btn-efectivo" onclick="procesarPago('Efectivo')">💵 Efectivo</button>
-                <button class="btn-pago btn-tarjeta" onclick="procesarPago('Tarjeta')">💳 Tarjeta</button>
+
+            <div class="seccion-pago">
+                <div class="total-container">
+                    <span>Total:</span>
+                    <span id="gran-total">$0.00</span>
+                </div>
+                
+                <div class="botones-pago">
+                    <button class="btn-pago btn-efectivo" onclick="procesarPago('Efectivo')">💵 Efectivo</button>
+                    <button class="btn-pago btn-tarjeta" onclick="procesarPago('Tarjeta')">💳 Tarjeta</button>
+                </div>
             </div>
+        </div>
+
+        <!-- TAB 2: REPORTES Y CORTE DE CAJA -->
+        <div id="tab-reportes" class="seccion-tab">
+            <h3>Corte de Caja en Sesión</h3>
+            <p style="font-size: 12px; color: #7f8c8d;">Cálculos basados en las ventas realizadas desde que abriste esta pantalla.</p>
+
+            <div class="card-reporte">
+                <h4>Ventas Totales del Día</h4>
+                <div class="valor" id="rep-ventas-totales">$0.00</div>
+            </div>
+
+            <div class="card-reporte">
+                <h4>Costo Total de Insumos</h4>
+                <div class="valor" id="rep-costos-totales" style="color: #e74c3c;">$0.00</div>
+            </div>
+
+            <div class="card-reporte">
+                <h4>Utilidad / Ganancia Estimada</h4>
+                <div class="valor" id="rep-utilidad">$0.00</div>
+            </div>
+
+            <button onclick="reiniciarCorte()" style="margin-top: auto; padding: 10px; background: #95a5a6; color: white; border: none; border-radius: 6px; cursor: pointer;">🔄 Reiniciar Corte de Caja</button>
         </div>
     </div>
 
     <script>
-        // URL de tu Google Apps Script
         const API_URL = "https://script.google.com/macros/s/AKfycbyDXrMwhDytj4jHEWQuQnudSYAyTPXQjlqSFVUiuBFqcS9hqCmyHtr77QAitsBMzWvh/exec";
 
-        // Catálogo de Productos
-        const productos = [
-            { id: 1, nombre: "Latte", precio: 55 },
-            { id: 2, nombre: "Mocha Latte", precio: 65 },
-            { id: 3, nombre: "Chai Latte", precio: 60 },
-            { id: 4, nombre: "Dirty Chai Latte", precio: 75 },
-            { id: 5, nombre: "Matcha Latte", precio: 70 },
-            { id: 6, nombre: "Espresso Tonic", precio: 65 },
-            { id: 7, nombre: "Frappé", precio: 70 },
-            { id: 8, nombre: "Café Chiapas (250g)", precio: 120 },
-            { id: 9, nombre: "Café Oaxaca (250g)", precio: 120 },
-            { id: 10, nombre: "Café Veracruz (250g)", precio: 120 }
-        ];
-
+        let productos = [];
         let carrito = [];
+        
+        // Memoria para el corte de caja en tiempo real de la sesión
+        let estadisticasSesion = {
+            totalVendido: 0,
+            costoTotal: 0
+        };
 
-        // 1. Renderizar los productos en pantalla
-        function cargarProductos() {
+        // 1. Descargar menú desde Google Sheets
+        async function descargarMenu() {
+            const overlay = document.getElementById('overlay-carga');
+            overlay.style.display = 'flex';
+            try {
+                const response = await fetch(API_URL);
+                productos = await response.json();
+                poblarCategorias();
+                renderizarProductos(productos);
+            } catch (error) {
+                console.error("Error al cargar menú:", error);
+                alert("No se pudo conectar con Google Sheets.");
+            } finally {
+                overlay.style.display = 'none';
+            }
+        }
+
+        // 2. Extraer categorías únicas para el menú desplegable de filtros
+        function poblarCategorias() {
+            const select = document.getElementById('select-categoria');
+            const categorias = [...new Set(productos.map(p => p.categoria))];
+            
+            select.innerHTML = '<option value="TODAS">Todas las categorías</option>';
+            categorias.forEach(cat => {
+                if(cat) {
+                    select.innerHTML += `<option value="${cat}">${cat}</option>`;
+                }
+            });
+        }
+
+        // 3. Filtrar productos por buscador y categoría
+        function filtrarProductos() {
+            const texto = document.getElementById('input-buscar').value.toLowerCase();
+            const categoriaFiltro = document.getElementById('select-categoria').value;
+
+            const filtrados = productos.filter(p => {
+                const coincideTexto = p.nombre.toLowerCase().includes(texto);
+                const coincideCategoria = (categoriaFiltro === "TODAS" || p.categoria === categoriaFiltro);
+                return coincideTexto && coincideCategoria;
+            });
+
+            renderizarProductos(filtrados);
+        }
+
+        // 4. Renderizar tarjetas de productos
+        function renderizarProductos(lista) {
             const grid = document.getElementById('grid-productos');
-            productos.forEach(prod => {
+            grid.innerHTML = '';
+
+            if (lista.length === 0) {
+                grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #7f8c8d;">No se encontraron productos.</p>';
+                return;
+            }
+
+            lista.forEach(prod => {
                 const div = document.createElement('div');
                 div.className = 'tarjeta-producto';
                 div.onclick = () => agregarAlCarrito(prod.id);
                 div.innerHTML = `
+                    <span class="cat">${prod.categoria || 'General'}</span>
                     <h3>${prod.nombre}</h3>
                     <div class="precio">$${prod.precio.toFixed(2)}</div>
                 `;
@@ -224,10 +399,10 @@
             });
         }
 
-        // 2. Agregar item al carrito
+        // 5. Gestión del Carrito
         function agregarAlCarrito(idProducto) {
-            const producto = productos.find(p => p.id === idProducto);
-            const itemEnCarrito = carrito.find(item => item.id === idProducto);
+            const producto = productos.find(p => p.id == idProducto);
+            const itemEnCarrito = carrito.find(item => item.id == idProducto);
 
             if (itemEnCarrito) {
                 itemEnCarrito.cantidad++;
@@ -237,17 +412,21 @@
             actualizarCarrito();
         }
 
-        // 3. Quitar item del carrito
         function eliminarDelCarrito(idProducto) {
-            carrito = carrito.filter(item => item.id !== idProducto);
+            carrito = carrito.filter(item => item.id != idProducto);
             actualizarCarrito();
         }
 
-        // 4. Actualizar interfaz del carrito
         function actualizarCarrito() {
             const lista = document.getElementById('lista-carrito');
             const totalElemento = document.getElementById('gran-total');
             
+            if(carrito.length === 0) {
+                lista.innerHTML = '<p style="text-align: center; color: #7f8c8d; margin-top: 20px;">El carrito está vacío</p>';
+                totalElemento.innerText = '$0.00';
+                return;
+            }
+
             lista.innerHTML = '';
             let total = 0;
 
@@ -260,9 +439,9 @@
                 div.innerHTML = `
                     <div>
                         <strong>${item.nombre}</strong><br>
-                        ${item.cantidad} x $${item.precio} = $${subtotal}
+                        ${item.cantidad} x $${item.precio.toFixed(2)} = $${subtotal.toFixed(2)}
                     </div>
-                    <button class="btn-eliminar" onclick="eliminarDelCarrito(${item.id})">X</button>
+                    <button class="btn-eliminar" onclick="eliminarDelCarrito('${item.id}')">X</button>
                 `;
                 lista.appendChild(div);
             });
@@ -270,23 +449,33 @@
             totalElemento.innerText = `$${total.toFixed(2)}`;
         }
 
-        // 5. Procesar el pago y enviar a Google Sheets
+        // 6. Procesar Pago y Registrar Venta en Sheets
         async function procesarPago(metodoPago) {
             if (carrito.length === 0) {
                 alert("El carrito está vacío");
                 return;
             }
 
-            document.getElementById('overlay-carga').style.display = 'flex';
+            const overlay = document.getElementById('overlay-carga');
+            overlay.innerText = "Registrando venta en Google Sheets... ☕";
+            overlay.style.display = 'flex';
 
-            // Enviamos cada artículo del carrito a Google Sheets
+            let totalVentaTicket = 0;
+            let costoVentaTicket = 0;
+
             try {
                 for (const item of carrito) {
+                    const subtotal = item.precio * item.cantidad;
+                    const costoSubtotal = (item.costo || 0) * item.cantidad;
+
+                    totalVentaTicket += subtotal;
+                    costoVentaTicket += costoSubtotal;
+
                     const venta = {
                         producto: item.nombre,
                         cantidad: item.cantidad,
                         precioUnitario: item.precio,
-                        total: item.precio * item.cantidad,
+                        total: subtotal,
                         metodoPago: metodoPago
                     };
 
@@ -297,21 +486,56 @@
                     });
                 }
                 
-                // Si todo sale bien
-                alert(`¡Venta registrada con éxito!\nTotal cobrado en ${metodoPago}: $${carrito.reduce((acc, item) => acc + (item.precio * item.cantidad), 0).toFixed(2)}`);
+                // Actualizar estadísticas de reporte en sesión
+                estadisticasSesion.totalVendido += totalVentaTicket;
+                estadisticasSesion.costoTotal += costoVentaTicket;
+                actualizarReportesUI();
+
+                alert(`¡Venta cobrada con éxito!\nMétodo: ${metodoPago} | Total: $${totalVentaTicket.toFixed(2)}`);
                 carrito = [];
                 actualizarCarrito();
 
             } catch (error) {
                 console.error("Error al registrar:", error);
-                alert("Hubo un error al guardar la venta. Revisa tu conexión.");
+                alert("Hubo un error al guardar la venta en la base de datos.");
             } finally {
-                document.getElementById('overlay-carga').style.display = 'none';
+                overlay.style.display = 'none';
             }
         }
 
-        // Iniciar la app
-        cargarProductos();
+        // 7. Cambiar pestañas (Carrito vs Reportes)
+        function cambiarTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('activo'));
+            document.querySelectorAll('.seccion-tab').forEach(tab => tab.classList.remove('activo'));
+
+            if(tabName === 'carrito') {
+                document.querySelectorAll('.tab-btn')[0].classList.add('activo');
+                document.getElementById('tab-carrito').classList.add('activo');
+            } else {
+                document.querySelectorAll('.tab-btn')[1].classList.add('activo');
+                document.getElementById('tab-reportes').classList.add('activo');
+            }
+        }
+
+        // 8. Reportes y Corte de Caja
+        function actualizarReportesUI() {
+            const utilidad = estadisticasSesion.totalVendido - estadisticasSesion.costoTotal;
+
+            document.getElementById('rep-ventas-totales').innerText = `$${estadisticasSesion.totalVendido.toFixed(2)}`;
+            document.getElementById('rep-costos-totales').innerText = `$${estadisticasSesion.costoTotal.toFixed(2)}`;
+            document.getElementById('rep-utilidad').innerText = `$${utilidad.toFixed(2)}`;
+        }
+
+        function reiniciarCorte() {
+            if(confirm("¿Estás seguro de reiniciar el corte de caja de la sesión actual?")) {
+                estadisticasSesion.totalVendido = 0;
+                estadisticasSesion.costoTotal = 0;
+                actualizarReportesUI();
+            }
+        }
+
+        // Iniciar app
+        descargarMenu();
     </script>
 </body>
 </html>
