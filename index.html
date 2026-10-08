@@ -5,69 +5,313 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>POS - Café Sierra Escondida</title>
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; text-align: center; }
-        .btn-cobrar { 
-            padding: 15px 30px; 
-            background-color: #27ae60; 
-            color: white; 
-            border: none; 
-            border-radius: 5px;
-            font-size: 18px;
-            cursor: pointer; 
-            margin-top: 20px;
+        :root {
+            --cafe-oscuro: #2c1e16;
+            --cafe-medio: #6f4e37;
+            --crema: #f5f0e6;
+            --verde-acento: #4a5d23;
+            --blanco: #ffffff;
+            --borde: #e0d8c3;
         }
-        .btn-cobrar:hover { background-color: #2ecc71; }
-        #mensaje { margin-top: 20px; font-weight: bold; color: #333; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--crema);
+            color: var(--cafe-oscuro);
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Panel de Productos */
+        .panel-productos {
+            flex: 2;
+            padding: 20px;
+            overflow-y: auto;
+            border-right: 2px solid var(--borde);
+        }
+
+        .header-titulos {
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--cafe-medio);
+            padding-bottom: 10px;
+        }
+
+        .grid-productos {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .tarjeta-producto {
+            background-color: var(--blanco);
+            border: 1px solid var(--borde);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+
+        .tarjeta-producto:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-color: var(--cafe-medio);
+        }
+
+        .tarjeta-producto h3 {
+            font-size: 14px;
+            margin: 0 0 10px 0;
+        }
+
+        .precio {
+            font-weight: bold;
+            color: var(--verde-acento);
+        }
+
+        /* Panel del Carrito */
+        .panel-carrito {
+            flex: 1;
+            background-color: var(--blanco);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .lista-carrito {
+            flex-grow: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--borde);
+        }
+
+        .item-carrito {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px dashed var(--borde);
+        }
+
+        .btn-eliminar {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            padding: 5px 8px;
+        }
+
+        .seccion-pago {
+            background-color: var(--crema);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .total-container {
+            display: flex;
+            justify-content: space-between;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .botones-pago {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-pago {
+            flex: 1;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--blanco);
+            transition: opacity 0.2s;
+        }
+
+        .btn-pago:hover { opacity: 0.9; }
+        .btn-efectivo { background-color: var(--verde-acento); }
+        .btn-tarjeta { background-color: var(--cafe-medio); }
+        
+        #overlay-carga {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.8);
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+            z-index: 1000;
+        }
     </style>
 </head>
 <body>
 
-    <h1>Caja - Café Sierra Escondida</h1>
-    <p>Haz clic en el botón para enviar una venta de prueba a tu base de datos.</p>
-    
-    <button class="btn-cobrar" onclick="registrarVentaPrueba()">☕ Registrar Venta de Prueba</button>
-    <p id="mensaje"></p>
+    <!-- Overlay de carga mientras guarda en Sheets -->
+    <div id="overlay-carga">Registrando venta en la base de datos... ☕</div>
+
+    <!-- Panel de Productos -->
+    <div class="panel-productos">
+        <div class="header-titulos">
+            <h2>Café Sierra Escondida</h2>
+            <p>Selecciona los productos para agregarlos al pedido</p>
+        </div>
+
+        <div class="grid-productos" id="grid-productos">
+            <!-- Los productos se cargan desde JavaScript -->
+        </div>
+    </div>
+
+    <!-- Panel del Carrito -->
+    <div class="panel-carrito">
+        <h2>Cuenta Actual</h2>
+        
+        <div class="lista-carrito" id="lista-carrito">
+            <!-- Los items del carrito aparecen aquí -->
+        </div>
+
+        <div class="seccion-pago">
+            <div class="total-container">
+                <span>Total:</span>
+                <span id="gran-total">$0.00</span>
+            </div>
+            
+            <div class="botones-pago">
+                <button class="btn-pago btn-efectivo" onclick="procesarPago('Efectivo')">💵 Efectivo</button>
+                <button class="btn-pago btn-tarjeta" onclick="procesarPago('Tarjeta')">💳 Tarjeta</button>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // Aquí está tu URL exacta
+        // URL de tu Google Apps Script
         const API_URL = "https://script.google.com/macros/s/AKfycbyDXrMwhDytj4jHEWQuQnudSYAyTPXQjlqSFVUiuBFqcS9hqCmyHtr77QAitsBMzWvh/exec";
 
-        function registrarVentaPrueba() {
-            const mensajeDiv = document.getElementById('mensaje');
-            mensajeDiv.innerText = "Enviando datos a Google Sheets...";
-            mensajeDiv.style.color = "blue";
-            
-            // Un ejemplo de lo que compraría un cliente
-            const venta = {
-                producto: "Latte Mediano",
-                cantidad: 1,
-                precioUnitario: 65.00,
-                total: 65.00,
-                metodoPago: "Efectivo"
-            };
+        // Catálogo de Productos
+        const productos = [
+            { id: 1, nombre: "Latte", precio: 55 },
+            { id: 2, nombre: "Mocha Latte", precio: 65 },
+            { id: 3, nombre: "Chai Latte", precio: 60 },
+            { id: 4, nombre: "Dirty Chai Latte", precio: 75 },
+            { id: 5, nombre: "Matcha Latte", precio: 70 },
+            { id: 6, nombre: "Espresso Tonic", precio: 65 },
+            { id: 7, nombre: "Frappé", precio: 70 },
+            { id: 8, nombre: "Café Chiapas (250g)", precio: 120 },
+            { id: 9, nombre: "Café Oaxaca (250g)", precio: 120 },
+            { id: 10, nombre: "Café Veracruz (250g)", precio: 120 }
+        ];
 
-            // Hacemos el envío de la información
-            fetch(API_URL, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "text/plain;charset=utf-8",
-                },
-                body: JSON.stringify(venta)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if(data.status === "success") {
-                    mensajeDiv.innerText = "✅ ¡Éxito! Venta guardada con el Folio: " + data.id;
-                    mensajeDiv.style.color = "green";
-                }
-            })
-            .catch(error => {
-                console.error("Error al registrar:", error);
-                mensajeDiv.innerText = "❌ Error al conectar con la base de datos.";
-                mensajeDiv.style.color = "red";
+        let carrito = [];
+
+        // 1. Renderizar los productos en pantalla
+        function cargarProductos() {
+            const grid = document.getElementById('grid-productos');
+            productos.forEach(prod => {
+                const div = document.createElement('div');
+                div.className = 'tarjeta-producto';
+                div.onclick = () => agregarAlCarrito(prod.id);
+                div.innerHTML = `
+                    <h3>${prod.nombre}</h3>
+                    <div class="precio">$${prod.precio.toFixed(2)}</div>
+                `;
+                grid.appendChild(div);
             });
         }
-    </script>
 
+        // 2. Agregar item al carrito
+        function agregarAlCarrito(idProducto) {
+            const producto = productos.find(p => p.id === idProducto);
+            const itemEnCarrito = carrito.find(item => item.id === idProducto);
+
+            if (itemEnCarrito) {
+                itemEnCarrito.cantidad++;
+            } else {
+                carrito.push({ ...producto, cantidad: 1 });
+            }
+            actualizarCarrito();
+        }
+
+        // 3. Quitar item del carrito
+        function eliminarDelCarrito(idProducto) {
+            carrito = carrito.filter(item => item.id !== idProducto);
+            actualizarCarrito();
+        }
+
+        // 4. Actualizar interfaz del carrito
+        function actualizarCarrito() {
+            const lista = document.getElementById('lista-carrito');
+            const totalElemento = document.getElementById('gran-total');
+            
+            lista.innerHTML = '';
+            let total = 0;
+
+            carrito.forEach(item => {
+                const subtotal = item.precio * item.cantidad;
+                total += subtotal;
+
+                const div = document.createElement('div');
+                div.className = 'item-carrito';
+                div.innerHTML = `
+                    <div>
+                        <strong>${item.nombre}</strong><br>
+                        ${item.cantidad} x $${item.precio} = $${subtotal}
+                    </div>
+                    <button class="btn-eliminar" onclick="eliminarDelCarrito(${item.id})">X</button>
+                `;
+                lista.appendChild(div);
+            });
+
+            totalElemento.innerText = `$${total.toFixed(2)}`;
+        }
+
+        // 5. Procesar el pago y enviar a Google Sheets
+        async function procesarPago(metodoPago) {
+            if (carrito.length === 0) {
+                alert("El carrito está vacío");
+                return;
+            }
+
+            document.getElementById('overlay-carga').style.display = 'flex';
+
+            // Enviamos cada artículo del carrito a Google Sheets
+            try {
+                for (const item of carrito) {
+                    const venta = {
+                        producto: item.nombre,
+                        cantidad: item.cantidad,
+                        precioUnitario: item.precio,
+                        total: item.precio * item.cantidad,
+                        metodoPago: metodoPago
+                    };
+
+                    await fetch(API_URL, {
+                        method: "POST",
+                        headers: { "Content-Type": "text/plain;charset=utf-8" },
+                        body: JSON.stringify(venta)
+                    });
+                }
+                
+                // Si todo sale bien
+                alert(`¡Venta registrada con éxito!\nTotal cobrado en ${metodoPago}: $${carrito.reduce((acc, item) => acc + (item.precio * item.cantidad), 0).toFixed(2)}`);
+                carrito = [];
+                actualizarCarrito();
+
+            } catch (error) {
+                console.error("Error al registrar:", error);
+                alert("Hubo un error al guardar la venta. Revisa tu conexión.");
+            } finally {
+                document.getElementById('overlay-carga').style.display = 'none';
+            }
+        }
+
+        // Iniciar la app
+        cargarProductos();
+    </script>
 </body>
 </html>
