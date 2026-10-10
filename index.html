@@ -232,36 +232,118 @@ table.tabla td:first-child { font-weight: 600; }
 #toast { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 12px 20px; border-radius: 14px; font-size: 14px; font-weight: 600; z-index: 4000; display: none; max-width: 90%; }
 #toast.error { background: var(--rojo); color: #fff; } #toast.aviso { background: var(--ambar); color: #fff; }
 
-/* ============ Ticket térmico ============ */
-#ticket-print { display: none; }
+/* ============ Clientes, productos, cotizaciones, editor ============ */
+.solo-mov { display: none; }
+.rail { overflow-y: auto; }
+.lista-cards { display: flex; flex-direction: column; background: var(--surface); border-radius: var(--r-l); overflow: hidden; }
+.fila-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 14px; align-items: center; padding: 13px 18px; border: none; border-bottom: 1px solid var(--line); background: none; width: 100%; text-align: left; font-size: 14px; }
+.fila-item:last-child { border-bottom: none; }
+button.fila-item:hover { background: var(--bg); }
+.fila-item.inactivo { opacity: .5; }
+.fila-item .sub, .sel-item .sub { display: block; font-size: 12px; color: var(--muted); font-weight: 500; }
+.fila-item .monto { font-weight: 800; text-align: right; }
+.fila-cliente { display: flex; gap: 8px; margin-bottom: 10px; }
+.cliente-btn { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; padding: 9px 12px; border: 1px solid var(--line); border-radius: var(--r-m); background: var(--bg); font-weight: 700; font-size: 13px; text-align: left; }
+.cliente-btn span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chip-mini { padding: 9px 12px; border: 1px solid var(--line); border-radius: var(--r-m); background: var(--surface); font-weight: 700; font-size: 12px; white-space: nowrap; }
+.banner { background: var(--salvia); color: var(--pino); border-radius: var(--r-s); padding: 6px 6px 6px 12px; font-size: 12px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; }
+.item .ctrl { flex-wrap: wrap; }
+.precio-edit { border: none; background: none; font-size: 12px; color: var(--muted); padding: 6px; border-radius: 8px; text-decoration: underline dotted; }
+.precio-edit.cambiado { color: var(--ambar); font-weight: 700; }
+.precio-edit s { opacity: .6; margin-left: 4px; }
+.btn-ancho { grid-column: 1 / -1; flex-direction: row; justify-content: center; gap: 8px; }
+.lista-sel { max-height: 44vh; overflow-y: auto; margin-top: 10px; display: flex; flex-direction: column; }
+.sel-item { text-align: left; background: none; border: none; border-bottom: 1px solid var(--line); padding: 12px 4px; display: flex; flex-direction: column; gap: 2px; font-size: 15px; }
+.sel-item:hover { background: var(--bg); }
+.campo-sel { width: 100%; padding: 13px; font-size: 16px; border: 1px solid var(--line); border-radius: var(--r-m); background: var(--bg); }
+.modal-contenido input[type=tel], .modal-contenido input[type=email] { width: 100%; padding: 13px; font-size: 18px; border: 1px solid var(--line); border-radius: var(--r-m); background: var(--bg); }
+.editor-linea { display: grid; grid-template-columns: minmax(0, 1fr) 62px 84px 34px; gap: 6px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.modal-contenido .editor-linea input[type=number] { width: 100%; padding: 9px 6px; font-size: 15px; border-radius: 8px; text-align: right; }
+.dos-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.menu-mas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px; }
+.menu-mas button { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 14px 4px; border: 1px solid var(--line); border-radius: var(--r-m); background: var(--surface); font-size: 12px; font-weight: 700; }
+.menu-mas button:active { background: var(--salvia); }
+table.tabla { min-width: 460px; }
+.panel { overflow-x: auto; }
+
+/* ============ Impresión: ticket térmico y cotización ============ */
+#ticket-print, #cot-print { display: none; }
 @media print {
   @page { margin: 0; }
   body { display: block; height: auto; overflow: visible; background: #fff; }
-  body > *:not(#ticket-print) { display: none !important; }
-  #ticket-print { display: block; width: 72mm; padding: 4mm; font-family: monospace; font-size: 12px; color: #000; }
+  body:not(.imprimiendo-cot) > *:not(#ticket-print) { display: none !important; }
+  body.imprimiendo-cot > *:not(#cot-print) { display: none !important; }
+  body:not(.imprimiendo-cot) #ticket-print { display: block; width: 72mm; padding: 4mm; font-family: monospace; font-size: 12px; color: #000; }
   #ticket-print hr { border: none; border-top: 1px dashed #000; }
   #ticket-print .tp-centro { text-align: center; }
   #ticket-print .tp-fila { display: flex; justify-content: space-between; gap: 6px; }
+  body.imprimiendo-cot #cot-print { display: block; padding: 16mm; font-family: system-ui, 'Segoe UI', sans-serif; color: #000; font-size: 13px; }
+  #cot-print .cp-cab { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 14px; }
+  #cot-print .cp-marca { font-size: 22px; font-weight: 800; }
+  #cot-print .cp-sub { font-size: 14px; letter-spacing: .04em; }
+  #cot-print .cp-der { text-align: right; line-height: 1.5; }
+  #cot-print table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+  #cot-print th { text-align: left; border-bottom: 1px solid #000; padding: 6px 4px; font-size: 12px; }
+  #cot-print td { padding: 8px 4px; border-bottom: 1px solid #ccc; vertical-align: top; }
+  #cot-print .r { text-align: right; }
+  #cot-print .cp-tot { margin: 14px 0 0 auto; width: 55%; }
+  #cot-print .cp-tot div { display: flex; justify-content: space-between; padding: 3px 0; }
+  #cot-print .cp-tot .gran { font-size: 17px; font-weight: 800; border-top: 2px solid #000; margin-top: 4px; padding-top: 6px; }
+  #cot-print .cp-pie { margin-top: 28px; font-size: 11px; color: #444; }
 }
 
 /* ============ Tablet y móvil ============ */
 @media (max-width: 1100px) { #v-vender.activa { grid-template-columns: minmax(0, 1fr) 340px; } }
 @media (max-width: 860px) {
-  body { grid-template-columns: 1fr; grid-template-rows: 1fr auto; }
-  .rail { order: 2; flex-direction: row; justify-content: space-around; padding: 6px 4px calc(6px + env(safe-area-inset-bottom)); border-right: none; border-top: 1px solid var(--line); gap: 0; }
-  .marca, .rail-fin { display: none; }
-  .nav-btn { width: auto; flex: 1; padding: 6px 0; }
-  .badge { right: 22%; }
-  .topbar { padding: 12px 14px 4px; }
+  body { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) auto; }
+  .contenido { height: 100%; min-height: 0; }
+  .rail { order: 2; flex-direction: row; justify-content: space-around; align-items: stretch; padding: 4px 4px calc(4px + env(safe-area-inset-bottom)); border-right: none; border-top: 1px solid var(--line); gap: 0; overflow: visible; }
+  .marca, .rail-fin, .solo-desk { display: none !important; }
+  .solo-mov { display: flex; }
+  .nav-btn { width: auto; flex: 1; padding: 8px 0 6px; font-size: 10.5px; }
+  .badge { right: 18%; }
+  input, select { font-size: 16px; }
+
+  .topbar { flex-wrap: nowrap; padding: 10px 14px 4px; gap: 10px; }
   .topbar h1 { font-size: 19px; }
-  .meta-btn { min-width: 0; }
+  .topbar .sub, #hoy-tickets { display: none; }
+  .hoy { gap: 8px; min-width: 0; }
+  .meta-btn { min-width: 0; padding: 6px 10px; }
+  .chip-sync { padding: 9px 10px; }
+  .chip-sync span { display: none; }
+  .chip-sync.pendiente span { display: inline; }
+
   #v-vender, .vista-pagina { padding-left: 14px; padding-right: 14px; }
-  #v-vender.activa { display: flex; }
-  .comanda { position: fixed; left: 0; right: 0; bottom: 0; top: 12vh; margin: 0; z-index: 1500; transform: translateY(105%); transition: transform .25s; border-radius: var(--r-l) var(--r-l) 0 0; box-shadow: 0 -8px 30px rgba(0,0,0,.25); }
+  .vista-pagina { padding-bottom: 24px; }
+  #v-vender.activa { display: flex; padding-bottom: 0; }
+  .catalogo { flex: 1; min-width: 0; padding-bottom: 0; }
+  .grid-productos { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 92px; gap: 8px; padding-bottom: 150px; }
+  .tile { padding: 11px; }
+  .tile .nombre { font-size: 13px; }
+
+  .comanda { position: fixed; left: 0; right: 0; bottom: 0; top: 8vh; margin: 0; z-index: 1500; transform: translateY(105%); transition: transform .25s; border-radius: var(--r-l) var(--r-l) 0 0; box-shadow: 0 -8px 30px rgba(0,0,0,.3); padding-bottom: env(safe-area-inset-bottom); }
   .comanda::after { display: none; }
   .comanda.abierta { transform: none; }
-  #fab-pedido { display: flex; position: fixed; left: 14px; right: 14px; bottom: calc(76px + env(safe-area-inset-bottom)); z-index: 1400; background: var(--pino); color: var(--pino-ink); border: none; border-radius: var(--r-m); padding: 15px 18px; justify-content: space-between; font-weight: 800; font-size: 15px; }
-  .catalogo { padding-bottom: 80px; }
+  .comanda-cab { flex-wrap: wrap; }
+  #fab-pedido { display: flex; position: fixed; left: 14px; right: 14px; bottom: calc(68px + env(safe-area-inset-bottom)); z-index: 1400; background: var(--pino); color: var(--pino-ink); border: none; border-radius: var(--r-m); padding: 15px 18px; justify-content: space-between; font-weight: 800; font-size: 15px; box-shadow: 0 6px 18px rgba(0,0,0,.25); }
+
+  .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .kpi { padding: 13px 14px; }
+  .kpi .v { font-size: 21px; }
+  .kpi.principal { grid-column: 1 / -1; }
+  .cols-2, .insights { grid-template-columns: 1fr; }
+  .panel { padding: 16px; }
+  .rangos { gap: 6px; }
+  .rangos input[type=date] { flex: 1; min-width: 130px; }
+  .fila-t2 { grid-template-columns: 52px minmax(0, 1fr) auto; row-gap: 4px; padding: 12px 14px; }
+  .fila-t2 .etq { grid-column: 2; justify-self: start; }
+  .fila-t2 .monto { grid-column: 3; grid-row: 1 / span 2; }
+  .fila-item { padding: 12px 14px; }
+  .barra-filtros .busqueda { flex: 1 1 100%; }
+
+  #modal { align-items: flex-end; padding: 0; }
+  .modal-contenido { width: 100%; border-radius: var(--r-l) var(--r-l) 0 0; max-height: 92dvh; padding: 20px 18px calc(20px + env(safe-area-inset-bottom)); }
+  #toast { bottom: calc(72px + env(safe-area-inset-bottom)); }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
@@ -285,6 +367,11 @@ table.tabla td:first-child { font-weight: 600; }
   <symbol id="i-phone" viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M11 18h2"/></symbol>
   <symbol id="i-book" viewBox="0 0 24 24"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3V4z"/><path d="M8 20a3 3 0 0 1 0-3h11"/></symbol>
   <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-box" viewBox="0 0 24 24"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/><path d="M3 8l9 5 9-5M12 13v8"/></symbol>
+  <symbol id="i-quote" viewBox="0 0 24 24"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4M10 12h6M10 16h6"/></symbol>
+  <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></symbol>
   <symbol id="i-print" viewBox="0 0 24 24"><path d="M7 8V3h10v5M7 17H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2"/><rect x="7" y="14" width="10" height="7"/></symbol>
 </svg>
 
@@ -292,15 +379,20 @@ table.tabla td:first-child { font-weight: 600; }
 <div id="modal" onclick="cerrarModal()"><div class="modal-contenido" id="modal-cuerpo" onclick="event.stopPropagation()"></div></div>
 <div id="toast"></div>
 <div id="ticket-print"></div>
+<div id="cot-print"></div>
 
 <!-- Barra lateral -->
 <nav class="rail" aria-label="Secciones">
   <div class="marca" title="Café Sierra Escondida"><svg class="ico"><use href="#i-cup"/></svg></div>
   <button class="nav-btn activo" data-vista="vender" onclick="irA('vender')"><svg class="ico"><use href="#i-cup"/></svg>Vender</button>
+  <button class="nav-btn solo-desk" data-vista="cotizaciones" onclick="irA('cotizaciones')"><svg class="ico"><use href="#i-quote"/></svg>Cotizar</button>
   <button class="nav-btn" data-vista="tickets" onclick="irA('tickets')"><svg class="ico"><use href="#i-receipt"/></svg>Tickets</button>
   <button class="nav-btn" data-vista="creditos" onclick="irA('creditos')"><svg class="ico"><use href="#i-wallet"/></svg>Por cobrar<span class="badge" id="badge-creditos">0</span></button>
-  <button class="nav-btn" data-vista="corte" onclick="irA('corte')"><svg class="ico"><use href="#i-corte"/></svg>Corte</button>
-  <button class="nav-btn" data-vista="reportes" onclick="irA('reportes')"><svg class="ico"><use href="#i-chart"/></svg>Reportes</button>
+  <button class="nav-btn solo-desk" data-vista="clientes" onclick="irA('clientes')"><svg class="ico"><use href="#i-user"/></svg>Clientes</button>
+  <button class="nav-btn solo-desk" data-vista="productos" onclick="irA('productos')"><svg class="ico"><use href="#i-box"/></svg>Productos</button>
+  <button class="nav-btn solo-desk" data-vista="corte" onclick="irA('corte')"><svg class="ico"><use href="#i-corte"/></svg>Corte</button>
+  <button class="nav-btn solo-desk" data-vista="reportes" onclick="irA('reportes')"><svg class="ico"><use href="#i-chart"/></svg>Reportes</button>
+  <button class="nav-btn solo-mov" data-vista="mas" onclick="abrirMenuMas()"><svg class="ico"><use href="#i-more"/></svg>Más</button>
   <div class="rail-fin">
     <button class="icon-btn" onclick="descargarMenu(true)" title="Actualizar menú" aria-label="Actualizar menú"><svg class="ico s"><use href="#i-refresh"/></svg></button>
     <button class="icon-btn" id="btn-tema" onclick="alternarTema()" title="Cambiar tema" aria-label="Cambiar tema"><svg class="ico s"><use href="#i-moon"/></svg></button>
@@ -341,6 +433,11 @@ table.tabla td:first-child { font-weight: 600; }
         </div>
         <button class="link-btn peligro" onclick="vaciarCarrito()">Vaciar</button>
       </div>
+      <div class="fila-cliente">
+        <button class="cliente-btn" onclick="elegirClientePedido()"><svg class="ico s"><use href="#i-user"/></svg><span id="btn-cliente-txt">Mostrador</span></button>
+        <button class="chip-mini" onclick="abrirConceptoLibre()">+ Concepto libre</button>
+      </div>
+      <div id="banner-cot"></div>
       <div class="lista-carrito" id="lista-carrito"></div>
       <div class="comanda-pie">
         <div class="fila-desc">
@@ -356,6 +453,7 @@ table.tabla td:first-child { font-weight: 600; }
           <button class="btn-pago" onclick="iniciarCobro('Tarjeta')"><svg class="ico"><use href="#i-card"/></svg>Tarjeta</button>
           <button class="btn-pago" onclick="iniciarCobro('Transferencia')"><svg class="ico"><use href="#i-phone"/></svg>Transferencia</button>
           <button class="btn-pago" onclick="iniciarCobro('Crédito')"><svg class="ico"><use href="#i-book"/></svg>Crédito</button>
+          <button class="btn-pago btn-ancho" id="btn-cotizar" onclick="abrirCotizar()"><svg class="ico s"><use href="#i-quote"/></svg>Guardar como cotización</button>
         </div>
       </div>
     </aside>
@@ -403,17 +501,51 @@ table.tabla td:first-child { font-weight: 600; }
     </div>
     <div id="contenido-reporte" style="display:flex;flex-direction:column;gap:14px"></div>
   </section>
+
+  <!-- COTIZACIONES -->
+  <section id="v-cotizaciones" class="vista vista-pagina">
+    <div class="barra-filtros">
+      <div class="tabs" id="tabs-cot" style="margin-bottom:0">
+        <button data-f="todas" class="activo">Todas</button><button data-f="Pendiente">Pendientes</button><button data-f="Convertida">Convertidas</button><button data-f="Vencida">Vencidas</button>
+      </div>
+      <button class="btn" onclick="cargarCotizaciones(true)">Actualizar</button>
+    </div>
+    <p class="nota-pequena" style="margin:0">Arma un pedido en Vender y toca "Guardar como cotización". Aquí podrás imprimirla, enviarla por WhatsApp o convertirla en venta.</p>
+    <div id="contenedor-cotizaciones"></div>
+  </section>
+
+  <!-- CLIENTES -->
+  <section id="v-clientes" class="vista vista-pagina">
+    <div class="barra-filtros">
+      <div class="busqueda" style="flex:1;min-width:220px"><svg class="ico s"><use href="#i-search"/></svg><input type="text" id="buscar-cliente" placeholder="Buscar cliente" autocomplete="off" oninput="renderClientes()"></div>
+      <button class="btn relleno" onclick="editarCliente()">Nuevo cliente</button>
+    </div>
+    <div id="contenedor-clientes"></div>
+  </section>
+
+  <!-- PRODUCTOS -->
+  <section id="v-productos" class="vista vista-pagina">
+    <div class="barra-filtros">
+      <div class="busqueda" style="flex:1;min-width:220px"><svg class="ico s"><use href="#i-search"/></svg><input type="text" id="buscar-producto" placeholder="Buscar producto" autocomplete="off" oninput="renderProductosAdmin()"></div>
+      <button class="btn relleno" onclick="editarProducto()">Nuevo producto</button>
+    </div>
+    <div id="contenedor-productos"></div>
+  </section>
 </main>
 
 <script>
 /* ============================ CONFIGURACIÓN ============================ */
 const API_URL = "https://script.google.com/macros/s/AKfycbyDXrMwhDytj4jHEWQuQnudSYAyTPXQjlqSFVUiuBFqcS9hqCmyHtr77QAitsBMzWvh/exec";
 const NEGOCIO = { nombre: "Café Sierra Escondida", leyenda: "¡Gracias por tu visita!" };
+// Pon true si quieres exigir la clave de administrador para cambiar precios al vender
+const PEDIR_CLAVE_PRECIO = false;
 const NOTAS_RAPIDAS = ["Sin azúcar", "Leche de avena", "Deslactosada", "Extra shot", "Poco hielo", "Bien caliente", "Para compartir"];
 const TITULOS = {
   vender: ["Vender", "Toca un producto para agregarlo"], tickets: ["Tickets", "Historial de ventas por día"],
   creditos: ["Por cobrar", "Créditos pendientes de cobro"], corte: ["Corte de caja", "Cierre y arqueo del día"],
-  reportes: ["Reportes", "Cómo va el negocio"]
+  reportes: ["Reportes", "Cómo va el negocio"],
+  cotizaciones: ["Cotizaciones", "Presupuestos para tus clientes"], clientes: ["Clientes", "Tu cartera y sus compras"],
+  productos: ["Productos", "Catálogo, precios y costos"]
 };
 const DIAS = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
 const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
@@ -439,8 +571,12 @@ let toastTimer;
 function toast(msg, tipo = "") { const t = $("toast"); t.textContent = msg; t.className = tipo; t.style.display = "block"; clearTimeout(toastTimer); toastTimer = setTimeout(() => t.style.display = "none", 3200); }
 function mostrarOverlay(txt) { $("overlay-texto").textContent = txt; $("overlay-carga").style.display = "flex"; }
 function ocultarOverlay() { $("overlay-carga").style.display = "none"; }
+function enfocar(id, seleccionar) { setTimeout(() => { const f = $(id); if (f) { f.focus(); if (seleccionar) f.select(); } }, 50); }
 function abrirModal(html) { $("modal-cuerpo").innerHTML = html; $("modal").style.display = "flex"; }
-function cerrarModal() { $("modal").style.display = "none"; }
+function cerrarModal() {
+  if (resolverClave) { const r = resolverClave; resolverClave = null; r(""); }
+  $("modal").style.display = "none";
+}
 
 /* ============================ API ============================ */
 async function apiGet(params) { const r = await fetch(API_URL + "?" + new URLSearchParams(params)); return r.json(); }
@@ -463,7 +599,7 @@ function alternarTema() {
 
 /* ============================ ESTADO ============================ */
 let productos = [];
-let carrito = leer("pos_carrito", []).map(i => ({ ...i, uid: i.uid || nuevoUid(), nota: i.nota || "" }));
+let carrito = leer("pos_carrito", []).map(i => ({ ...i, uid: i.uid || nuevoUid(), nota: i.nota || "", precioBase: i.precioBase ?? i.precio }));
 let categoriaActiva = "TODAS";
 let tipoOrden = leer("pos_tipo", "Aquí");
 let cola = leer("pos_cola", []);
@@ -471,17 +607,27 @@ let freq = leer("pos_freq", {});
 let ticketsCache = [], creditosCache = [];
 let ultimoResumen = null, pagoActual = null, ocupado = false;
 let reporteActual = null, rangoActual = "7d", tabProductos = "top";
+let clienteActual = leer("pos_cliente", null);      // cliente asignado al pedido
+let cotizacionOrigen = leer("pos_cot", null);       // cotización cargada al pedido
+let clientesCache = leer("pos_clientes", []), cotizacionesCache = [], productosAdmin = [];
+let claveSesion = "", resolverClave = null, filtroCot = "todas";
+let selector = null, selLista = [], cotActual = null, editor = null;
 
 /* ============================ NAVEGACIÓN ============================ */
 function irA(vista) {
   document.querySelectorAll(".vista").forEach(v => v.classList.toggle("activa", v.id === "v-" + vista));
   document.querySelectorAll(".nav-btn").forEach(b => b.classList.toggle("activo", b.dataset.vista === vista));
+  const mas = document.querySelector('.nav-btn[data-vista="mas"]');
+  if (mas) mas.classList.toggle("activo", !["vender", "tickets", "creditos"].includes(vista));
   $("titulo-vista").textContent = TITULOS[vista][0]; $("subtitulo-vista").textContent = TITULOS[vista][1];
   cerrarComandaMovil();
   if (vista === "tickets") cargarTickets();
   if (vista === "creditos") cargarCreditos(true);
   if (vista === "corte") cargarCorte();
   if (vista === "reportes") cargarReporte();
+  if (vista === "cotizaciones") cargarCotizaciones(true);
+  if (vista === "clientes") cargarClientes(true);
+  if (vista === "productos") cargarProductosAdmin(true);
 }
 document.addEventListener("keydown", e => {
   if (e.key === "Escape") { cerrarModal(); cerrarComandaMovil(); }
@@ -545,8 +691,9 @@ $("grid-productos").addEventListener("click", e => { const t = e.target.closest(
 /* ============================ PEDIDO ============================ */
 function agregarAlCarrito(id) {
   const p = productos.find(x => String(x.id) === String(id)); if (!p) return;
-  const it = carrito.find(x => String(x.id) === String(id) && !x.nota);
-  if (it) it.cantidad++; else carrito.push({ uid: nuevoUid(), id: p.id, nombre: p.nombre, precio: p.precio, costo: p.costo || 0, cantidad: 1, nota: "" });
+  const it = carrito.find(x => String(x.id) === String(id) && !x.nota && x.precio === p.precio);
+  if (it) it.cantidad++;
+  else carrito.push({ uid: nuevoUid(), id: p.id, nombre: p.nombre, precio: p.precio, precioBase: p.precio, costo: p.costo || 0, cantidad: 1, nota: "" });
   if (navigator.vibrate) navigator.vibrate(8);
   actualizarCarrito();
 }
@@ -557,8 +704,11 @@ function cambiarCantidad(uid, d) {
 }
 function quitarLinea(uid) { carrito = carrito.filter(x => x.uid !== uid); actualizarCarrito(); }
 function vaciarCarrito() {
-  if (!carrito.length) return;
-  if (confirm("¿Vaciar el pedido actual?")) { carrito = []; $("desc-valor").value = ""; actualizarCarrito(); }
+  if (!carrito.length && !clienteActual) return;
+  if (confirm("¿Vaciar el pedido actual?")) {
+    carrito = []; clienteActual = null; cotizacionOrigen = null; $("desc-valor").value = "";
+    guardar("pos_cliente", null); guardar("pos_cot", null); actualizarCarrito();
+  }
 }
 
 function abrirNota(uid) {
@@ -572,7 +722,7 @@ function abrirNota(uid) {
       <button onclick="cerrarModal()">Cancelar</button>
       <button class="ok" onclick="guardarNota('${it.uid}')">Guardar nota</button>
     </div>`);
-  setTimeout(() => $("nota-texto").focus(), 50);
+  enfocar("nota-texto");
 }
 function agregarSugerida(n) { const i = $("nota-texto"); i.value = i.value ? i.value + ", " + n : n; i.focus(); }
 function guardarNota(uid) {
@@ -596,7 +746,9 @@ function actualizarCarrito() {
   guardar("pos_carrito", carrito);
   $("lista-carrito").innerHTML = !carrito.length
     ? '<p class="vacio">El pedido está vacío.<br>Toca un producto para empezar.</p>'
-    : carrito.map(i => `
+    : carrito.map(i => {
+      const cambiado = i.precio !== i.precioBase;
+      return `
       <div class="item">
         <div><div class="nom">${esc(i.nombre)}</div>${i.nota ? `<div class="nota-txt">${esc(i.nota)}</div>` : ""}</div>
         <div class="imp">${fmt(i.precio * i.cantidad)}</div>
@@ -604,15 +756,19 @@ function actualizarCarrito() {
           <button class="btn-cant" data-acc="menos" data-uid="${i.uid}" aria-label="Quitar una pieza">−</button>
           <span class="q">${i.cantidad}</span>
           <button class="btn-cant" data-acc="mas" data-uid="${i.uid}" aria-label="Agregar una pieza">+</button>
-          <span class="pu">${fmt(i.precio)} c/u</span>
-          <button class="link-btn" data-acc="nota" data-uid="${i.uid}">${i.nota ? "Editar nota" : "Agregar nota"}</button>
+          <button class="precio-edit ${cambiado ? "cambiado" : ""}" data-acc="precio" data-uid="${i.uid}" aria-label="Cambiar precio">${fmt(i.precio)} c/u${cambiado ? ` <s>${fmt(i.precioBase)}</s>` : ""}</button>
+          <button class="link-btn" data-acc="nota" data-uid="${i.uid}">${i.nota ? "Editar nota" : "Nota"}</button>
           <button class="link-btn peligro" data-acc="quitar" data-uid="${i.uid}" style="margin-left:0">Quitar</button>
         </div>
-      </div>`).join("");
+      </div>`;
+    }).join("");
   $("subtotal").textContent = fmt(t.subtotal);
   $("fila-desc").style.display = t.desc > 0 ? "flex" : "none";
   $("desc-monto").textContent = "-" + fmt(t.desc);
   $("gran-total").textContent = fmt(t.total);
+  $("btn-cliente-txt").textContent = clienteActual ? clienteActual.nombre : "Mostrador";
+  $("banner-cot").innerHTML = cotizacionOrigen
+    ? `<div class="banner"><span>Desde la cotización ${esc(cotizacionOrigen)}</span><button class="link-btn" onclick="soltarCotizacion()">Quitar</button></div>` : "";
   document.querySelectorAll(".btn-pago").forEach(b => b.disabled = !carrito.length);
   const piezas = carrito.reduce((s, i) => s + i.cantidad, 0);
   $("fab-cant").textContent = piezas ? `Ver pedido (${piezas})` : "Pedido vacío";
@@ -625,6 +781,7 @@ $("lista-carrito").addEventListener("click", e => {
   if (b.dataset.acc === "mas") cambiarCantidad(uid, 1);
   else if (b.dataset.acc === "menos") cambiarCantidad(uid, -1);
   else if (b.dataset.acc === "nota") abrirNota(uid);
+  else if (b.dataset.acc === "precio") editarPrecio(uid);
   else quitarLinea(uid);
 });
 $("seg-tipo").addEventListener("click", e => {
@@ -638,6 +795,12 @@ function cerrarComandaMovil() { $("comanda").classList.remove("abierta"); }
 /* ============================ COBRO ============================ */
 function iniciarCobro(metodo) {
   if (!carrito.length) return toast("El pedido está vacío", "aviso");
+  if (metodo === "Crédito" && !clienteActual) {
+    return abrirSelectorCliente({
+      motivo: "Elige a quién se le fía este pedido.", permitirMostrador: false,
+      alElegir: c => { clienteActual = { id: c.id, nombre: c.nombre, telefono: c.telefono }; guardar("pos_cliente", clienteActual); actualizarCarrito(); iniciarCobro("Crédito"); }
+    });
+  }
   const t = calcularTotales();
   pagoActual = { metodo, total: t.total };
   let extra = "";
@@ -648,21 +811,15 @@ function iniciarCobro(metodo) {
       <input type="number" id="pago-recibido" inputmode="decimal" min="0" step="any" placeholder="${t.total.toFixed(2)}" oninput="actualizarCambio()">
       <div class="rapidos"><button onclick="setRecibido(${t.total})">Exacto</button>${billetes.map(b => `<button onclick="setRecibido(${b})">${fmt0(b)}</button>`).join("")}</div>
       <div class="cambio" id="pago-cambio">Cambio: ${fmt(0)}</div>`;
-  } else if (metodo === "Crédito") {
-    const clientes = [...new Set(creditosCache.map(c => c.cliente))];
-    extra = `
-      <label class="lbl" for="pago-cliente">Nombre del cliente (obligatorio)</label>
-      <input type="text" id="pago-cliente" list="lista-clientes" autocomplete="off">
-      <datalist id="lista-clientes">${clientes.map(c => `<option value="${esc(c)}">`).join("")}</datalist>`;
   }
   abrirModal(`
     <h3>Cobrar con ${esc(metodo.toLowerCase())}</h3>
-    <p class="nota-pequena">${esc(tipoOrden === "Llevar" ? "Para llevar" : "Para consumir aquí")}</p>
+    <p class="nota-pequena">${esc(tipoOrden === "Llevar" ? "Para llevar" : "Para consumir aquí")}${clienteActual ? ", cliente " + esc(clienteActual.nombre) : ""}</p>
     <div class="total-modal">${fmt(t.total)}</div>
     ${extra}
     <label class="chk"><input type="checkbox" id="pago-imprimir"> Imprimir ticket</label>
     <div class="acciones-modal"><button onclick="cerrarModal()">Cancelar</button><button class="ok" onclick="confirmarCobro()">Confirmar cobro</button></div>`);
-  setTimeout(() => { const f = $("pago-recibido") || $("pago-cliente"); if (f) f.focus(); }, 50);
+  setTimeout(() => { const f = $("pago-recibido"); if (f) f.focus(); }, 50);
 }
 function setRecibido(v) { $("pago-recibido").value = v; actualizarCambio(); }
 function actualizarCambio() {
@@ -677,20 +834,20 @@ const nuevoFolio = () => "V-" + Date.now().toString(36).toUpperCase() + Math.ran
 async function confirmarCobro() {
   if (ocupado || !pagoActual) return;
   const t = calcularTotales(), metodo = pagoActual.metodo;
-  let recibido = null, cambio = 0, cliente = "";
+  const cliente = clienteActual ? clienteActual.nombre : "";
+  let recibido = null, cambio = 0;
   if (metodo === "Efectivo") {
     const v = parseFloat($("pago-recibido").value);
     recibido = isNaN(v) ? t.total : v;
     if (recibido < t.total - 0.001) return toast("El efectivo recibido es menor al total", "error");
     cambio = redondear(recibido - t.total);
   }
-  if (metodo === "Crédito") {
-    cliente = $("pago-cliente").value.trim();
-    if (!cliente) return toast("Escribe el nombre del cliente", "error");
-  }
+  if (metodo === "Crédito" && !cliente) return toast("Elige al cliente para el crédito", "error");
   const imprimir = $("pago-imprimir").checked;
+  const veniaDeCot = !!cotizacionOrigen;
+
   const ticket = {
-    action: "venta", folio: nuevoFolio(), metodoPago: metodo, cliente, descuento: t.desc, tipo: tipoOrden,
+    action: "venta", folio: nuevoFolio(), metodoPago: metodo, cliente, descuento: t.desc, tipo: tipoOrden, cotizacion: cotizacionOrigen || "",
     items: carrito.map(i => ({ producto: i.nombre, cantidad: i.cantidad, precioUnitario: i.precio, costoUnitario: i.costo, nota: i.nota }))
   };
   const ahora = new Date();
@@ -711,13 +868,15 @@ async function confirmarCobro() {
   }
   ocupado = false; ocultarOverlay();
 
-  idsVendidos.forEach(([id, c]) => freq[id] = (freq[id] || 0) + c); guardar("pos_freq", freq);
-  carrito = []; $("desc-valor").value = ""; cerrarComandaMovil();
+  idsVendidos.forEach(([id, c]) => { if (!String(id).startsWith("LIBRE")) freq[id] = (freq[id] || 0) + c; });
+  guardar("pos_freq", freq);
+  carrito = []; clienteActual = null; cotizacionOrigen = null; guardar("pos_cliente", null); guardar("pos_cot", null);
+  $("desc-valor").value = ""; cerrarComandaMovil();
   actualizarCarrito(); poblarCategorias(); actualizarEstadoSync();
   ultimoResumen = resumen; mostrarExito(resumen, sincronizado);
   if (imprimir) imprimirResumen(resumen);
   if (metodo === "Crédito") cargarCreditos();
-  if (sincronizado) cargarHoy();
+  if (sincronizado) { cargarHoy(); cargarClientes(); if (veniaDeCot) cargarCotizaciones(); }
 }
 
 function mostrarExito(r, sincronizado) {
@@ -780,7 +939,7 @@ function editarMeta() {
     <p class="nota-pequena">La barra de la parte superior muestra tu avance contra esta meta.</p>
     <input type="number" id="meta-valor" inputmode="decimal" min="0" step="any" value="${leer("pos_meta", "") || ""}" placeholder="Ejemplo: 3000" onkeydown="if(event.key==='Enter'){event.stopPropagation();guardarMeta()}">
     <div class="acciones-modal"><button onclick="cerrarModal()">Cancelar</button><button class="ok" onclick="guardarMeta()">Guardar</button></div>`);
-  setTimeout(() => $("meta-valor").focus(), 50);
+  enfocar("meta-valor");
 }
 function guardarMeta() { guardar("pos_meta", parseFloat($("meta-valor").value) || 0); cerrarModal(); pintarMeta(); }
 
@@ -819,25 +978,25 @@ function abrirDetalleTicket(i) {
     <div class="fila fuerte"><span>Total</span><span>${fmt(t.total)}</span></div>
     <div class="acciones-modal">
       <button onclick="imprimirTicketServidor(${i})">Imprimir</button>
+      ${t.estado !== "Anulado" ? `<button onclick="editarTicket(${i})">Editar</button>` : ""}
       ${t.estado === "Pendiente" ? `<button class="ok" onclick="abrirCobroCredito('${esc(t.folio)}', ${t.total})">Cobrar</button>` : ""}
-      ${t.estado !== "Anulado" ? `<button class="peligro" onclick="pedirAnulacion('${esc(t.folio)}')">Anular</button>` : ""}
     </div>
-    <div class="acciones-modal" style="margin-top:8px"><button onclick="cerrarModal()">Cerrar</button></div>`);
+    <div class="acciones-modal" style="margin-top:8px">
+      ${t.estado !== "Anulado" ? `<button class="peligro" onclick="pedirAnulacion('${esc(t.folio)}')">Anular</button>` : ""}
+      <button class="peligro" onclick="pedirEliminarTicket(${i})">Eliminar</button>
+      <button onclick="cerrarModal()">Cerrar</button>
+    </div>`);
 }
 function pedirAnulacion(folio) {
   abrirModal(`
     <h3>Anular ticket ${esc(folio)}</h3>
-    <p class="nota-pequena">Dejará de contar en el corte y en los reportes. Requiere la clave de administrador.</p>
-    <label class="lbl" for="clave-admin">Clave</label>
-    <input type="password" id="clave-admin" autocomplete="off" onkeydown="if(event.key==='Enter'){event.stopPropagation();anularTicket('${esc(folio)}')}">
+    <p class="nota-pequena">El ticket se conserva en la hoja pero dejará de contar en el corte y en los reportes.</p>
     <div class="acciones-modal"><button onclick="cerrarModal()">Cancelar</button><button class="peligro" onclick="anularTicket('${esc(folio)}')">Anular</button></div>`);
-  setTimeout(() => $("clave-admin").focus(), 50);
 }
 async function anularTicket(folio) {
-  const clave = $("clave-admin").value; cerrarModal(); mostrarOverlay("Anulando ticket…");
-  try { await apiPost({ action: "anular", folio, clave }); toast("Ticket anulado"); cargarTickets(); cargarCreditos(); cargarHoy(); }
-  catch (e) { toast(e.servidor ? e.message : "Sin conexión, intenta de nuevo", "error"); }
-  finally { ocultarOverlay(); }
+  cerrarModal();
+  const r = await accionAdmin({ action: "anular", folio }, "Anular un ticket requiere la clave de administrador.");
+  if (r) { toast("Ticket anulado"); cargarTickets(); cargarCreditos(); cargarHoy(); }
 }
 
 /* ============================ POR COBRAR ============================ */
@@ -1106,11 +1265,493 @@ function imprimirResumen(r) {
   window.print();
 }
 
+
+/* ============================ CLAVE DE ADMINISTRADOR ============================ */
+function obtenerClave(motivo) {
+  if (claveSesion) return Promise.resolve(claveSesion);
+  return new Promise(res => {
+    abrirModal(`
+      <h3>Clave de administrador</h3>
+      <p class="nota-pequena">${esc(motivo || "Esta acción requiere la clave.")}</p>
+      <input type="password" id="clave-input" autocomplete="off" onkeydown="if(event.key==='Enter'){event.stopPropagation();enviarClave()}">
+      <div class="acciones-modal"><button onclick="cerrarModal()">Cancelar</button><button class="ok" onclick="enviarClave()">Continuar</button></div>`);
+    resolverClave = res;
+    enfocar("clave-input");
+  });
+}
+function enviarClave() {
+  const v = $("clave-input").value; if (!v) return;
+  claveSesion = v;
+  const r = resolverClave; resolverClave = null;
+  $("modal").style.display = "none";
+  if (r) r(v);
+}
+// Ejecuta una acción protegida con clave. Devuelve la respuesta o null si se canceló o falló.
+async function accionAdmin(cuerpo, motivo) {
+  const clave = await obtenerClave(motivo);
+  if (!clave) return null;
+  mostrarOverlay("Guardando…");
+  try { return await apiPost({ ...cuerpo, clave }); }
+  catch (e) {
+    if (e.servidor && /clave/i.test(e.message)) claveSesion = "";
+    toast(e.servidor ? e.message : "Sin conexión, intenta de nuevo", "error");
+    return null;
+  } finally { ocultarOverlay(); }
+}
+
+/* ============================ MENÚ "MÁS" (MÓVIL) ============================ */
+function abrirMenuMas() {
+  const items = [["cotizaciones", "quote", "Cotizaciones"], ["clientes", "user", "Clientes"], ["productos", "box", "Productos"], ["corte", "corte", "Corte"], ["reportes", "chart", "Reportes"]];
+  abrirModal(`<h3>Más secciones</h3><div class="menu-mas">
+    ${items.map(([v, i, t]) => `<button onclick="cerrarModal();irA('${v}')">${icono(i)}${t}</button>`).join("")}
+    <button onclick="alternarTema();cerrarModal()">${icono("moon")}Tema</button>
+    <button onclick="cerrarModal();descargarMenu(true)">${icono("refresh")}Actualizar menú</button>
+  </div>`);
+}
+
+/* ============================ PRECIO EDITABLE Y CONCEPTO LIBRE ============================ */
+async function editarPrecio(uid) {
+  const it = carrito.find(x => x.uid === uid); if (!it) return;
+  if (PEDIR_CLAVE_PRECIO) {
+    const k = await obtenerClave("Cambiar un precio requiere la clave de administrador.");
+    if (!k) return;
+    try { await apiPost({ action: "verificarClave", clave: k }); }
+    catch (e) { if (e.servidor) claveSesion = ""; return toast(e.servidor ? e.message : "Sin conexión, intenta de nuevo", "error"); }
+  }
+  abrirModal(`
+    <h3>Precio de ${esc(it.nombre)}</h3>
+    <p class="nota-pequena">Precio de lista: ${fmt(it.precioBase)}. El cambio aplica solo a este pedido${it.cantidad > 1 ? " y a sus " + it.cantidad + " piezas" : ""}.</p>
+    <label class="lbl" for="precio-nuevo">Precio unitario</label>
+    <input type="number" id="precio-nuevo" inputmode="decimal" min="0" step="any" value="${it.precio}" onkeydown="if(event.key==='Enter'){event.stopPropagation();aplicarPrecio('${it.uid}')}">
+    <div class="rapidos"><button onclick="$('precio-nuevo').value=${it.precioBase}">Restablecer a lista</button></div>
+    <div class="acciones-modal"><button onclick="cerrarModal()">Cancelar</button><button class="ok" onclick="aplicarPrecio('${it.uid}')">Aplicar precio</button></div>`);
+  enfocar("precio-nuevo", true);
+}
+function aplicarPrecio(uid) {
+  const it = carrito.find(x => x.uid === uid); if (!it) return;
+  const v = parseFloat($("precio-nuevo").value);
+  if (isNaN(v) || v < 0) return toast("Escribe un precio válido", "error");
+  it.precio = redondear(v); cerrarModal(); actualizarCarrito();
+}
+function abrirConceptoLibre() {
+  abrirModal(`
+    <h3>Concepto libre</h3>
+    <p class="nota-pequena">Para cobrar o cotizar algo que no está en el catálogo (renta, servicio, pedido especial).</p>
+    <label class="lbl" for="libre-nombre">Descripción</label>
+    <input type="text" id="libre-nombre" autocomplete="off" maxlength="80">
+    <div class="dos-col">
+      <div><label class="lbl" for="libre-precio">Precio</label><input type="number" id="libre-precio" inputmode="decimal" min="0" step="any"></div>
+      <div><label class="lbl" for="libre-costo">Costo (opcional)</label><input type="number" id="libre-costo" inputmode="decimal" min="0" step="any"></div>
+    </div>
+    <div class="acciones-modal"><button onclick="cerrarModal()">Cancelar</button><button class="ok" onclick="agregarConceptoLibre()">Agregar al pedido</button></div>`);
+  enfocar("libre-nombre");
+}
+function agregarConceptoLibre() {
+  const nombre = $("libre-nombre").value.trim(), precio = parseFloat($("libre-precio").value), costo = parseFloat($("libre-costo").value) || 0;
+  if (!nombre) return toast("Escribe una descripción", "error");
+  if (isNaN(precio) || precio < 0) return toast("Escribe un precio válido", "error");
+  carrito.push({ uid: nuevoUid(), id: "LIBRE-" + nuevoUid(), nombre, precio: redondear(precio), precioBase: redondear(precio), costo, cantidad: 1, nota: "" });
+  cerrarModal(); actualizarCarrito();
+}
+
+/* ============================ CLIENTES ============================ */
+function abrirWhatsApp(tel, texto) {
+  let n = String(tel || "").replace(/\D/g, "");
+  if (n.length === 10) n = "52" + n;
+  window.open("https://wa.me/" + n + (texto ? "?text=" + encodeURIComponent(texto) : ""), "_blank");
+}
+function elegirClientePedido() {
+  abrirSelectorCliente({
+    permitirMostrador: true,
+    alElegir: c => { clienteActual = c ? { id: c.id, nombre: c.nombre, telefono: c.telefono } : null; guardar("pos_cliente", clienteActual); cerrarModal(); actualizarCarrito(); }
+  });
+}
+function abrirSelectorCliente(opc) {
+  selector = opc;
+  abrirModal(`
+    <h3>Cliente</h3>
+    <p class="nota-pequena">${esc(opc.motivo || "Asigna el pedido a un cliente o déjalo como mostrador.")}</p>
+    <input type="text" id="sel-buscar" placeholder="Buscar por nombre o teléfono" autocomplete="off" oninput="pintarSelector()">
+    <div id="sel-lista" class="lista-sel"></div>
+    <div class="acciones-modal"><button onclick="cerrarModal()">Cancelar</button><button class="ok" onclick="editarCliente(-1, true)">Nuevo cliente</button></div>`);
+  pintarSelector(); enfocar("sel-buscar");
+}
+function pintarSelector() {
+  const q = $("sel-buscar").value.toLowerCase().trim();
+  selLista = clientesCache.filter(c => !q || (c.nombre + " " + (c.telefono || "")).toLowerCase().includes(q)).slice(0, 40);
+  $("sel-lista").innerHTML =
+    (selector.permitirMostrador ? '<button class="sel-item" data-i="-1"><strong>Mostrador</strong><span class="sub">Sin cliente</span></button>' : "") +
+    selLista.map((c, i) => `<button class="sel-item" data-i="${i}"><strong>${esc(c.nombre)}</strong><span class="sub">${esc(c.telefono || "Sin teléfono")}${c.pendiente > 0 ? ", debe " + fmt0(c.pendiente) : ""}</span></button>`).join("") +
+    (!selLista.length ? '<p class="vacio">No hay coincidencias. Crea un cliente nuevo.</p>' : "");
+}
+$("modal-cuerpo").addEventListener("click", e => {
+  const b = e.target.closest(".sel-item"); if (!b || !selector) return;
+  const i = +b.dataset.i, f = selector.alElegir; selector = null;
+  f(i < 0 ? null : selLista[i]);
+});
+
+async function cargarClientes(mostrar = false) {
+  if (mostrar) $("contenedor-clientes").innerHTML = '<p class="vacio">Cargando…</p>';
+  try {
+    const d = await apiGet({ action: "clientes" });
+    if (!Array.isArray(d)) throw new Error(d.message);
+    clientesCache = d; guardar("pos_clientes", d);
+  } catch (e) { if (mostrar && !clientesCache.length) { $("contenedor-clientes").innerHTML = '<p class="vacio">No se pudo cargar. Revisa tu conexión y que el script esté actualizado.</p>'; return; } }
+  renderClientes();
+}
+function renderClientes() {
+  const q = ($("buscar-cliente").value || "").toLowerCase().trim();
+  const filas = clientesCache.map((c, i) => ({ c, i })).filter(({ c }) => !q || (c.nombre + " " + (c.telefono || "")).toLowerCase().includes(q));
+  $("contenedor-clientes").innerHTML = filas.length
+    ? `<div class="lista-cards">${filas.map(({ c, i }) => `
+      <button class="fila-item" data-i="${i}">
+        <span><strong>${esc(c.nombre)}</strong>${!c.registrado ? ' <span class="etq pend">Sin ficha</span>' : ""}<span class="sub">${esc(c.telefono || "Sin teléfono")}${c.ultimaCompra ? ", última compra " + esc(fechaCorta(c.ultimaCompra)) : ""}</span></span>
+        <span class="monto">${fmt0(c.totalComprado)}${c.pendiente > 0 ? `<span class="sub" style="color:var(--ambar)">Debe ${fmt0(c.pendiente)}</span>` : ""}</span>
+      </button>`).join("")}</div>`
+    : '<p class="vacio">Aún no hay clientes. Toca "Nuevo cliente" para agregar el primero.</p>';
+}
+$("contenedor-clientes").addEventListener("click", e => { const b = e.target.closest("button[data-i]"); if (b) verCliente(+b.dataset.i); });
+
+function verCliente(idx) {
+  const c = clientesCache[idx]; if (!c) return;
+  abrirModal(`
+    <h3>${esc(c.nombre)}</h3>
+    <p class="nota-pequena">${esc([c.telefono, c.email].filter(Boolean).join(", ") || "Sin datos de contacto")}${c.notas ? "<br>" + esc(c.notas) : ""}</p>
+    <div class="fila"><span>Total comprado</span><strong>${fmt(c.totalComprado)}</strong></div>
+    <div class="fila"><span>Tickets</span><strong>${c.numTickets}</strong></div>
+    <div class="fila"><span>Última compra</span><strong>${c.ultimaCompra ? esc(fechaCorta(c.ultimaCompra)) : "Sin compras"}</strong></div>
+    ${c.pendiente > 0 ? `<div class="fila fuerte" style="color:var(--ambar)"><span>Por cobrar</span><span>${fmt(c.pendiente)}</span></div>` : ""}
+    <div class="acciones-modal">
+      <button class="ok" onclick="venderACliente(${idx})">Nueva venta</button>
+      <button onclick="editarCliente(${idx})">${c.registrado ? "Editar" : "Guardar ficha"}</button>
+      ${c.telefono ? `<button onclick="abrirWhatsApp(clientesCache[${idx}].telefono, '')">WhatsApp</button>` : ""}
+    </div>
+    <div class="acciones-modal" style="margin-top:8px">
+      ${c.pendiente > 0 ? '<button onclick="cerrarModal();irA(\'creditos\')">Ver por cobrar</button>' : ""}
+      <button onclick="cerrarModal()">Cerrar</button>
+    </div>`);
+}
+function venderACliente(idx) {
+  const c = clientesCache[idx]; if (!c) return;
+  clienteActual = { id: c.id, nombre: c.nombre, telefono: c.telefono }; guardar("pos_cliente", clienteActual);
+  cerrarModal(); irA("vender"); actualizarCarrito();
+}
+function editarCliente(idx = -1, desdeSelector = false) {
+  const c = idx >= 0 ? clientesCache[idx] : null;
+  abrirModal(`
+    <h3>${c && c.registrado ? "Editar cliente" : c ? "Guardar ficha de cliente" : "Nuevo cliente"}</h3>
+    ${c && c.registrado ? '<p class="nota-pequena">Cambiar el nombre no modifica las ventas anteriores.</p>' : ""}
+    <label class="lbl" for="cli-nombre">Nombre</label>
+    <input type="text" id="cli-nombre" value="${esc(c ? c.nombre : "")}" autocomplete="off">
+    <label class="lbl" for="cli-tel">Teléfono</label>
+    <input type="tel" id="cli-tel" inputmode="tel" value="${esc(c ? c.telefono : "")}">
+    <label class="lbl" for="cli-email">Correo</label>
+    <input type="email" id="cli-email" value="${esc(c ? c.email : "")}">
+    <label class="lbl" for="cli-notas">Notas</label>
+    <input type="text" id="cli-notas" value="${esc(c ? c.notas : "")}" placeholder="Ej. pide factura, entrega a domicilio">
+    <div class="acciones-modal"><button onclick="cerrarModal()">Cancelar</button><button class="ok" onclick="guardarCliente(${idx}, ${desdeSelector})">Guardar</button></div>
+    ${c && c.registrado ? `<div class="acciones-modal" style="margin-top:8px"><button class="peligro" onclick="eliminarCliente(${idx})">Eliminar cliente</button></div>` : ""}`);
+  enfocar("cli-nombre");
+}
+async function guardarCliente(idx, desdeSelector) {
+  const c = idx >= 0 ? clientesCache[idx] : null;
+  const datos = { action: "guardarCliente", id: c && c.registrado ? c.id : "", nombre: $("cli-nombre").value.trim(), telefono: $("cli-tel").value.trim(), email: $("cli-email").value.trim(), notas: $("cli-notas").value.trim() };
+  if (!datos.nombre) return toast("Escribe el nombre del cliente", "error");
+  cerrarModal(); mostrarOverlay("Guardando cliente…");
+  try {
+    const j = await apiPost(datos);
+    await cargarClientes(); toast("Cliente guardado");
+    if (desdeSelector && selector) { const f = selector.alElegir; selector = null; f(j.cliente); }
+  } catch (e) { toast(e.servidor ? e.message : "Sin conexión, intenta de nuevo", "error"); }
+  finally { ocultarOverlay(); }
+}
+async function eliminarCliente(idx) {
+  const c = clientesCache[idx]; if (!c) return;
+  if (!confirm("¿Eliminar a " + c.nombre + "? Sus ventas anteriores se conservan.")) return;
+  cerrarModal(); mostrarOverlay("Eliminando…");
+  try { await apiPost({ action: "eliminarCliente", id: c.id }); toast("Cliente eliminado"); await cargarClientes(); }
+  catch (e) { toast(e.servidor ? e.message : "Sin conexión, intenta de nuevo", "error"); }
+  finally { ocultarOverlay(); }
+}
+
+/* ============================ COTIZACIONES ============================ */
+function abrirCotizar() {
+  if (!carrito.length) return toast("El pedido está vacío", "aviso");
+  const t = calcularTotales();
+  abrirModal(`
+    <h3>Guardar como cotización</h3>
+    <p class="nota-pequena">No se cobra nada. Podrás imprimirla, enviarla por WhatsApp o convertirla en venta.</p>
+    <div class="total-modal">${fmt(t.total)}</div>
+    <label class="lbl" for="cot-cliente">Cliente</label>
+    <input type="text" id="cot-cliente" list="lista-clientes-cot" value="${esc(clienteActual ? clienteActual.nombre : "")}" autocomplete="off">
+    <datalist id="lista-clientes-cot">${clientesCache.map(c => `<option value="${esc(c.nombre)}">`).join("")}</datalist>
+    <label class="lbl" for="cot-tel">Teléfono (para WhatsApp)</label>
+    <input type="tel" id="cot-tel" inputmode="tel" value="${esc(clienteActual ? clienteActual.telefono || "" : "")}">
+    <label class="lbl" for="cot-vig">Vigencia</label>
+    <select id="cot-vig" class="campo-sel"><option value="3">3 días</option><option value="7" selected>7 días</option><option value="15">15 días</option><option value="30">30 días</option></select>
+    <label class="lbl" for="cot-notas">Notas para el cliente</label>
+    <input type="text" id="cot-notas" maxlength="140" placeholder="Ej. Incluye montaje. Anticipo del 50%">
+    <div class="acciones-modal"><button onclick="cerrarModal()">Cancelar</button><button class="ok" onclick="guardarCotizacion()">Guardar cotización</button></div>`);
+  enfocar("cot-cliente");
+}
+async function guardarCotizacion() {
+  const t = calcularTotales(), cliente = $("cot-cliente").value.trim();
+  let tel = $("cot-tel").value.trim();
+  if (!tel) { const m = clientesCache.find(c => c.nombre.toLowerCase() === cliente.toLowerCase()); if (m) tel = m.telefono || ""; }
+  const items = carrito.map(i => ({ id: i.id, nombre: i.nombre, cantidad: i.cantidad, precio: i.precio, costo: i.costo, nota: i.nota }));
+  const cot = { action: "guardarCotizacion", folio: "C-" + Date.now().toString(36).toUpperCase(), cliente, telefono: tel, vigenciaDias: +$("cot-vig").value, notas: $("cot-notas").value.trim(), descuento: t.desc, items };
+  cerrarModal(); mostrarOverlay("Guardando cotización…");
+  try {
+    const j = await apiPost(cot);
+    cotActual = { folio: j.folio, fecha: hoy(), cliente, telefono: tel, total: j.total, vigencia: j.vigencia, estado: "Pendiente", items, descuento: t.desc, notas: cot.notas };
+    mostrarCotizacionGuardada(cotActual); cargarCotizaciones();
+  } catch (e) { toast(e.servidor ? e.message : "Sin conexión: la cotización no se guardó. Intenta de nuevo", "error"); }
+  finally { ocultarOverlay(); }
+}
+function mostrarCotizacionGuardada(q) {
+  abrirModal(`
+    <div class="exito">
+      <div class="check">${icono("check")}</div>
+      <h3>Cotización guardada</h3>
+      <div class="total-modal">${fmt(q.total)}</div>
+      <p class="nota-pequena">Folio ${esc(q.folio)}, vigente hasta ${esc(fechaLarga(q.vigencia))}</p>
+      <div class="acciones-modal"><button onclick="imprimirCotizacion(cotActual)">Imprimir</button><button class="ok" onclick="compartirCotizacion(cotActual)">WhatsApp</button></div>
+      <div class="acciones-modal" style="margin-top:8px"><button onclick="cerrarModal()">Seguir con el pedido</button><button onclick="vaciarTrasCotizar()">Vaciar pedido</button></div>
+    </div>`);
+}
+function vaciarTrasCotizar() {
+  carrito = []; clienteActual = null; cotizacionOrigen = null; $("desc-valor").value = "";
+  guardar("pos_cliente", null); guardar("pos_cot", null); cerrarModal(); cerrarComandaMovil(); actualizarCarrito();
+}
+const estadoCot = q => (q.estado === "Pendiente" && q.vigencia && q.vigencia < hoy()) ? "Vencida" : q.estado;
+
+async function cargarCotizaciones(mostrar = false) {
+  if (mostrar) $("contenedor-cotizaciones").innerHTML = '<p class="vacio">Cargando…</p>';
+  try { const d = await apiGet({ action: "cotizaciones" }); if (!Array.isArray(d)) throw new Error(d.message); cotizacionesCache = d; }
+  catch (e) { if (mostrar) $("contenedor-cotizaciones").innerHTML = '<p class="vacio">No se pudieron cargar. Revisa tu conexión y que el script esté actualizado.</p>'; return; }
+  renderCotizaciones();
+}
+function renderCotizaciones() {
+  const l = cotizacionesCache.map((q, i) => ({ q, i })).filter(({ q }) => filtroCot === "todas" || estadoCot(q) === filtroCot);
+  const etq = e => e === "Convertida" ? '<span class="etq ok">Convertida</span>' : e === "Vencida" ? '<span class="etq anul">Vencida</span>' : '<span class="etq pend">Pendiente</span>';
+  $("contenedor-cotizaciones").innerHTML = l.length
+    ? `<div class="lista-cards">${l.map(({ q, i }) => `
+      <button class="fila-item" data-i="${i}">
+        <span><strong>${esc(q.cliente || "Sin cliente")}</strong> ${etq(estadoCot(q))}<span class="sub">${esc(q.folio)}, ${esc(fechaCorta(q.fecha))}, vigente hasta ${esc(fechaCorta(q.vigencia))}</span></span>
+        <span class="monto">${fmt(q.total)}</span>
+      </button>`).join("")}</div>`
+    : '<p class="vacio">No hay cotizaciones en esta lista.</p>';
+}
+$("contenedor-cotizaciones").addEventListener("click", e => { const b = e.target.closest("button[data-i]"); if (b) abrirDetalleCot(+b.dataset.i); });
+$("tabs-cot").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  filtroCot = b.dataset.f; document.querySelectorAll("#tabs-cot button").forEach(x => x.classList.toggle("activo", x === b)); renderCotizaciones();
+});
+
+function abrirDetalleCot(i) {
+  const q = cotizacionesCache[i]; if (!q) return;
+  const sub = redondear(q.items.reduce((s, x) => s + x.precio * x.cantidad, 0)), est = estadoCot(q);
+  abrirModal(`
+    <h3>Cotización ${esc(q.folio)}</h3>
+    <p class="nota-pequena">${esc(q.cliente || "Sin cliente")}, creada el ${esc(fechaCorta(q.fecha))}, vigente hasta ${esc(fechaCorta(q.vigencia))}. Estado: ${esc(est.toLowerCase())}${q.venta ? ", ticket " + esc(q.venta) : ""}</p>
+    ${q.items.map(x => `<div class="fila"><span>${x.cantidad} × ${esc(x.nombre)}${x.nota ? `<br><small style="color:var(--ambar);font-style:italic">${esc(x.nota)}</small>` : ""}</span><span>${fmt(x.precio * x.cantidad)}</span></div>`).join("")}
+    ${q.descuento > 0 ? `<div class="fila"><span>Descuento</span><span>-${fmt(q.descuento)}</span></div>` : ""}
+    <div class="fila fuerte"><span>Total</span><span>${fmt(redondear(sub - (q.descuento || 0)))}</span></div>
+    ${q.notas ? `<p class="nota-pequena" style="margin-top:10px">${esc(q.notas)}</p>` : ""}
+    <div class="acciones-modal">
+      ${est !== "Convertida" ? `<button class="ok" onclick="cargarCotizacionAlPedido(${i})">Convertir en venta</button>` : ""}
+      <button onclick="imprimirCotizacion(cotizacionesCache[${i}])">Imprimir</button>
+      <button onclick="compartirCotizacion(cotizacionesCache[${i}])">WhatsApp</button>
+    </div>
+    <div class="acciones-modal" style="margin-top:8px"><button class="peligro" onclick="eliminarCotizacion(${i})">Eliminar</button><button onclick="cerrarModal()">Cerrar</button></div>`);
+}
+function cargarCotizacionAlPedido(i) {
+  const q = cotizacionesCache[i]; if (!q) return;
+  if (carrito.length && !confirm("Se reemplazará el pedido actual por la cotización. ¿Continuar?")) return;
+  carrito = q.items.map(x => {
+    const p = productos.find(y => String(y.id) === String(x.id));
+    return { uid: nuevoUid(), id: x.id, nombre: x.nombre, precio: x.precio, precioBase: p ? p.precio : x.precio, costo: x.costo || 0, cantidad: x.cantidad, nota: x.nota || "" };
+  });
+  $("desc-tipo").value = "$"; $("desc-valor").value = q.descuento || "";
+  const c = clientesCache.find(x => x.nombre.toLowerCase() === String(q.cliente || "").toLowerCase());
+  clienteActual = c ? { id: c.id, nombre: c.nombre, telefono: c.telefono } : (q.cliente ? { id: "", nombre: q.cliente, telefono: q.telefono || "" } : null);
+  cotizacionOrigen = q.folio; guardar("pos_cliente", clienteActual); guardar("pos_cot", cotizacionOrigen);
+  cerrarModal(); irA("vender"); actualizarCarrito();
+  toast("Cotización cargada. Puedes ajustar precios antes de cobrar.");
+}
+function soltarCotizacion() { cotizacionOrigen = null; guardar("pos_cot", null); actualizarCarrito(); }
+async function eliminarCotizacion(i) {
+  const q = cotizacionesCache[i]; if (!q) return;
+  if (!confirm("¿Eliminar la cotización " + q.folio + "?")) return;
+  cerrarModal(); mostrarOverlay("Eliminando…");
+  try { await apiPost({ action: "eliminarCotizacion", folio: q.folio }); toast("Cotización eliminada"); await cargarCotizaciones(); }
+  catch (e) { toast(e.servidor ? e.message : "Sin conexión, intenta de nuevo", "error"); }
+  finally { ocultarOverlay(); }
+}
+function textoCotizacion(q) {
+  const sub = redondear(q.items.reduce((s, x) => s + x.precio * x.cantidad, 0));
+  return [`*Cotización ${q.folio}*`, NEGOCIO.nombre, q.cliente ? "Para: " + q.cliente : "", "",
+    ...q.items.map(x => `${x.cantidad} x ${x.nombre}${x.nota ? " (" + x.nota + ")" : ""}  ${fmt(x.precio * x.cantidad)}`),
+    q.descuento > 0 ? "Descuento: -" + fmt(q.descuento) : "", `*Total: ${fmt(redondear(sub - (q.descuento || 0)))}*`, "",
+    "Vigente hasta el " + fechaLarga(q.vigencia), q.notas || ""].filter((l, i, a) => l !== "" || (a[i - 1] !== "" && i > 0)).join("\n");
+}
+function compartirCotizacion(q) { if (q) abrirWhatsApp(q.telefono, textoCotizacion(q)); }
+function imprimirCotizacion(q) {
+  if (!q) return;
+  const sub = redondear(q.items.reduce((s, x) => s + x.precio * x.cantidad, 0)), desc = q.descuento || 0;
+  $("cot-print").innerHTML = `
+    <div class="cp-cab"><div><div class="cp-marca">${esc(NEGOCIO.nombre)}</div><div class="cp-sub">COTIZACIÓN</div></div>
+      <div class="cp-der"><strong>${esc(q.folio)}</strong><br>Fecha: ${esc(fechaLarga(q.fecha))}<br>Vigente hasta: ${esc(fechaLarga(q.vigencia))}</div></div>
+    <div>Para: <strong>${esc(q.cliente || "Cliente")}</strong>${q.telefono ? " (" + esc(q.telefono) + ")" : ""}</div>
+    <table><thead><tr><th>Cant.</th><th>Descripción</th><th class="r">Precio</th><th class="r">Importe</th></tr></thead><tbody>
+      ${q.items.map(x => `<tr><td>${x.cantidad}</td><td>${esc(x.nombre)}${x.nota ? `<br><small>${esc(x.nota)}</small>` : ""}</td><td class="r">${fmt(x.precio)}</td><td class="r">${fmt(x.precio * x.cantidad)}</td></tr>`).join("")}
+    </tbody></table>
+    <div class="cp-tot">${desc > 0 ? `<div><span>Subtotal</span><span>${fmt(sub)}</span></div><div><span>Descuento</span><span>-${fmt(desc)}</span></div>` : ""}
+      <div class="gran"><span>Total</span><span>${fmt(redondear(sub - desc))}</span></div></div>
+    ${q.notas ? `<p>${esc(q.notas)}</p>` : ""}
+    <p class="cp-pie">Precios en pesos mexicanos. Esta cotización no es un comprobante de pago.</p>`;
+  document.body.classList.add("imprimiendo-cot");
+  window.print();
+}
+window.addEventListener("afterprint", () => document.body.classList.remove("imprimiendo-cot"));
+
+/* ============================ PRODUCTOS (ADMINISTRACIÓN) ============================ */
+async function cargarProductosAdmin(mostrar = false) {
+  if (mostrar) $("contenedor-productos").innerHTML = '<p class="vacio">Cargando…</p>';
+  try { const d = await apiGet({ action: "productosAdmin" }); if (!Array.isArray(d)) throw new Error(d.message); productosAdmin = d; }
+  catch (e) { if (mostrar) $("contenedor-productos").innerHTML = '<p class="vacio">No se pudo cargar. Revisa tu conexión y que el script esté actualizado.</p>'; return; }
+  renderProductosAdmin();
+}
+function renderProductosAdmin() {
+  const q = ($("buscar-producto").value || "").toLowerCase().trim();
+  const l = productosAdmin.map((p, i) => ({ p, i })).filter(({ p }) => !q || (p.nombre + " " + p.categoria).toLowerCase().includes(q))
+    .sort((a, b) => String(a.p.categoria).localeCompare(String(b.p.categoria)) || String(a.p.nombre).localeCompare(String(b.p.nombre)));
+  $("contenedor-productos").innerHTML = l.length
+    ? `<div class="lista-cards">${l.map(({ p, i }) => `
+      <button class="fila-item ${p.activo ? "" : "inactivo"}" data-i="${i}">
+        <span><strong>${esc(p.nombre)}</strong>${p.activo ? "" : ' <span class="etq pend">Oculto</span>'}<span class="sub">${esc(p.categoria || "Sin categoría")}</span></span>
+        <span class="monto">${fmt(p.precio)}<span class="sub">Costo ${fmt(p.costo)}${p.precio > 0 ? ", margen " + Math.round((p.precio - p.costo) / p.precio * 100) + "%" : ""}</span></span>
+      </button>`).join("")}</div>`
+    : '<p class="vacio">No hay productos. Toca "Nuevo producto" para agregar el primero.</p>';
+}
+$("contenedor-productos").addEventListener("click", e => { const b = e.target.closest("button[data-i]"); if (b) editarProducto(+b.dataset.i); });
+
+function editarProducto(idx = -1) {
+  const p = idx >= 0 ? productosAdmin[idx] : null;
+  const cats = [...new Set(productosAdmin.map(x => x.categoria).filter(Boolean))];
+  abrirModal(`
+    <h3>${p ? "Editar producto" : "Nuevo producto"}</h3>
+    <label class="lbl" for="prod-nombre">Nombre</label>
+    <input type="text" id="prod-nombre" value="${esc(p ? p.nombre : "")}" autocomplete="off" maxlength="80">
+    <label class="lbl" for="prod-cat">Categoría</label>
+    <input type="text" id="prod-cat" list="lista-cats" value="${esc(p ? p.categoria : "")}" autocomplete="off">
+    <datalist id="lista-cats">${cats.map(c => `<option value="${esc(c)}">`).join("")}</datalist>
+    <div class="dos-col">
+      <div><label class="lbl" for="prod-precio">Precio de venta</label><input type="number" id="prod-precio" inputmode="decimal" min="0" step="any" value="${p ? p.precio : ""}"></div>
+      <div><label class="lbl" for="prod-costo">Costo</label><input type="number" id="prod-costo" inputmode="decimal" min="0" step="any" value="${p ? p.costo : ""}"></div>
+    </div>
+    <label class="chk"><input type="checkbox" id="prod-activo" ${!p || p.activo ? "checked" : ""}> Visible en el punto de venta</label>
+    <p class="nota-pequena" style="margin-top:10px">Guardar cambios requiere la clave de administrador. Si renombras un producto, las ventas anteriores conservan el nombre viejo.</p>
+    <div class="acciones-modal"><button onclick="cerrarModal()">Cancelar</button><button class="ok" onclick="guardarProducto(${idx})">Guardar</button></div>
+    ${p ? `<div class="acciones-modal" style="margin-top:8px"><button class="peligro" onclick="eliminarProducto(${idx})">Eliminar producto</button></div>` : ""}`);
+  enfocar("prod-nombre");
+}
+async function guardarProducto(idx) {
+  const p = idx >= 0 ? productosAdmin[idx] : null;
+  const d = { action: "guardarProducto", id: p ? p.id : "", nombre: $("prod-nombre").value.trim(), categoria: $("prod-cat").value.trim(), precio: parseFloat($("prod-precio").value), costo: parseFloat($("prod-costo").value) || 0, activo: $("prod-activo").checked };
+  if (!d.nombre) return toast("Escribe el nombre del producto", "error");
+  if (isNaN(d.precio) || d.precio < 0) return toast("Escribe un precio válido", "error");
+  const r = await accionAdmin(d, "Guardar productos requiere la clave de administrador.");
+  if (!r) return;
+  cerrarModal(); toast("Producto guardado");
+  await cargarProductosAdmin(); descargarMenu();
+}
+async function eliminarProducto(idx) {
+  const p = productosAdmin[idx]; if (!p) return;
+  if (!confirm("¿Eliminar " + p.nombre + " del catálogo? Las ventas anteriores se conservan. Si solo quieres ocultarlo, desmarca \"Visible\".")) return;
+  cerrarModal();
+  const r = await accionAdmin({ action: "eliminarProducto", id: p.id }, "Eliminar productos requiere la clave de administrador.");
+  if (r) { toast("Producto eliminado"); await cargarProductosAdmin(); descargarMenu(); }
+}
+
+/* ============================ EDITAR / ELIMINAR TICKETS ============================ */
+function editarTicket(i) {
+  const t = ticketsCache[i]; if (!t) return;
+  editor = {
+    folio: t.folio, metodoPago: t.metodo, cliente: t.cliente || "", tipo: t.tipo || "", descuento: t.descuento || 0,
+    items: t.items.map(x => ({ producto: x.nombre, cantidad: x.cantidad, precioUnitario: x.precio, costoUnitario: x.costo || 0, nota: x.nota || "" }))
+  };
+  renderEditor();
+}
+function renderEditor() {
+  const e = editor;
+  abrirModal(`
+    <h3>Editar ticket ${esc(e.folio)}</h3>
+    <p class="nota-pequena">Cambia cantidad y precio de cada línea. Al guardar se pedirá la clave de administrador.</p>
+    <div class="editor-linea" style="border-bottom:none;padding-bottom:0"><span class="nota-pequena" style="margin:0">Producto</span><span class="nota-pequena" style="margin:0;text-align:right">Cant.</span><span class="nota-pequena" style="margin:0;text-align:right">Precio</span><span></span></div>
+    ${e.items.map((it, k) => `
+      <div class="editor-linea">
+        <div><strong style="font-size:13px">${esc(it.producto)}</strong>${it.nota ? `<br><small style="color:var(--ambar);font-style:italic">${esc(it.nota)}</small>` : ""}</div>
+        <input type="number" min="0" step="any" inputmode="decimal" value="${it.cantidad}" aria-label="Cantidad" oninput="edCambio(${k},'cantidad',this.value)">
+        <input type="number" min="0" step="any" inputmode="decimal" value="${it.precioUnitario}" aria-label="Precio unitario" oninput="edCambio(${k},'precioUnitario',this.value)">
+        <button class="btn-cant" onclick="edQuitar(${k})" aria-label="Quitar línea">×</button>
+      </div>`).join("")}
+    <label class="lbl" for="ed-agregar">Agregar producto</label>
+    <div style="display:flex;gap:8px"><select id="ed-agregar" class="campo-sel">${productos.map(p => `<option value="${esc(p.id)}">${esc(p.nombre)} (${fmt(p.precio)})</option>`).join("")}</select><button class="btn" onclick="edAgregar()">Agregar</button></div>
+    <label class="lbl" for="ed-metodo">Método de pago</label>
+    <select id="ed-metodo" class="campo-sel" onchange="edCampo('metodoPago',this.value)">${["Efectivo", "Tarjeta", "Transferencia", "Crédito"].map(m => `<option ${m === e.metodoPago ? "selected" : ""}>${m}</option>`).join("")}</select>
+    <label class="lbl" for="ed-cliente">Cliente</label>
+    <input type="text" id="ed-cliente" list="lista-clientes-ed" value="${esc(e.cliente)}" autocomplete="off" oninput="edCampo('cliente',this.value)">
+    <datalist id="lista-clientes-ed">${clientesCache.map(c => `<option value="${esc(c.nombre)}">`).join("")}</datalist>
+    <div class="dos-col">
+      <div><label class="lbl" for="ed-tipo">Consumo</label><select id="ed-tipo" class="campo-sel" onchange="edCampo('tipo',this.value)">${[["", "Sin registrar"], ["Aquí", "Aquí"], ["Llevar", "Para llevar"]].map(([v, t]) => `<option value="${v}" ${v === e.tipo ? "selected" : ""}>${t}</option>`).join("")}</select></div>
+      <div><label class="lbl" for="ed-desc">Descuento en pesos</label><input type="number" id="ed-desc" min="0" step="any" inputmode="decimal" value="${e.descuento || ""}" oninput="edCampo('descuento',this.value)"></div>
+    </div>
+    <div class="fila fuerte" style="margin-top:14px"><span>Total</span><span id="ed-total"></span></div>
+    <div class="acciones-modal"><button onclick="cerrarModal()">Cancelar</button><button class="ok" onclick="guardarEdicion()">Guardar cambios</button></div>`);
+  edTotales();
+}
+function edCambio(k, campo, v) { editor.items[k][campo] = parseFloat(v) || 0; edTotales(); }
+function edCampo(c, v) { editor[c] = c === "descuento" ? (parseFloat(v) || 0) : v; edTotales(); }
+function edQuitar(k) { editor.items.splice(k, 1); renderEditor(); }
+function edAgregar() {
+  const p = productos.find(x => String(x.id) === $("ed-agregar").value); if (!p) return;
+  editor.items.push({ producto: p.nombre, cantidad: 1, precioUnitario: p.precio, costoUnitario: p.costo || 0, nota: "" });
+  renderEditor();
+}
+function edTotales() {
+  const sub = redondear(editor.items.reduce((s, x) => s + x.cantidad * x.precioUnitario, 0));
+  const desc = Math.min(Math.max(editor.descuento || 0, 0), sub);
+  $("ed-total").textContent = fmt(sub - desc);
+}
+async function guardarEdicion() {
+  const e = editor;
+  if (!e.items.length) return toast("El ticket necesita al menos un producto", "error");
+  if (e.items.some(x => !(x.cantidad > 0))) return toast("Revisa las cantidades: deben ser mayores a cero", "error");
+  if (e.metodoPago === "Crédito" && !String(e.cliente).trim()) return toast("El crédito requiere el nombre del cliente", "error");
+  const r = await accionAdmin({ action: "editarTicket", ...e }, "Editar un ticket requiere la clave de administrador.");
+  if (!r) { if (editor) renderEditor(); return; }
+  editor = null; cerrarModal(); toast("Ticket actualizado");
+  cargarTickets(); cargarCreditos(); cargarHoy(); cargarClientes();
+}
+function pedirEliminarTicket(i) {
+  const t = ticketsCache[i]; if (!t) return;
+  abrirModal(`
+    <h3>Eliminar ticket ${esc(t.folio)}</h3>
+    <p class="nota-pequena">Se borrará de la hoja de forma permanente y dejará de contar en el corte y en los reportes. Si prefieres conservar el registro, usa Anular.</p>
+    <div class="acciones-modal"><button onclick="cerrarModal()">Cancelar</button><button class="peligro" onclick="eliminarTicket('${esc(t.folio)}')">Eliminar</button></div>`);
+}
+async function eliminarTicket(folio) {
+  cerrarModal();
+  const r = await accionAdmin({ action: "eliminarTicket", folio }, "Eliminar un ticket requiere la clave de administrador.");
+  if (r) { toast("Ticket eliminado"); cargarTickets(); cargarCreditos(); cargarHoy(); cargarClientes(); }
+}
+
 /* ============================ INICIO ============================ */
 aplicarTema(leer("pos_tema", window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches ? "oscuro" : "claro"));
 $("fecha-corte").value = hoy(); $("fecha-tickets").value = hoy();
 marcarTipo(); actualizarCarrito(); actualizarEstadoSync(); pintarMeta();
-descargarMenu().then(() => { cargarCreditos(); procesarCola(); cargarHoy(); });
+descargarMenu().then(() => { cargarCreditos(); cargarClientes(); procesarCola(); cargarHoy(); });
 setInterval(cargarHoy, 120000);
 </script>
 </body>
