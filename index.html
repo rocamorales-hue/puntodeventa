@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>POS Pro - Café Sierra Escondida (Firebase)</title>
+<title>POS Pro - Café Sierra Escondida (Firebase Fix)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -79,7 +79,6 @@ button { cursor: pointer; }
 .tile .pie { display: flex; justify-content: space-between; align-items: baseline; }
 .tile .precio { font-weight: 800; font-size: 16px; color: var(--pino); }
 .tile .cat { font-size: 11px; color: var(--muted); }
-.tile .en-pedido { font-size: 11px; font-weight: 700; background: var(--pino); color: var(--pino-ink); border-radius: 10px; padding: 1px 8px; }
 
 .comanda { position: relative; background: var(--surface); border-radius: var(--r-l) var(--r-l) 0 0; margin: 0 0 22px; display: flex; flex-direction: column; min-height: 0; padding: 18px 18px 6px; }
 .comanda::after { content: ""; position: absolute; left: 0; right: 0; bottom: -10px; height: 10px;
@@ -94,7 +93,6 @@ button { cursor: pointer; }
 .item:last-child { border-bottom: none; }
 .item .nom { font-weight: 700; font-size: 14px; }
 .item .imp { font-weight: 700; font-size: 14px; text-align: right; }
-.item .nota-txt { font-size: 12px; color: var(--ambar); font-style: italic; }
 .item .ctrl { display: flex; align-items: center; gap: 6px; grid-column: 1 / -1; flex-wrap: wrap; }
 .btn-cant { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); font-size: 17px; line-height: 1; display: grid; place-items: center; }
 .btn-cant:hover { background: var(--salvia); }
@@ -114,7 +112,6 @@ button { cursor: pointer; }
 .btn-pago:hover:not(:disabled) { border-color: var(--pino); }
 .btn-pago:disabled { opacity: .4; cursor: not-allowed; }
 .btn-principal { grid-column: 1 / -1; background: var(--pino); color: var(--pino-ink); border-color: var(--pino); flex-direction: row; justify-content: center; font-size: 16px; padding: 16px; gap: 8px; }
-.btn-principal:hover:not(:disabled) { filter: brightness(1.08); border-color: var(--pino); }
 #fab-pedido { display: none; }
 
 .barra-filtros { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
@@ -123,136 +120,47 @@ button { cursor: pointer; }
 .btn:hover { border-color: var(--pino); }
 .btn.relleno { background: var(--pino); color: var(--pino-ink); border-color: var(--pino); }
 .btn.peligro { background: var(--rojo); color: #fff; border-color: var(--rojo); }
-.panel { background: var(--surface); border-radius: var(--r-l); padding: 18px 20px; overflow-x: auto; }
-.panel h3 { margin: 0 0 12px; font-size: 14px; font-weight: 700; color: var(--muted); }
-.fila { display: flex; justify-content: space-between; gap: 10px; padding: 5px 0; font-size: 14px; }
-.fila.fuerte { font-weight: 800; border-top: 1px solid var(--line); margin-top: 6px; padding-top: 10px; }
-.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
-.kpi { background: var(--surface); border-radius: var(--r-l); padding: 16px 18px; }
-.kpi .t { font-size: 12px; color: var(--muted); font-weight: 600; }
-.kpi .v { font-size: 26px; font-weight: 800; letter-spacing: -.02em; margin: 4px 0 2px; }
-.kpi.principal { background: var(--pino); color: var(--pino-ink); }
-.cols-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
-.campo { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 4px 0; font-size: 14px; }
-.campo input { width: 120px; padding: 8px; border: 1px solid var(--line); border-radius: var(--r-s); background: var(--bg); text-align: right; }
 
 .lista-t { display: flex; flex-direction: column; background: var(--surface); border-radius: var(--r-l); overflow: hidden; }
 .fila-t2 { display: grid; grid-template-columns: 64px 1fr auto auto; gap: 12px; align-items: center; padding: 13px 18px; border-bottom: 1px solid var(--line); text-align: left; background: none; border-left: none; border-right: none; border-top: none; width: 100%; font-size: 14px; }
-.fila-t2:last-child { border-bottom: none; }
-button.fila-t2:hover { background: var(--bg); }
 .fila-t2 .hora { color: var(--muted); font-weight: 600; }
 .fila-t2 .sub { display: block; font-size: 12px; color: var(--muted); }
 .fila-t2 .monto { font-weight: 800; }
-.fila-t2.anulado { opacity: .5; } .fila-t2.anulado .monto { text-decoration: line-through; }
-.etq { display: inline-block; font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 10px; }
-.etq.pend { background: var(--ambar-bg); color: var(--ambar); }
-.etq.anul { background: var(--rojo-bg); color: var(--rojo); }
-.etq.ok { background: var(--salvia); color: var(--pino); }
-
-.cliente-card { background: var(--surface); border-radius: var(--r-l); padding: 16px 20px; }
-.cliente-card .cab { display: flex; justify-content: space-between; align-items: baseline; font-weight: 800; font-size: 16px; margin-bottom: 6px; }
-.cliente-card .cab span:last-child { color: var(--ambar); }
-.fila-credito { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 0; border-top: 1px solid var(--line); font-size: 13px; }
 
 #modal { display: none; position: fixed; inset: 0; background: rgba(20,17,15,.55); justify-content: center; align-items: center; z-index: 2000; padding: 14px; backdrop-filter: blur(2px); }
 .modal-contenido { background: var(--surface); padding: 22px; border-radius: var(--r-l); width: 400px; max-width: 100%; max-height: 92vh; overflow-y: auto; }
 .modal-contenido h3 { margin: 0 0 6px; font-size: 18px; font-weight: 800; }
-.nota-pequena { font-size: 12px; color: var(--muted); margin: 0 0 10px; }
 .lbl { display: block; font-size: 12px; font-weight: 700; color: var(--muted); margin: 14px 0 5px; }
-.modal-contenido input[type=number], .modal-contenido input[type=text], .modal-contenido input[type=password], .modal-contenido input[type=tel], .modal-contenido input[type=email] { width: 100%; padding: 13px; font-size: 18px; border: 1px solid var(--line); border-radius: var(--r-m); background: var(--bg); }
+.modal-contenido input[type=number], .modal-contenido input[type=text], .modal-contenido input[type=tel], .modal-contenido input[type=email] { width: 100%; padding: 13px; font-size: 18px; border: 1px solid var(--line); border-radius: var(--r-m); background: var(--bg); }
 .total-modal { font-size: 40px; font-weight: 800; text-align: center; letter-spacing: -.02em; margin: 6px 0; }
-.rapidos { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
-.rapidos button { padding: 9px 13px; border: 1px solid var(--line); background: var(--bg); border-radius: var(--r-s); font-weight: 700; font-size: 13px; }
-.cambio { margin-top: 14px; text-align: center; font-size: 22px; font-weight: 800; color: var(--pino); }
-.cambio.falta { color: var(--rojo); }
 .acciones-modal { display: flex; gap: 8px; margin-top: 18px; flex-wrap: wrap; }
 .acciones-modal button { flex: 1; padding: 13px; border-radius: var(--r-m); border: 1px solid var(--line); background: var(--surface); font-weight: 700; font-size: 14px; }
 .acciones-modal .ok { background: var(--pino); color: var(--pino-ink); border-color: var(--pino); }
 .acciones-modal .peligro { background: var(--rojo); color: #fff; border-color: var(--rojo); }
-.chk { display: flex; gap: 8px; align-items: center; margin-top: 14px; font-size: 13px; font-weight: 600; }
-.exito { text-align: center; }
-.exito .check { width: 64px; height: 64px; border-radius: 50%; background: var(--salvia); color: var(--pino); display: grid; place-items: center; margin: 0 auto 8px; }
-.exito .check .ico { width: 32px; height: 32px; stroke-width: 2.4; }
-.sugeridas { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
-.sugeridas button { padding: 7px 12px; border-radius: 16px; border: 1px solid var(--line); background: var(--bg); font-size: 12px; font-weight: 600; }
+
 #overlay-carga { display: flex; position: fixed; inset: 0; background: var(--bg); justify-content: center; align-items: center; flex-direction: column; gap: 14px; font-size: 16px; font-weight: 700; z-index: 3000; color: var(--muted); }
 #overlay-carga .marca { margin: 0; }
 #toast { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 12px 20px; border-radius: 14px; font-size: 14px; font-weight: 600; z-index: 4000; display: none; max-width: 90%; }
 #toast.error { background: var(--rojo); color: #fff; } #toast.aviso { background: var(--ambar); color: #fff; }
 
-.solo-mov { display: none; }
 .lista-cards { display: flex; flex-direction: column; background: var(--surface); border-radius: var(--r-l); overflow: hidden; }
 .fila-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 14px; align-items: center; padding: 13px 18px; border: none; border-bottom: 1px solid var(--line); background: none; width: 100%; text-align: left; font-size: 14px; }
-.fila-item:last-child { border-bottom: none; }
-button.fila-item:hover { background: var(--bg); }
-.fila-item.inactivo { opacity: .5; }
 .fila-item .sub { display: block; font-size: 12px; color: var(--muted); font-weight: 500; }
 .fila-item .monto { font-weight: 800; text-align: right; }
-.fila-cliente { display: flex; gap: 8px; margin-bottom: 10px; }
-.cliente-btn { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; padding: 9px 12px; border: 1px solid var(--line); border-radius: var(--r-m); background: var(--bg); font-weight: 700; font-size: 13px; text-align: left; }
-.cliente-btn span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.chip-mini { padding: 9px 12px; border: 1px solid var(--line); border-radius: var(--r-m); background: var(--surface); font-weight: 700; font-size: 12px; white-space: nowrap; }
-.banner { background: var(--salvia); color: var(--pino); border-radius: var(--r-s); padding: 6px 6px 6px 12px; font-size: 12px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; }
-.precio-edit { border: none; background: none; font-size: 12px; color: var(--muted); padding: 6px; border-radius: 8px; text-decoration: underline dotted; }
-.precio-edit.cambiado { color: var(--ambar); font-weight: 700; }
 .btn-ancho { grid-column: 1 / -1; flex-direction: row; justify-content: center; gap: 8px; }
-.lista-sel { max-height: 44vh; overflow-y: auto; margin-top: 10px; display: flex; flex-direction: column; }
-.sel-item { text-align: left; background: none; border: none; border-bottom: 1px solid var(--line); padding: 12px 4px; display: flex; flex-direction: column; gap: 2px; font-size: 15px; }
-.campo-sel { width: 100%; padding: 13px; font-size: 16px; border: 1px solid var(--line); border-radius: var(--r-m); background: var(--bg); }
-.editor-linea { display: grid; grid-template-columns: minmax(0, 1fr) 62px 84px 34px; gap: 6px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--line); }
-.modal-contenido .editor-linea input[type=number] { width: 100%; padding: 9px 6px; font-size: 15px; border-radius: 8px; text-align: right; }
-.dos-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.menu-mas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px; }
-.menu-mas button { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 14px 4px; border: 1px solid var(--line); border-radius: var(--r-m); background: var(--surface); font-size: 12px; font-weight: 700; }
-table.tabla { min-width: 460px; width: 100%; border-collapse: collapse; font-size: 13px; }
-table.tabla th { text-align: right; font-weight: 600; color: var(--muted); padding: 6px 4px; font-size: 12px; }
-table.tabla td { text-align: right; padding: 9px 4px; border-top: 1px solid var(--line); }
-table.tabla th:first-child, table.tabla td:first-child { text-align: left; font-weight: 600; }
 
-#ticket-print, #cot-print { display: none; }
-@media print {
-  @page { margin: 0; }
-  body { display: block; height: auto; overflow: visible; background: #fff; }
-  body:not(.imprimiendo-cot) > *:not(#ticket-print) { display: none !important; }
-  body.imprimiendo-cot > *:not(#cot-print) { display: none !important; }
-  body:not(.imprimiendo-cot) #ticket-print { display: block; width: 72mm; padding: 4mm; font-family: monospace; font-size: 12px; color: #000; }
-  #ticket-print hr { border: none; border-top: 1px dashed #000; }
-  #ticket-print .tp-centro { text-align: center; }
-  #ticket-print .tp-fila { display: flex; justify-content: space-between; gap: 6px; }
-}
-
-@media (max-width: 1100px) { #v-vender.activa { grid-template-columns: minmax(0, 1fr) 340px; } }
 @media (max-width: 860px) {
   body { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) auto; }
-  .contenido { height: 100%; min-height: 0; }
-  .rail { order: 2; flex-direction: row; justify-content: space-around; align-items: stretch; padding: 4px 4px calc(4px + env(safe-area-inset-bottom)); border-right: none; border-top: 1px solid var(--line); gap: 0; overflow: visible; }
-  .marca, .rail-fin, .solo-desk { display: none !important; }
-  .solo-mov { display: flex; }
-  .nav-btn { width: auto; flex: 1; padding: 8px 0 6px; font-size: 10.5px; }
-  .badge { right: 18%; }
-  input, select { font-size: 16px; }
+  .rail { order: 2; flex-direction: row; justify-content: space-around; padding: 4px 4px calc(4px + env(safe-area-inset-bottom)); border-right: none; border-top: 1px solid var(--line); }
+  .marca, .rail-fin { display: none !important; }
   .topbar { flex-wrap: nowrap; padding: 10px 14px 4px; gap: 10px; }
-  .topbar h1 { font-size: 19px; }
-  .topbar .sub, #hoy-tickets { display: none; }
-  .hoy { gap: 8px; min-width: 0; }
-  .meta-btn { min-width: 0; padding: 6px 10px; }
-  #v-vender, .vista-pagina { padding-left: 14px; padding-right: 14px; }
-  #v-vender.activa { display: flex; padding-bottom: 0; }
-  .catalogo { flex: 1; min-width: 0; padding-bottom: 0; }
-  .grid-productos { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 92px; gap: 8px; padding-bottom: 150px; }
-  .tile { padding: 11px; }
-  .tile .nombre { font-size: 13px; }
-  .comanda { position: fixed; left: 0; right: 0; bottom: 0; top: 8vh; margin: 0; z-index: 1500; transform: translateY(105%); transition: transform .25s; border-radius: var(--r-l) var(--r-l) 0 0; box-shadow: 0 -8px 30px rgba(0,0,0,.3); padding-bottom: env(safe-area-inset-bottom); }
-  .comanda::after { display: none; }
+  #v-vender.activa { display: flex; }
+  .grid-productos { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 92px; }
+  .comanda { position: fixed; left: 0; right: 0; bottom: 0; top: 8vh; margin: 0; z-index: 1500; transform: translateY(105%); border-radius: var(--r-l) var(--r-l) 0 0; }
   .comanda.abierta { transform: none; }
-  #fab-pedido { display: flex; position: fixed; left: 14px; right: 14px; bottom: calc(68px + env(safe-area-inset-bottom)); z-index: 1400; background: var(--pino); color: var(--pino-ink); border: none; border-radius: var(--r-m); padding: 15px 18px; justify-content: space-between; font-weight: 800; font-size: 15px; }
-  .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .kpi.principal { grid-column: 1 / -1; }
-  .cols-2 { grid-template-columns: 1fr; }
-  .panel { padding: 16px; }
-  .fila-t2 { grid-template-columns: 52px minmax(0, 1fr) auto; row-gap: 4px; padding: 12px 14px; }
+  #fab-pedido { display: flex; position: fixed; left: 14px; right: 14px; bottom: calc(68px + env(safe-area-inset-bottom)); z-index: 1400; background: var(--pino); color: var(--pino-ink); border: none; border-radius: var(--r-m); padding: 15px 18px; justify-content: space-between; font-weight: 800; }
   #modal { align-items: flex-end; padding: 0; }
-  .modal-contenido { width: 100%; border-radius: var(--r-l) var(--r-l) 0 0; max-height: 92dvh; padding: 20px 18px calc(20px + env(safe-area-inset-bottom)); }
+  .modal-contenido { width: 100%; border-radius: var(--r-l) var(--r-l) 0 0; }
 }
 </style>
 </head>
@@ -264,55 +172,42 @@ table.tabla th:first-child, table.tabla td:first-child { text-align: left; font-
   <symbol id="i-wallet" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18"/><circle cx="16.5" cy="14.5" r="1"/></symbol>
   <symbol id="i-corte" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 12h2M12 12h2M8 16h2M12 16h2"/></symbol>
   <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></symbol>
-  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></symbol>
-  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/></symbol>
   <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></symbol>
-  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14-4M4 4v4h4M4 13a8 8 0 0 0 14 4M20 20v-4h-4"/></symbol>
-  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7"/></symbol>
   <symbol id="i-cash" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/></symbol>
   <symbol id="i-card" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h3"/></symbol>
   <symbol id="i-phone" viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M11 18h2"/></symbol>
   <symbol id="i-book" viewBox="0 0 24 24"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3V4z"/><path d="M8 20a3 3 0 0 1 0-3h11"/></symbol>
   <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
   <symbol id="i-box" viewBox="0 0 24 24"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/><path d="M3 8l9 5 9-5M12 13v8"/></symbol>
-  <symbol id="i-quote" viewBox="0 0 24 24"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4M10 12h6M10 16h6"/></symbol>
-  <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></symbol>
   <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M17.5 19A4.5 4.5 0 0 0 18 10a6 6 0 0 0-11.8-1.5A5.5 5.5 0 0 0 5 19h12.5z"/></symbol>
 </svg>
 
 <div id="overlay-carga"><div class="marca"><svg class="ico"><use href="#i-cup"/></svg></div><span id="overlay-texto">Conectando a Firebase…</span></div>
 <div id="modal" onclick="cerrarModal()"><div class="modal-contenido" id="modal-cuerpo" onclick="event.stopPropagation()"></div></div>
 <div id="toast"></div>
-<div id="ticket-print"></div>
 
 <!-- Barra lateral -->
 <nav class="rail" aria-label="Secciones">
   <div class="marca" title="Café Sierra Escondida"><svg class="ico"><use href="#i-cup"/></svg></div>
-  <button class="nav-btn activo" data-vista="vender" onclick="irA('vender')"><svg class="ico"><use href="#i-cup"/></svg>Vender</button>
-  <button class="nav-btn solo-desk" data-vista="cotizaciones" onclick="irA('cotizaciones')"><svg class="ico"><use href="#i-quote"/></svg>Cotizar</button>
-  <button class="nav-btn" data-vista="tickets" onclick="irA('tickets')"><svg class="ico"><use href="#i-receipt"/></svg>Tickets</button>
-  <button class="nav-btn" data-vista="creditos" onclick="irA('creditos')"><svg class="ico"><use href="#i-wallet"/></svg>Por cobrar<span class="badge" id="badge-creditos">0</span></button>
-  <button class="nav-btn solo-desk" data-vista="clientes" onclick="irA('clientes')"><svg class="ico"><use href="#i-user"/></svg>Clientes</button>
-  <button class="nav-btn solo-desk" data-vista="productos" onclick="irA('productos')"><svg class="ico"><use href="#i-box"/></svg>Productos</button>
-  <button class="nav-btn solo-desk" data-vista="corte" onclick="irA('corte')"><svg class="ico"><use href="#i-corte"/></svg>Corte</button>
-  <button class="nav-btn solo-desk" data-vista="reportes" onclick="irA('reportes')"><svg class="ico"><use href="#i-chart"/></svg>Reportes</button>
-  <button class="nav-btn solo-mov" data-vista="mas" onclick="abrirMenuMas()"><svg class="ico"><use href="#i-more"/></svg>Más</button>
+  <button class="nav-btn activo" onclick="irA('vender')"><svg class="ico"><use href="#i-cup"/></svg>Vender</button>
+  <button class="nav-btn" onclick="irA('tickets')"><svg class="ico"><use href="#i-receipt"/></svg>Tickets</button>
+  <button class="nav-btn" onclick="irA('creditos')"><svg class="ico"><use href="#i-wallet"/></svg>Por cobrar</button>
+  <button class="nav-btn" onclick="irA('clientes')"><svg class="ico"><use href="#i-user"/></svg>Clientes</button>
+  <button class="nav-btn" onclick="irA('productos')"><svg class="ico"><use href="#i-box"/></svg>Productos</button>
   <div class="rail-fin">
-    <button class="icon-btn" onclick="migrarDeGoogleSheets()" title="Importar desde Google Sheets" aria-label="Importar desde Google Sheets"><svg class="ico s"><use href="#i-cloud"/></svg></button>
-    <button class="icon-btn" id="btn-tema" onclick="alternarTema()" title="Cambiar tema" aria-label="Cambiar tema"><svg class="ico s"><use href="#i-moon"/></svg></button>
+    <button class="icon-btn" onclick="migrarDeGoogleSheets()" title="Importar desde Google Sheets"><svg class="ico s"><use href="#i-cloud"/></svg></button>
   </div>
 </nav>
 
 <main class="contenido">
   <header class="topbar">
-    <div><h1 id="titulo-vista">Vender</h1><div class="sub" id="subtitulo-vista">Café Sierra Escondida</div></div>
+    <div><h1>Vender</h1><div class="sub">Café Sierra Escondida</div></div>
     <div class="hoy">
-      <button class="meta-btn" onclick="editarMeta()" title="Cambiar la meta diaria">
-        <div class="fila-meta"><span>Vendido hoy</span><span id="hoy-tickets">0 tickets</span></div>
-        <strong id="hoy-ventas">$0.00</strong> <span class="sub" id="hoy-meta"></span>
-        <div class="barra"><i id="hoy-barra"></i></div>
+      <button class="meta-btn">
+        <div class="fila-meta"><span>Vendido hoy</span></div>
+        <strong id="hoy-ventas">$0.00</strong>
       </button>
-      <button id="estado-sync" class="chip-sync"><i></i><span>Firebase Activo</span></button>
+      <button id="estado-sync" class="chip-sync"><i></i><span>Firebase Conectado</span></button>
     </div>
   </header>
 
@@ -321,8 +216,7 @@ table.tabla th:first-child, table.tabla td:first-child { text-align: left; font-
     <div class="catalogo">
       <div class="busqueda">
         <svg class="ico s"><use href="#i-search"/></svg>
-        <input type="text" id="input-buscar" placeholder="Buscar producto" autocomplete="off" oninput="filtrarProductos()" onkeydown="if(event.key==='Enter')agregarPrimero()">
-        <kbd>/</kbd>
+        <input type="text" id="input-buscar" placeholder="Buscar producto" oninput="filtrarProductos()">
       </div>
       <div class="chips" id="chips"></div>
       <div class="grid-productos" id="grid-productos"></div>
@@ -331,590 +225,230 @@ table.tabla th:first-child, table.tabla td:first-child { text-align: left; font-
     <aside class="comanda" id="comanda">
       <div class="comanda-cab">
         <h2>Pedido</h2>
-        <div class="seg" id="seg-tipo">
-          <button data-tipo="Aquí" class="activo">Aquí</button>
-          <button data-tipo="Llevar">Para llevar</button>
-        </div>
         <button class="link-btn peligro" onclick="vaciarCarrito()">Vaciar</button>
       </div>
-      <div class="fila-cliente">
-        <button class="cliente-btn" onclick="elegirClientePedido()"><svg class="ico s"><use href="#i-user"/></svg><span id="btn-cliente-txt">Mostrador</span></button>
-        <button class="chip-mini" onclick="abrirConceptoLibre()">+ Concepto libre</button>
-      </div>
-      <div id="banner-cot"></div>
       <div class="lista-carrito" id="lista-carrito"></div>
       <div class="comanda-pie">
-        <div class="fila-desc">
-          <label for="desc-valor">Descuento</label>
-          <input type="number" id="desc-valor" min="0" step="any" placeholder="0" inputmode="decimal" oninput="actualizarCarrito()">
-          <select id="desc-tipo" onchange="actualizarCarrito()"><option value="%">%</option><option value="$">$</option></select>
-        </div>
         <div class="fila-t"><span>Subtotal</span><span id="subtotal">$0.00</span></div>
-        <div class="fila-t" id="fila-desc" style="display:none"><span>Descuento</span><span id="desc-monto">-$0.00</span></div>
         <div class="total"><span>Total</span><span id="gran-total">$0.00</span></div>
         <div class="pagos">
           <button class="btn-pago btn-principal" onclick="iniciarCobro('Efectivo')"><svg class="ico"><use href="#i-cash"/></svg>Cobrar en efectivo</button>
           <button class="btn-pago" onclick="iniciarCobro('Tarjeta')"><svg class="ico"><use href="#i-card"/></svg>Tarjeta</button>
           <button class="btn-pago" onclick="iniciarCobro('Transferencia')"><svg class="ico"><use href="#i-phone"/></svg>Transferencia</button>
-          <button class="btn-pago" onclick="iniciarCobro('Crédito')"><svg class="ico"><use href="#i-book"/></svg>Crédito</button>
-          <button class="btn-pago btn-ancho" id="btn-cotizar" onclick="abrirCotizar()"><svg class="ico s"><use href="#i-quote"/></svg>Guardar como cotización</button>
         </div>
       </div>
     </aside>
-    <button id="fab-pedido" onclick="abrirComandaMovil()"><span id="fab-cant">Ver pedido</span><span id="fab-total">$0.00</span></button>
   </section>
 
   <!-- TICKETS -->
   <section id="v-tickets" class="vista vista-pagina">
-    <div class="barra-filtros">
-      <input type="date" id="fecha-tickets" onchange="cargarTickets()" aria-label="Fecha">
-      <button class="btn" onclick="cargarTickets()">Actualizar</button>
-    </div>
+    <div class="barra-filtros"><button class="btn" onclick="cargarTickets()">Actualizar</button></div>
     <div id="contenedor-tickets"></div>
   </section>
 
   <!-- POR COBRAR -->
   <section id="v-creditos" class="vista vista-pagina">
-    <div class="barra-filtros"><button class="btn" onclick="cargarCreditos()">Actualizar</button><span id="resumen-creditos" style="font-weight:700"></span></div>
-    <div id="contenedor-creditos" style="display:flex;flex-direction:column;gap:12px"></div>
-  </section>
-
-  <!-- CORTE -->
-  <section id="v-corte" class="vista vista-pagina">
-    <div class="barra-filtros">
-      <input type="date" id="fecha-corte" onchange="cargarCorte()" aria-label="Fecha del corte">
-      <button class="btn" onclick="cargarCorte()">Actualizar</button>
-    </div>
-    <div id="contenido-corte" style="display:flex;flex-direction:column;gap:14px"></div>
-  </section>
-
-  <!-- REPORTES -->
-  <section id="v-reportes" class="vista vista-pagina">
-    <div class="rangos" id="rangos">
-      <button class="chip" data-rango="hoy">Hoy</button>
-      <button class="chip" data-rango="ayer">Ayer</button>
-      <button class="chip activo" data-rango="7d">7 días</button>
-      <button class="chip" data-rango="30d">30 días</button>
-      <input type="date" id="rep-desde" style="padding:8px;border:1px solid var(--line);border-radius:10px;background:var(--surface)">
-      <input type="date" id="rep-hasta" style="padding:8px;border:1px solid var(--line);border-radius:10px;background:var(--surface)">
-      <button class="btn relleno" onclick="rangoPersonalizado()">Aplicar</button>
-    </div>
-    <div id="contenido-reporte" style="display:flex;flex-direction:column;gap:14px"></div>
-  </section>
-
-  <!-- COTIZACIONES -->
-  <section id="v-cotizaciones" class="vista vista-pagina">
-    <div class="barra-filtros">
-      <button class="btn" onclick="cargarCotizaciones()">Actualizar</button>
-    </div>
-    <div id="contenedor-cotizaciones"></div>
+    <div id="contenedor-creditos"></div>
   </section>
 
   <!-- CLIENTES -->
   <section id="v-clientes" class="vista vista-pagina">
-    <div class="barra-filtros">
-      <div class="busqueda" style="flex:1;min-width:220px"><svg class="ico s"><use href="#i-search"/></svg><input type="text" id="buscar-cliente" placeholder="Buscar cliente" oninput="renderClientes()"></div>
-      <button class="btn relleno" onclick="editarCliente()">Nuevo cliente</button>
-    </div>
+    <div class="barra-filtros"><button class="btn relleno" onclick="editarClienteModal()">Nuevo cliente</button></div>
     <div id="contenedor-clientes"></div>
   </section>
 
   <!-- PRODUCTOS -->
   <section id="v-productos" class="vista vista-pagina">
-    <div class="barra-filtros">
-      <div class="busqueda" style="flex:1;min-width:220px"><svg class="ico s"><use href="#i-search"/></svg><input type="text" id="buscar-producto" placeholder="Buscar producto" oninput="renderProductosAdmin()"></div>
-      <button class="btn relleno" onclick="editarProducto()">Nuevo producto</button>
-    </div>
+    <div class="barra-filtros"><button class="btn relleno" onclick="editarProductoModal()">Nuevo producto</button></div>
     <div id="contenedor-productos"></div>
   </section>
 </main>
 
-<!-- FIREBASE SDK v10 (MODULE) -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
-import { 
-  getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, where, orderBy, getDoc, setDoc 
-} from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+<!-- FIREBASE COMPAT SDK (SOLUCIÓN CONTRA CONGELAMIENTO) -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
-// Tu Configuración de Firebase
+<script>
+// Inicialización de Firebase Compat
 const firebaseConfig = {
   apiKey: "AIzaSyBXRIqA9AD15ZCF-HI0bq-Ie2fCAA2jR-M",
   authDomain: "punto-de-venta-e113c.firebaseapp.com",
   projectId: "punto-de-venta-e113c",
   storageBucket: "punto-de-venta-e113c.firebasestorage.app",
   messagingSenderId: "694466401488",
-  appId: "1:694466401488:web:28f231d6de441bd623fad5",
-  measurementId: "G-MB8H30Y6LB"
+  appId: "1:694466401488:web:28f231d6de441bd623fad5"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-/* ============================ BINDINGS GLOBALES ============================ */
-const NEGOCIO = { nombre: "Café Sierra Escondida", leyenda: "¡Gracias por tu visita!" };
+/* ============================ HELPERS ============================ */
 const $ = id => document.getElementById(id);
-const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-const fmt = n => "$" + (Number(n) || 0).toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-const fmt0 = n => "$" + Math.round(Number(n) || 0).toLocaleString("es-MX");
-const redondear = n => Math.round((Number(n) || 0) * 100) / 100;
+const fmt = n => "$" + (Number(n) || 0).toFixed(2);
 const iso = d => d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
 const hoy = () => iso(new Date());
-const nuevoUid = () => Math.random().toString(36).slice(2, 9);
-const leer = (k, def) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : def; } catch (e) { return def; } };
-const guardar = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
-const icono = (id, cls = "") => `<svg class="ico ${cls}"><use href="#i-${id}"/></svg>`;
 
-let toastTimer;
-function toast(msg, tipo = "") { const t = $("toast"); t.textContent = msg; t.className = tipo; t.style.display = "block"; clearTimeout(toastTimer); toastTimer = setTimeout(() => t.style.display = "none", 3200); }
+function toast(msg, tipo = "") {
+  const t = $("toast"); t.textContent = msg; t.className = tipo; t.style.display = "block";
+  setTimeout(() => t.style.display = "none", 3000);
+}
 function mostrarOverlay(txt) { $("overlay-texto").textContent = txt; $("overlay-carga").style.display = "flex"; }
 function ocultarOverlay() { $("overlay-carga").style.display = "none"; }
 function abrirModal(html) { $("modal-cuerpo").innerHTML = html; $("modal").style.display = "flex"; }
 function cerrarModal() { $("modal").style.display = "none"; }
 
 /* ============================ ESTADO LOCAL ============================ */
-let productos = [], productosAdmin = [];
-let carrito = leer("pos_carrito", []).map(i => ({ ...i, uid: i.uid || nuevoUid(), precioBase: i.precioBase ?? i.precio }));
-let categoriaActiva = "TODAS", tipoOrden = leer("pos_tipo", "Aquí");
-let clienteActual = leer("pos_cliente", null), cotizacionOrigen = leer("pos_cot", null);
-let clientesCache = [], ticketsCache = [], creditosCache = [], cotizacionesCache = [];
-let hoyVentas = 0, pagoActual = null;
+let productos = [], carrito = [], ticketsCache = [], clientesCache = [], pagoActual = null;
 
-/* ============================ FIREBASE API LOGIC ============================ */
-
-// 1. PRODUCTOS
-window.cargarProductos = async function() {
-  mostrarOverlay("Cargando productos...");
+/* ============================ LÓGICA PRINCIPAL ============================ */
+async function cargarProductos() {
   try {
-    const qSnap = await getDocs(collection(db, "productos"));
-    productos = []; productosAdmin = [];
-    qSnap.forEach(docSnap => {
-      const p = { id: docSnap.id, ...docSnap.data() };
-      productosAdmin.push(p);
-      if (p.activo !== false) productos.push(p);
+    const snap = await db.collection("productos").get();
+    productos = [];
+    snap.forEach(d => productos.push({ id: d.id, ...d.data() }));
+    renderGridProductos(productos);
+    renderProductosAdmin();
+  } catch (e) {
+    toast("Error al cargar productos", "error");
+  } finally {
+    ocultarOverlay();
+  }
+}
+
+function renderGridProductos(list) {
+  const grid = $("grid-productos");
+  if (!list.length) { grid.innerHTML = '<p class="vacio" style="grid-column:1/-1">No hay productos. Si es tu primera vez, importa tu menú desde Google Sheets con el botón de la nube en el menú lateral.</p>'; return; }
+  grid.innerHTML = list.map(p => `
+    <button class="tile" onclick="agregarAlCarrito('${p.id}')">
+      <span class="nombre">${p.nombre}</span>
+      <span class="pie"><span class="precio">${fmt(p.precio)}</span></span>
+    </button>`).join("");
+}
+
+function agregarAlCarrito(id) {
+  const p = productos.find(x => x.id === id); if (!p) return;
+  const it = carrito.find(x => x.id === id);
+  if (it) it.cantidad++; else carrito.push({ id: p.id, nombre: p.nombre, precio: p.precio, cantidad: 1 });
+  actualizarCarrito();
+}
+
+function actualizarCarrito() {
+  const subtotal = carrito.reduce((s, i) => s + i.precio * i.cantidad, 0);
+  $("lista-carrito").innerHTML = !carrito.length ? '<p class="vacio">Pedido vacío</p>' : carrito.map(i => `
+    <div class="item">
+      <div><div class="nom">${i.nombre}</div></div>
+      <div class="imp">${fmt(i.precio * i.cantidad)}</div>
+      <div class="ctrl">
+        <button class="btn-cant" onclick="cambiarCant('${i.id}', -1)">−</button>
+        <span class="q">${i.cantidad}</span>
+        <button class="btn-cant" onclick="cambiarCant('${i.id}', 1)">+</button>
+      </div>
+    </div>`).join("");
+  $("subtotal").textContent = fmt(subtotal);
+  $("gran-total").textContent = fmt(subtotal);
+}
+
+function cambiarCant(id, d) {
+  const it = carrito.find(x => x.id === id);
+  if (it) { it.cantidad += d; if (it.cantidad <= 0) carrito = carrito.filter(x => x.id !== id); actualizarCarrito(); }
+}
+function vaciarCarrito() { carrito = []; actualizarCarrito(); }
+
+function iniciarCobro(metodo) {
+  if (!carrito.length) return toast("El pedido está vacío", "aviso");
+  const total = carrito.reduce((s, i) => s + i.precio * i.cantidad, 0);
+  pagoActual = { metodo, total };
+  abrirModal(`
+    <h3>Cobrar en ${metodo}</h3>
+    <div class="total-modal">${fmt(total)}</div>
+    <div class="acciones-modal">
+      <button onclick="cerrarModal()">Cancelar</button>
+      <button class="ok" onclick="confirmarCobro()">Confirmar Venta</button>
+    </div>`);
+}
+
+async function confirmarCobro() {
+  const total = carrito.reduce((s, i) => s + i.precio * i.cantidad, 0);
+  mostrarOverlay("Guardando venta...");
+  try {
+    await db.collection("ventas").add({
+      fecha: hoy(),
+      hora: new Date().toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit" }),
+      metodo: pagoActual.metodo,
+      total,
+      items: carrito
     });
-    poblarCategorias(); filtrarProductos(); renderProductosAdmin();
-  } catch (e) { toast("Error al cargar productos", "error"); }
-  finally { ocultarOverlay(); }
-};
+    cerrarModal(); vaciarCarrito(); toast("¡Venta Exitosa!"); cargarHoy();
+  } catch (e) {
+    toast("Error al registrar cobro", "error");
+  } finally {
+    ocultarOverlay();
+  }
+}
 
-window.guardarProducto = async function(id = "") {
-  const nombre = $("prod-nombre").value.trim();
-  const precio = parseFloat($("prod-precio").value);
-  const costo = parseFloat($("prod-costo").value) || 0;
-  const categoria = $("prod-cat").value.trim();
-  const activo = $("prod-activo").checked;
-  if (!nombre || isNaN(precio)) return toast("Escribe un nombre y precio válidos", "error");
-
-  mostrarOverlay("Guardando producto...");
+async function cargarHoy() {
   try {
-    const pData = { nombre, precio, costo, categoria, activo };
-    if (id) {
-      await updateDoc(doc(db, "productos", id), pData);
-    } else {
-      await addDoc(collection(db, "productos"), pData);
-    }
-    cerrarModal(); toast("Producto guardado"); await window.cargarProductos();
-  } catch(e) { toast("Error al guardar", "error"); }
-  finally { ocultarOverlay(); }
-};
+    const snap = await db.collection("ventas").where("fecha", "==", hoy()).get();
+    let total = 0;
+    snap.forEach(d => total += d.data().total || 0);
+    $("hoy-ventas").textContent = fmt(total);
+  } catch(e) {}
+}
 
-window.eliminarProductoFB = async function(id) {
-  if(!confirm("¿Borrar producto de la base de datos?")) return;
-  mostrarOverlay("Eliminando...");
-  try {
-    await deleteDoc(doc(db, "productos", id));
-    cerrarModal(); toast("Producto eliminado"); await window.cargarProductos();
-  } catch(e) { toast("Error al eliminar", "error"); }
-  finally { ocultarOverlay(); }
-};
-
-// 2. VENTAS / TICKETS
-window.confirmarCobro = async function() {
-  if (!pagoActual) return;
-  const t = calcularTotales(), metodo = pagoActual.metodo;
-  const cliente = clienteActual ? clienteActual.nombre : "";
-  if (metodo === "Crédito" && !cliente) return toast("Debes elegir un cliente para el crédito", "error");
-
-  const folio = "V-" + Date.now().toString(36).toUpperCase();
-  const ventaData = {
-    folio, fecha: hoy(), hora: new Date().toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit" }),
-    ts: Date.now(), metodo, cliente, descuento: t.desc, tipo: tipoOrden, estado: metodo === "Crédito" ? "Pendiente" : "Pagado",
-    total: t.total, subtotal: t.subtotal, items: carrito.map(i => ({ nombre: i.nombre, cantidad: i.cantidad, precio: i.precio, costo: i.costo || 0, nota: i.nota || "" }))
-  };
-
-  mostrarOverlay("Procesando cobro...");
-  try {
-    await addDoc(collection(db, "ventas"), ventaData);
-    if (cotizacionOrigen) {
-      const qSnap = await getDocs(query(collection(db, "cotizaciones"), where("folio", "==", cotizacionOrigen)));
-      qSnap.forEach(async dSnap => { await updateDoc(doc(db, "cotizaciones", dSnap.id), { estado: "Convertida", venta: folio }); });
-    }
-    
-    // Si fue cliente a crédito, actualizar pendiente
-    if (clienteActual && clienteActual.id) {
-      const cRef = doc(db, "clientes", clienteActual.id);
-      const cSnap = await getDoc(cRef);
-      if (cSnap.exists()) {
-        const cData = cSnap.data();
-        await updateDoc(cRef, { 
-          totalComprado: redondear((cData.totalComprado || 0) + t.total),
-          numTickets: (cData.numTickets || 0) + 1,
-          pendiente: metodo === "Crédito" ? redondear((cData.pendiente || 0) + t.total) : (cData.pendiente || 0)
-        });
-      }
-    }
-
-    cerrarModal();
-    const resumen = { ...ventaData, fechaTxt: ventaData.fecha, horaTxt: ventaData.hora, recibido: parseFloat($("pago-recibido")?.value) \vert{}\vert{} t.total, cambio: parseFloat($("pago-recibido")?.value) - t.total || 0 };
-    if ($("pago-imprimir")?.checked) window.imprimirResumen(resumen);
-    carrito = []; clienteActual = null; cotizacionOrigen = null;
-    guardar("pos_cliente", null); guardar("pos_cot", null); actualizarCarrito();
-    toast("Venta exitosa"); cargarHoy();
-  } catch (e) { toast("Error al procesar la venta", "error"); }
-  finally { ocultarOverlay(); }
-};
-
-window.cargarTickets = async function() {
-  const f = $("fecha-tickets").value || hoy();
+async function cargarTickets() {
   mostrarOverlay("Cargando tickets...");
   try {
-    const q = query(collection(db, "ventas"), where("fecha", "==", f));
-    const qSnap = await getDocs(q);
+    const snap = await db.collection("ventas").where("fecha", "==", hoy()).get();
     ticketsCache = [];
-    qSnap.forEach(d => ticketsCache.push({ id: d.id, ...d.data() }));
-    ticketsCache.sort((a,b) => b.ts - a.ts);
-    renderTickets();
-  } catch(e) { toast("Error al cargar tickets", "error"); }
-  finally { ocultarOverlay(); }
-};
+    snap.forEach(d => ticketsCache.push({ id: d.id, ...d.data() }));
+    $("contenedor-tickets").innerHTML = ticketsCache.map(t => `
+      <div class="fila-t2">
+        <span class="hora">${t.hora}</span>
+        <span>${t.metodo}</span>
+        <span class="monto">${fmt(t.total)}</span>
+      </div>`).join("") || '<p class="vacio">Sin tickets hoy</p>';
+  } catch(e) {} finally { ocultarOverlay(); }
+}
 
-window.anularTicketFB = async function(id) {
-  if(!confirm("¿Anular este ticket? Dejará de contar en ventas.")) return;
-  mostrarOverlay("Anulando...");
-  try {
-    await updateDoc(doc(db, "ventas", id), { estado: "Anulado" });
-    cerrarModal(); toast("Ticket Anulado"); window.cargarTickets(); cargarHoy();
-  } catch(e) { toast("Error al anular", "error"); }
-  finally { ocultarOverlay(); }
-};
-
-window.eliminarTicketFB = async function(id) {
-  if(!confirm("¿Eliminar este ticket permanentemente?")) return;
-  mostrarOverlay("Eliminando...");
-  try {
-    await deleteDoc(doc(db, "ventas", id));
-    cerrarModal(); toast("Ticket Eliminado"); window.cargarTickets(); cargarHoy();
-  } catch(e) { toast("Error al eliminar", "error"); }
-  finally { ocultarOverlay(); }
-};
-
-// 3. CREDITOS Y CLIENTES
-window.cargarClientes = async function() {
-  try {
-    const qSnap = await getDocs(collection(db, "clientes"));
-    clientesCache = [];
-    qSnap.forEach(d => clientesCache.push({ id: d.id, ...d.data() }));
-    renderClientes();
-  } catch(e) {}
-};
-
-window.guardarClienteFB = async function(id = "") {
-  const nombre = $("cli-nombre").value.trim();
-  const telefono = $("cli-tel").value.trim();
-  const email = $("cli-email").value.trim();
-  const notas = $("cli-notas").value.trim();
-  if(!nombre) return toast("Escribe el nombre", "error");
-
-  mostrarOverlay("Guardando cliente...");
-  try {
-    const data = { nombre, telefono, email, notas };
-    if (id) await updateDoc(doc(db, "clientes", id), data);
-    else await addDoc(collection(db, "clientes"), { ...data, totalComprado: 0, numTickets: 0, pendiente: 0 });
-    cerrarModal(); toast("Cliente guardado"); window.cargarClientes();
-  } catch(e) { toast("Error al guardar", "error"); }
-  finally { ocultarOverlay(); }
-};
-
-window.cargarCreditos = async function() {
-  mostrarOverlay("Cargando créditos...");
-  try {
-    const q = query(collection(db, "ventas"), where("estado", "==", "Pendiente"));
-    const qSnap = await getDocs(q);
-    creditosCache = [];
-    qSnap.forEach(d => creditosCache.push({ id: d.id, ...d.data() }));
-    renderCreditos();
-  } catch(e) {}
-  finally { ocultarOverlay(); }
-};
-
-window.cobrarCreditoFB = async function(id, metodo) {
-  mostrarOverlay("Cobrando crédito...");
-  try {
-    await updateDoc(doc(db, "ventas", id), { estado: "Pagado", metodoCobroCredito: metodo, fechaCobroCredito: hoy() });
-    cerrarModal(); toast("Crédito pagado"); window.cargarCreditos(); cargarHoy();
-  } catch(e) { toast("Error al cobrar", "error"); }
-  finally { ocultarOverlay(); }
-};
-
-// 4. COTIZACIONES
-window.guardarCotizacionFB = async function() {
-  const cliente = $("cot-cliente").value.trim();
-  const tel = $("cot-tel").value.trim();
-  const vig = parseInt($("cot-vig").value) || 7;
-  const notas = $("cot-notas").value.trim();
-  const t = calcularTotales();
-
-  const cot = {
-    folio: "C-" + Date.now().toString(36).toUpperCase(), fecha: hoy(), cliente, telefono: tel,
-    total: t.total, vigencia: iso(new Date(Date.now() + vig * 86400000)), estado: "Pendiente",
-    items: carrito.map(i => ({ nombre: i.nombre, cantidad: i.cantidad, precio: i.precio, nota: i.nota || "" })), descuento: t.desc, notas
-  };
-
-  mostrarOverlay("Guardando cotización...");
-  try {
-    await addDoc(collection(db, "cotizaciones"), cot);
-    cerrarModal(); toast("Cotización guardada");
-  } catch(e) { toast("Error al guardar", "error"); }
-  finally { ocultarOverlay(); }
-};
-
-window.cargarCotizaciones = async function() {
-  mostrarOverlay("Cargando cotizaciones...");
-  try {
-    const qSnap = await getDocs(collection(db, "cotizaciones"));
-    cotizacionesCache = [];
-    qSnap.forEach(d => cotizacionesCache.push({ id: d.id, ...d.data() }));
-    renderCotizaciones();
-  } catch(e) {}
-  finally { ocultarOverlay(); }
-};
-
-// 5. IMPORTADOR DESDE GOOGLE SHEETS (MIGRACIÓN)
-window.migrarDeGoogleSheets = async function() {
-  const url = prompt("Pega aquí la URL de tu antiguo WebApp Exec de Apps Script para traer tu menú actual:");
+async function migrarDeGoogleSheets() {
+  const url = prompt("Pega tu URL de Google Apps Script Exec:");
   if (!url) return;
-  mostrarOverlay("Importando desde Sheets...");
+  mostrarOverlay("Importando productos...");
   try {
     const r = await fetch(url + "?action=menu");
     const data = await r.json();
     if (Array.isArray(data)) {
       for (let p of data) {
-        await addDoc(collection(db, "productos"), {
-          nombre: p.nombre, categoria: p.categoria || "General", precio: parseFloat(p.precio) || 0, costo: parseFloat(p.costo) || 0, activo: true
-        });
+        await db.collection("productos").add({ nombre: p.nombre, precio: parseFloat(p.precio) || 0 });
       }
-      toast("¡Importación exitosa! Tu menú ahora está en Firebase.");
-      window.cargarProductos();
+      toast("¡Importado correctamente!"); cargarProductos();
     }
-  } catch(e) { toast("Error al importar", "error"); }
-  finally { ocultarOverlay(); }
-};
-
-/* ============================ UI & RENDERING ============================ */
-function poblarCategorias() {
-  const cats = [...new Set(productos.map(p => p.categoria).filter(Boolean))];
-  const lista = ["TODAS", ...cats];
-  $("chips").innerHTML = lista.map(c => `<button class="chip ${c === categoriaActiva ? "activo" : ""}" onclick="setCat('${esc(c)}')">${c === "TODAS" ? "Todo" : esc(c)}</button>`).join("");
+  } catch(e) {
+    toast("Error al conectar con Sheets", "error");
+  } finally {
+    ocultarOverlay();
+  }
 }
-window.setCat = c => { categoriaActiva = c; poblarCategorias(); filtrarProductos(); };
-
-function filtrarProductos() {
-  const txt = $("input-buscar").value.toLowerCase().trim();
-  const list = productos.filter(p => (categoriaActiva === "TODAS" || p.categoria === categoriaActiva) && p.nombre.toLowerCase().includes(txt));
-  renderGridProductos(list);
-}
-window.filtrarProductos = filtrarProductos;
-
-function renderGridProductos(list) {
-  const grid = $("grid-productos");
-  if (!list.length) { grid.innerHTML = '<p class="vacio" style="grid-column:1/-1">No hay productos.</p>'; return; }
-  grid.innerHTML = list.map(p => `
-    <button class="tile" onclick="agregarAlCarrito('${esc(p.id)}')">
-      <span class="nombre">${esc(p.nombre)}</span>
-      <span class="pie"><span class="precio">${fmt(p.precio)}</span><span class="cat">${esc(p.categoria || "")}</span></span>
-    </button>`).join("");
-}
-
-window.agregarAlCarrito = function(id) {
-  const p = productos.find(x => String(x.id) === String(id)); if (!p) return;
-  const it = carrito.find(x => String(x.id) === String(id));
-  if (it) it.cantidad++; else carrito.push({ uid: nuevoUid(), id: p.id, nombre: p.nombre, precio: p.precio, precioBase: p.precio, costo: p.costo || 0, cantidad: 1, nota: "" });
-  actualizarCarrito();
-};
-
-function calcularTotales() {
-  const subtotal = redondear(carrito.reduce((s, i) => s + i.precio * i.cantidad, 0));
-  const valor = parseFloat($("desc-valor").value) || 0;
-  let desc = $("desc-tipo").value === "%" ? subtotal * Math.min(valor, 100) / 100 : valor;
-  desc = redondear(Math.min(Math.max(desc, 0), subtotal));
-  return { subtotal, desc, total: redondear(subtotal - desc) };
-}
-
-function actualizarCarrito() {
-  const t = calcularTotales();
-  guardar("pos_carrito", carrito);
-  $("lista-carrito").innerHTML = !carrito.length ? '<p class="vacio">Pedido vacío</p>' : carrito.map(i => `
-    <div class="item">
-      <div><div class="nom">${esc(i.nombre)}</div></div>
-      <div class="imp">${fmt(i.precio * i.cantidad)}</div>
-      <div class="ctrl">
-        <button class="btn-cant" onclick="cambiarCant('${i.uid}', -1)">−</button>
-        <span class="q">${i.cantidad}</span>
-        <button class="btn-cant" onclick="cambiarCant('${i.uid}', 1)">+</button>
-        <span style="font-size:12px">${fmt(i.precio)}</span>
-        <button class="link-btn peligro" onclick="quitarItem('${i.uid}')">Quitar</button>
-      </div>
-    </div>`).join("");
-  $("subtotal").textContent = fmt(t.subtotal);
-  $("gran-total").textContent = fmt(t.total);
-}
-window.cambiarCant = (uid, d) => { const it = carrito.find(x => x.uid === uid); if(it){ it.cantidad += d; if(it.cantidad <= 0) carrito = carrito.filter(x => x.uid !== uid); actualizarCarrito(); } };
-window.quitarItem = uid => { carrito = carrito.filter(x => x.uid !== uid); actualizarCarrito(); };
-window.vaciarCarrito = () => { carrito = []; actualizarCarrito(); };
-
-window.iniciarCobro = function(metodo) {
-  if (!carrito.length) return toast("El pedido está vacío", "aviso");
-  const t = calcularTotales(); pagoActual = { metodo, total: t.total };
-  abrirModal(`
-    <h3>Cobrar ${metodo}</h3>
-    <div class="total-modal">${fmt(t.total)}</div>
-    ${metodo === "Efectivo" ? `<input type="number" id="pago-recibido" placeholder="Efectivo recibido">` : ""}
-    <label class="chk"><input type="checkbox" id="pago-imprimir"> Imprimir ticket</label>
-    <div class="acciones-modal"><button onclick="cerrarModal()">Cancelar</button><button class="ok" onclick="window.confirmarCobro()">Confirmar</button></div>`);
-};
-
-function renderTickets() {
-  $("contenedor-tickets").innerHTML = ticketsCache.map(t => `
-    <div class="fila-t2 ${t.estado === "Anulado" ? "anulado" : ""}">
-      <span class="hora">${esc(t.hora)}</span>
-      <span>${esc(t.folio)}<span class="sub">${esc(t.metodo)} ${t.cliente ? "- " + esc(t.cliente) : ""}</span></span>
-      <span class="monto">${fmt(t.total)}</span>
-      <button class="btn" onclick="modalTicket('${t.id}')">Ver</button>
-    </div>`).join("");
-}
-
-window.modalTicket = function(id) {
-  const t = ticketsCache.find(x => x.id === id); if(!t) return;
-  abrirModal(`
-    <h3>Ticket ${t.folio}</h3>
-    <p>${t.fecha} ${t.hora} - ${t.metodo}</p>
-    ${t.items.map(i => `<div class="fila"><span>${i.cantidad}x ${i.nombre}</span><span>${fmt(i.precio * i.cantidad)}</span></div>`).join("")}
-    <div class="fila fuerte"><span>Total</span><span>${fmt(t.total)}</span></div>
-    <div class="acciones-modal">
-      ${t.estado !== "Anulado" ? `<button class="peligro" onclick="window.anularTicketFB('${t.id}')">Anular</button>` : ""}
-      <button class="peligro" onclick="window.eliminarTicketFB('${t.id}')">Eliminar</button>
-      <button onclick="cerrarModal()">Cerrar</button>
-    </div>`);
-};
-
-function renderClientes() {
-  $("contenedor-clientes").innerHTML = `<div class="lista-cards">${clientesCache.map(c => `
-    <div class="fila-item">
-      <span><strong>${esc(c.nombre)}</strong><span class="sub">${esc(c.telefono || "Sin tel")}</span></span>
-      <span class="monto">${fmt(c.totalComprado || 0)}<button class="btn" style="margin-left:8px" onclick="editarClienteModal('${c.id}')">Editar</button></span>
-    </div>`).join("")}</div>`;
-}
-
-window.editarClienteModal = function(id = "") {
-  const c = clientesCache.find(x => x.id === id);
-  abrirModal(`
-    <h3>${c ? "Editar Cliente" : "Nuevo Cliente"}</h3>
-    <input type="text" id="cli-nombre" placeholder="Nombre" value="${c ? esc(c.nombre) : ""}">
-    <input type="tel" id="cli-tel" placeholder="Teléfono" value="${c ? esc(c.telefono || "") : ""}">
-    <input type="email" id="cli-email" placeholder="Correo" value="${c ? esc(c.email || "") : ""}">
-    <input type="text" id="cli-notas" placeholder="Notas" value="${c ? esc(c.notas || "") : ""}">
-    <div class="acciones-modal"><button onclick="cerrarModal()">Cancelar</button><button class="ok" onclick="window.guardarClienteFB('${id}')">Guardar</button></div>`);
-};
 
 function renderProductosAdmin() {
-  $("contenedor-productos").innerHTML = `<div class="lista-cards">${productosAdmin.map(p => `
+  $("contenedor-productos").innerHTML = `<div class="lista-cards">${productos.map(p => `
     <div class="fila-item">
-      <span><strong>${esc(p.nombre)}</strong><span class="sub">${esc(p.categoria)}</span></span>
-      <span class="monto">${fmt(p.precio)}<button class="btn" style="margin-left:8px" onclick="editarProductoModal('${p.id}')">Editar</button></span>
+      <span><strong>${p.nombre}</strong></span>
+      <span class="monto">${fmt(p.precio)}</span>
     </div>`).join("")}</div>`;
 }
 
-window.editarProductoModal = function(id = "") {
-  const p = productosAdmin.find(x => x.id === id);
-  abrirModal(`
-    <h3>${p ? "Editar Producto" : "Nuevo Producto"}</h3>
-    <input type="text" id="prod-nombre" placeholder="Nombre" value="${p ? esc(p.nombre) : ""}">
-    <input type="text" id="prod-cat" placeholder="Categoría" value="${p ? esc(p.categoria) : ""}">
-    <input type="number" id="prod-precio" placeholder="Precio" value="${p ? p.precio : ""}">
-    <input type="number" id="prod-costo" placeholder="Costo" value="${p ? p.costo : ""}">
-    <label class="chk"><input type="checkbox" id="prod-activo" ${!p || p.activo ? "checked" : ""}> Visible</label>
-    <div class="acciones-modal">
-      <button onclick="cerrarModal()">Cancelar</button>
-      <button class="ok" onclick="window.guardarProducto('${id}')">Guardar</button>
-      ${p ? `<button class="peligro" onclick="window.eliminarProductoFB('${id}')">Borrar</button>` : ""}
-    </div>`);
-};
-
-function renderCreditos() {
-  $("contenedor-creditos").innerHTML = creditosCache.map(c => `
-    <div class="cliente-card">
-      <div class="cab"><span>${esc(c.cliente)}</span><span>${fmt(c.total)}</span></div>
-      <p class="nota-pequena">${c.fecha} - Folio ${c.folio}</p>
-      <button class="btn relleno" onclick="modalCobrarCredito('${c.id}', ${c.total})">Cobrar crédito</button>
-    </div>`).join("");
-}
-
-window.modalCobrarCredito = function(id, total) {
-  abrirModal(`
-    <h3>Cobrar crédito</h3>
-    <div class="total-modal">${fmt(total)}</div>
-    <div class="acciones-modal">
-      <button class="ok" onclick="window.cobrarCreditoFB('${id}', 'Efectivo')">Efectivo</button>
-      <button class="ok" onclick="window.cobrarCreditoFB('${id}', 'Tarjeta')">Tarjeta</button>
-    </div>`);
-};
-
-function renderCotizaciones() {
-  $("contenedor-cotizaciones").innerHTML = `<div class="lista-cards">${cotizacionesCache.map(q => `
-    <div class="fila-item">
-      <span><strong>${esc(q.cliente || "Cliente")}</strong><span class="sub">${q.folio} - Vigente:${q.vigencia}</span></span>
-      <span class="monto">${fmt(q.total)}</span>
-    </div>`).join("")}</div>`;
-}
-
-window.abrirCotizar = function() {
-  abrirModal(`
-    <h3>Guardar Cotización</h3>
-    <input type="text" id="cot-cliente" placeholder="Nombre cliente">
-    <input type="tel" id="cot-tel" placeholder="Teléfono">
-    <input type="number" id="cot-vig" placeholder="Vigencia en días" value="7">
-    <input type="text" id="cot-notas" placeholder="Notas">
-    <div class="acciones-modal"><button onclick="cerrarModal()">Cancelar</button><button class="ok" onclick="window.guardarCotizacionFB()">Guardar</button></div>`);
-};
-
-async function cargarHoy() {
-  try {
-    const q = query(collection(db, "ventas"), where("fecha", "==", hoy()));
-    const qSnap = await getDocs(q);
-    let total = 0, count = 0;
-    qSnap.forEach(d => {
-      const v = d.data();
-      if(v.estado !== "Anulado") { total += v.total; count++; }
-    });
-    $("hoy-ventas").textContent = fmt0(total);
-    $("hoy-tickets").textContent = count + " tickets";
-  } catch(e) {}
-}
-
-window.irA = function(vista) {
+function irA(vista) {
   document.querySelectorAll(".vista").forEach(v => v.classList.toggle("activa", v.id === "v-" + vista));
-  if (vista === "tickets") window.cargarTickets();
-  if (vista === "creditos") window.cargarCreditos();
-  if (vista === "clientes") window.cargarClientes();
-  if (vista === "productos") window.cargarProductos();
-  if (vista === "cotizaciones") window.cargarCotizaciones();
-};
+  if (vista === "tickets") cargarTickets();
+  if (vista === "productos") renderProductosAdmin();
+}
 
-/* ============================ INICIALIZACIÓN ============================ */
-window.cargarProductos().then(() => {
-  window.cargarClientes();
-  cargarHoy();
-});
+/* ============================ INICIO ============================ */
+// Forzar ocultamiento del overlay a los 2 segundos por seguridad
+setTimeout(ocultarOverlay, 2000);
+cargarProductos();
+cargarHoy();
 </script>
 </body>
 </html>
