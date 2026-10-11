@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>POS Pro - Café Sierra Escondida (Firebase Fix)</title>
+<title>POS Pro - Café Sierra Escondida (Firebase Full Import)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -51,8 +51,6 @@ button { cursor: pointer; }
 .meta-btn { border: 1px solid var(--line); background: var(--surface); border-radius: var(--r-m); padding: 8px 14px; text-align: left; min-width: 190px; }
 .meta-btn .fila-meta { display: flex; justify-content: space-between; gap: 10px; font-size: 12px; color: var(--muted); font-weight: 600; }
 .meta-btn strong { font-size: 15px; color: var(--ink); }
-.barra { height: 5px; background: var(--salvia); border-radius: 3px; margin-top: 6px; overflow: hidden; }
-.barra > i { display: block; height: 100%; background: var(--pino); border-radius: 3px; width: 0; transition: width .5s; }
 .chip-sync { display: flex; align-items: center; gap: 7px; border: 1px solid var(--line); background: var(--surface); border-radius: 20px; padding: 8px 12px; font-size: 12px; font-weight: 600; color: var(--pino); }
 .chip-sync i { width: 8px; height: 8px; border-radius: 50%; background: var(--pino); }
 
@@ -66,102 +64,58 @@ button { cursor: pointer; }
 .busqueda { position: relative; }
 .busqueda .ico { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); }
 .busqueda input { width: 100%; padding: 14px 16px 14px 44px; border: 1px solid var(--line); border-radius: var(--r-m); background: var(--surface); font-size: 15px; }
-.busqueda kbd { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font: 600 11px var(--fuente); color: var(--muted); border: 1px solid var(--line); border-radius: 6px; padding: 2px 7px; }
 .chips { display: flex; gap: 8px; overflow-x: auto; padding: 12px 0; flex-shrink: 0; scrollbar-width: none; }
 .chip { flex-shrink: 0; padding: 8px 16px; border-radius: 20px; border: 1px solid var(--line); background: var(--surface); font-size: 13px; font-weight: 600; color: var(--muted); }
-.chip:hover { color: var(--ink); }
 .chip.activo { background: var(--ink); color: var(--bg); border-color: var(--ink); }
 .grid-productos { flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(158px, 1fr)); grid-auto-rows: 104px; gap: 10px; align-content: start; padding: 2px 4px 4px 2px; }
-.tile { text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-m); padding: 14px; display: flex; flex-direction: column; justify-content: space-between; transition: border-color .12s, background .12s; }
-.tile:hover { border-color: var(--pino); }
-.tile:active { background: var(--salvia); }
+.tile { text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-m); padding: 14px; display: flex; flex-direction: column; justify-content: space-between; }
 .tile .nombre { font-weight: 700; font-size: 14px; line-height: 1.25; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
 .tile .pie { display: flex; justify-content: space-between; align-items: baseline; }
 .tile .precio { font-weight: 800; font-size: 16px; color: var(--pino); }
-.tile .cat { font-size: 11px; color: var(--muted); }
 
 .comanda { position: relative; background: var(--surface); border-radius: var(--r-l) var(--r-l) 0 0; margin: 0 0 22px; display: flex; flex-direction: column; min-height: 0; padding: 18px 18px 6px; }
-.comanda::after { content: ""; position: absolute; left: 0; right: 0; bottom: -10px; height: 10px;
-  background: linear-gradient(135deg, var(--surface) 33.33%, transparent 33.33%) 0 0 / 14px 10px, linear-gradient(225deg, var(--surface) 33.33%, transparent 33.33%) 0 0 / 14px 10px; }
 .comanda-cab { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 12px; }
 .comanda-cab h2 { margin: 0; font-size: 18px; font-weight: 800; }
-.seg { display: inline-flex; background: var(--bg); border-radius: 12px; padding: 3px; }
-.seg button { border: none; background: none; padding: 6px 12px; border-radius: 9px; font-size: 12px; font-weight: 700; color: var(--muted); }
-.seg button.activo { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.12); }
 .lista-carrito { flex: 1; overflow-y: auto; min-height: 80px; border-top: 1px dashed var(--line); border-bottom: 1px dashed var(--line); }
 .item { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; padding: 11px 0; border-bottom: 1px solid var(--line); }
-.item:last-child { border-bottom: none; }
 .item .nom { font-weight: 700; font-size: 14px; }
 .item .imp { font-weight: 700; font-size: 14px; text-align: right; }
 .item .ctrl { display: flex; align-items: center; gap: 6px; grid-column: 1 / -1; flex-wrap: wrap; }
 .btn-cant { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); font-size: 17px; line-height: 1; display: grid; place-items: center; }
-.btn-cant:hover { background: var(--salvia); }
-.item .q { min-width: 22px; text-align: center; font-weight: 800; }
-.link-btn { border: none; background: none; color: var(--muted); font-size: 12px; font-weight: 600; padding: 4px 8px; border-radius: 8px; margin-left: auto; }
-.link-btn:hover { background: var(--bg); color: var(--ink); }
-.link-btn.peligro:hover { color: var(--rojo); background: var(--rojo-bg); }
 .vacio { text-align: center; color: var(--muted); font-size: 13px; padding: 26px 8px; line-height: 1.5; }
 .comanda-pie { padding: 12px 0 14px; }
-.fila-desc { display: flex; gap: 6px; align-items: center; margin-bottom: 8px; font-size: 12px; font-weight: 600; color: var(--muted); }
-.fila-desc input { width: 72px; padding: 7px 8px; border: 1px solid var(--line); border-radius: var(--r-s); background: var(--bg); }
-.fila-desc select { padding: 7px 6px; border: 1px solid var(--line); border-radius: var(--r-s); background: var(--bg); }
 .fila-t { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); padding: 2px 0; }
 .total { display: flex; justify-content: space-between; align-items: baseline; font-size: 30px; font-weight: 800; letter-spacing: -.02em; margin: 6px 0 12px; }
 .pagos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .btn-pago { padding: 13px 6px; border-radius: var(--r-m); border: 1px solid var(--line); background: var(--surface); font-weight: 700; font-size: 13px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-.btn-pago:hover:not(:disabled) { border-color: var(--pino); }
-.btn-pago:disabled { opacity: .4; cursor: not-allowed; }
 .btn-principal { grid-column: 1 / -1; background: var(--pino); color: var(--pino-ink); border-color: var(--pino); flex-direction: row; justify-content: center; font-size: 16px; padding: 16px; gap: 8px; }
-#fab-pedido { display: none; }
 
 .barra-filtros { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-.barra-filtros input[type=date] { padding: 9px 10px; border: 1px solid var(--line); border-radius: var(--r-s); background: var(--surface); }
 .btn { padding: 10px 16px; border-radius: var(--r-s); border: 1px solid var(--line); background: var(--surface); font-weight: 700; font-size: 13px; }
-.btn:hover { border-color: var(--pino); }
 .btn.relleno { background: var(--pino); color: var(--pino-ink); border-color: var(--pino); }
-.btn.peligro { background: var(--rojo); color: #fff; border-color: var(--rojo); }
 
 .lista-t { display: flex; flex-direction: column; background: var(--surface); border-radius: var(--r-l); overflow: hidden; }
-.fila-t2 { display: grid; grid-template-columns: 64px 1fr auto auto; gap: 12px; align-items: center; padding: 13px 18px; border-bottom: 1px solid var(--line); text-align: left; background: none; border-left: none; border-right: none; border-top: none; width: 100%; font-size: 14px; }
+.fila-t2 { display: grid; grid-template-columns: 64px 1fr auto; gap: 12px; align-items: center; padding: 13px 18px; border-bottom: 1px solid var(--line); text-align: left; font-size: 14px; }
 .fila-t2 .hora { color: var(--muted); font-weight: 600; }
-.fila-t2 .sub { display: block; font-size: 12px; color: var(--muted); }
 .fila-t2 .monto { font-weight: 800; }
 
 #modal { display: none; position: fixed; inset: 0; background: rgba(20,17,15,.55); justify-content: center; align-items: center; z-index: 2000; padding: 14px; backdrop-filter: blur(2px); }
 .modal-contenido { background: var(--surface); padding: 22px; border-radius: var(--r-l); width: 400px; max-width: 100%; max-height: 92vh; overflow-y: auto; }
 .modal-contenido h3 { margin: 0 0 6px; font-size: 18px; font-weight: 800; }
-.lbl { display: block; font-size: 12px; font-weight: 700; color: var(--muted); margin: 14px 0 5px; }
-.modal-contenido input[type=number], .modal-contenido input[type=text], .modal-contenido input[type=tel], .modal-contenido input[type=email] { width: 100%; padding: 13px; font-size: 18px; border: 1px solid var(--line); border-radius: var(--r-m); background: var(--bg); }
+.modal-contenido input { width: 100%; padding: 13px; font-size: 18px; border: 1px solid var(--line); border-radius: var(--r-m); background: var(--bg); margin-bottom: 8px; }
 .total-modal { font-size: 40px; font-weight: 800; text-align: center; letter-spacing: -.02em; margin: 6px 0; }
 .acciones-modal { display: flex; gap: 8px; margin-top: 18px; flex-wrap: wrap; }
 .acciones-modal button { flex: 1; padding: 13px; border-radius: var(--r-m); border: 1px solid var(--line); background: var(--surface); font-weight: 700; font-size: 14px; }
 .acciones-modal .ok { background: var(--pino); color: var(--pino-ink); border-color: var(--pino); }
-.acciones-modal .peligro { background: var(--rojo); color: #fff; border-color: var(--rojo); }
 
 #overlay-carga { display: flex; position: fixed; inset: 0; background: var(--bg); justify-content: center; align-items: center; flex-direction: column; gap: 14px; font-size: 16px; font-weight: 700; z-index: 3000; color: var(--muted); }
-#overlay-carga .marca { margin: 0; }
-#toast { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 12px 20px; border-radius: 14px; font-size: 14px; font-weight: 600; z-index: 4000; display: none; max-width: 90%; }
-#toast.error { background: var(--rojo); color: #fff; } #toast.aviso { background: var(--ambar); color: #fff; }
+#toast { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 12px 20px; border-radius: 14px; font-size: 14px; font-weight: 600; z-index: 4000; display: none; }
+#toast.error { background: var(--rojo); color: #fff; }
 
 .lista-cards { display: flex; flex-direction: column; background: var(--surface); border-radius: var(--r-l); overflow: hidden; }
-.fila-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 14px; align-items: center; padding: 13px 18px; border: none; border-bottom: 1px solid var(--line); background: none; width: 100%; text-align: left; font-size: 14px; }
+.fila-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 14px; align-items: center; padding: 13px 18px; border-bottom: 1px solid var(--line); text-align: left; font-size: 14px; }
 .fila-item .sub { display: block; font-size: 12px; color: var(--muted); font-weight: 500; }
 .fila-item .monto { font-weight: 800; text-align: right; }
-.btn-ancho { grid-column: 1 / -1; flex-direction: row; justify-content: center; gap: 8px; }
-
-@media (max-width: 860px) {
-  body { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) auto; }
-  .rail { order: 2; flex-direction: row; justify-content: space-around; padding: 4px 4px calc(4px + env(safe-area-inset-bottom)); border-right: none; border-top: 1px solid var(--line); }
-  .marca, .rail-fin { display: none !important; }
-  .topbar { flex-wrap: nowrap; padding: 10px 14px 4px; gap: 10px; }
-  #v-vender.activa { display: flex; }
-  .grid-productos { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 92px; }
-  .comanda { position: fixed; left: 0; right: 0; bottom: 0; top: 8vh; margin: 0; z-index: 1500; transform: translateY(105%); border-radius: var(--r-l) var(--r-l) 0 0; }
-  .comanda.abierta { transform: none; }
-  #fab-pedido { display: flex; position: fixed; left: 14px; right: 14px; bottom: calc(68px + env(safe-area-inset-bottom)); z-index: 1400; background: var(--pino); color: var(--pino-ink); border: none; border-radius: var(--r-m); padding: 15px 18px; justify-content: space-between; font-weight: 800; }
-  #modal { align-items: flex-end; padding: 0; }
-  .modal-contenido { width: 100%; border-radius: var(--r-l) var(--r-l) 0 0; }
-}
 </style>
 </head>
 <body>
@@ -170,13 +124,10 @@ button { cursor: pointer; }
   <symbol id="i-cup" viewBox="0 0 24 24"><path d="M5 9h11v5a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5V9z"/><path d="M16 10h1.5a2.5 2.5 0 0 1 0 5H16"/><path d="M8 3v2M12 3v2"/></symbol>
   <symbol id="i-receipt" viewBox="0 0 24 24"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3z"/><path d="M9 8h6M9 12h6"/></symbol>
   <symbol id="i-wallet" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18"/><circle cx="16.5" cy="14.5" r="1"/></symbol>
-  <symbol id="i-corte" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 12h2M12 12h2M8 16h2M12 16h2"/></symbol>
-  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></symbol>
   <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></symbol>
   <symbol id="i-cash" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/></symbol>
   <symbol id="i-card" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h3"/></symbol>
   <symbol id="i-phone" viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M11 18h2"/></symbol>
-  <symbol id="i-book" viewBox="0 0 24 24"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3V4z"/><path d="M8 20a3 3 0 0 1 0-3h11"/></symbol>
   <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
   <symbol id="i-box" viewBox="0 0 24 24"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/><path d="M3 8l9 5 9-5M12 13v8"/></symbol>
   <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M17.5 19A4.5 4.5 0 0 0 18 10a6 6 0 0 0-11.8-1.5A5.5 5.5 0 0 0 5 19h12.5z"/></symbol>
@@ -195,13 +146,13 @@ button { cursor: pointer; }
   <button class="nav-btn" onclick="irA('clientes')"><svg class="ico"><use href="#i-user"/></svg>Clientes</button>
   <button class="nav-btn" onclick="irA('productos')"><svg class="ico"><use href="#i-box"/></svg>Productos</button>
   <div class="rail-fin">
-    <button class="icon-btn" onclick="migrarDeGoogleSheets()" title="Importar desde Google Sheets"><svg class="ico s"><use href="#i-cloud"/></svg></button>
+    <button class="icon-btn" onclick="migrarTodoDeSheets()" title="Importar TODO desde Google Sheets"><svg class="ico s"><use href="#i-cloud"/></svg></button>
   </div>
 </nav>
 
 <main class="contenido">
   <header class="topbar">
-    <div><h1>Vender</h1><div class="sub">Café Sierra Escondida</div></div>
+    <div><h1 id="titulo-vista">Vender</h1><div class="sub">Café Sierra Escondida</div></div>
     <div class="hoy">
       <button class="meta-btn">
         <div class="fila-meta"><span>Vendido hoy</span></div>
@@ -264,12 +215,11 @@ button { cursor: pointer; }
   </section>
 </main>
 
-<!-- FIREBASE COMPAT SDK (SOLUCIÓN CONTRA CONGELAMIENTO) -->
+<!-- FIREBASE COMPAT SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <script>
-// Inicialización de Firebase Compat
 const firebaseConfig = {
   apiKey: "AIzaSyBXRIqA9AD15ZCF-HI0bq-Ie2fCAA2jR-M",
   authDomain: "punto-de-venta-e113c.firebaseapp.com",
@@ -282,7 +232,6 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-/* ============================ HELPERS ============================ */
 const $ = id => document.getElementById(id);
 const fmt = n => "$" + (Number(n) || 0).toFixed(2);
 const iso = d => d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
@@ -297,10 +246,8 @@ function ocultarOverlay() { $("overlay-carga").style.display = "none"; }
 function abrirModal(html) { $("modal-cuerpo").innerHTML = html; $("modal").style.display = "flex"; }
 function cerrarModal() { $("modal").style.display = "none"; }
 
-/* ============================ ESTADO LOCAL ============================ */
 let productos = [], carrito = [], ticketsCache = [], clientesCache = [], pagoActual = null;
 
-/* ============================ LÓGICA PRINCIPAL ============================ */
 async function cargarProductos() {
   try {
     const snap = await db.collection("productos").get();
@@ -317,7 +264,7 @@ async function cargarProductos() {
 
 function renderGridProductos(list) {
   const grid = $("grid-productos");
-  if (!list.length) { grid.innerHTML = '<p class="vacio" style="grid-column:1/-1">No hay productos. Si es tu primera vez, importa tu menú desde Google Sheets con el botón de la nube en el menú lateral.</p>'; return; }
+  if (!list.length) { grid.innerHTML = '<p class="vacio" style="grid-column:1/-1">No hay productos. Usa el botón de la nube para importar tu menú de Sheets.</p>'; return; }
   grid.innerHTML = list.map(p => `
     <button class="tile" onclick="agregarAlCarrito('${p.id}')">
       <span class="nombre">${p.nombre}</span>
@@ -398,33 +345,78 @@ async function cargarHoy() {
 async function cargarTickets() {
   mostrarOverlay("Cargando tickets...");
   try {
-    const snap = await db.collection("ventas").where("fecha", "==", hoy()).get();
+    const snap = await db.collection("ventas").get();
     ticketsCache = [];
     snap.forEach(d => ticketsCache.push({ id: d.id, ...d.data() }));
+    ticketsCache.sort((a,b) => (b.fecha + b.hora).localeCompare(a.fecha + a.hora));
     $("contenedor-tickets").innerHTML = ticketsCache.map(t => `
       <div class="fila-t2">
-        <span class="hora">${t.hora}</span>
-        <span>${t.metodo}</span>
+        <span class="hora">${t.hora || ''}</span>
+        <span>${t.metodo || 'Venta'} <span class="sub">${t.fecha || ''}</span></span>
         <span class="monto">${fmt(t.total)}</span>
-      </div>`).join("") || '<p class="vacio">Sin tickets hoy</p>';
+      </div>`).join("") || '<p class="vacio">Sin tickets</p>';
   } catch(e) {} finally { ocultarOverlay(); }
 }
 
-async function migrarDeGoogleSheets() {
-  const url = prompt("Pega tu URL de Google Apps Script Exec:");
-  if (!url) return;
-  mostrarOverlay("Importando productos...");
+async function cargarClientes() {
+  mostrarOverlay("Cargando clientes...");
   try {
-    const r = await fetch(url + "?action=menu");
-    const data = await r.json();
-    if (Array.isArray(data)) {
-      for (let p of data) {
+    const snap = await db.collection("clientes").get();
+    clientesCache = [];
+    snap.forEach(d => clientesCache.push({ id: d.id, ...d.data() }));
+    renderClientes();
+  } catch(e) {} finally { ocultarOverlay(); }
+}
+
+function renderClientes() {
+  $("contenedor-clientes").innerHTML = `<div class="lista-cards">${clientesCache.map(c => `
+    <div class="fila-item">
+      <span><strong>${c.nombre || 'Cliente'}</strong><span class="sub">${c.telefono || ''}</span></span>
+      <span class="monto">${c.email || ''}</span>
+    </div>`).join("")}</div>`;
+}
+
+// IMPORTADOR COMPLETO (PRODUCTOS, CLIENTES, COTIZACIONES, VENTAS)
+async function migrarTodoDeSheets() {
+  const url = prompt("Pega la URL de tu WebApp Exec de Apps Script:");
+  if (!url) return;
+  mostrarOverlay("Importando todas las pestañas...");
+  try {
+    // 1. Productos
+    const rProd = await fetch(url + "?action=menu");
+    const dataProd = await rProd.json();
+    if (Array.isArray(dataProd)) {
+      for (let p of dataProd) {
         await db.collection("productos").add({ nombre: p.nombre, precio: parseFloat(p.precio) || 0 });
       }
-      toast("¡Importado correctamente!"); cargarProductos();
     }
+    
+    // 2. Clientes
+    try {
+      const rCli = await fetch(url + "?action=clientes");
+      const dataCli = await rCli.json();
+      if (Array.isArray(dataCli)) {
+        for (let c of dataCli) {
+          await db.collection("clientes").add(c);
+        }
+      }
+    } catch(e){}
+
+    // 3. Ventas
+    try {
+      const rVen = await fetch(url + "?action=ventas");
+      const dataVen = await rVen.json();
+      if (Array.isArray(dataVen)) {
+        for (let v of dataVen) {
+          await db.collection("ventas").add(v);
+        }
+      }
+    } catch(e){}
+
+    toast("¡Importación de pestañas completada!");
+    cargarProductos();
   } catch(e) {
-    toast("Error al conectar con Sheets", "error");
+    toast("Error en la importación", "error");
   } finally {
     ocultarOverlay();
   }
@@ -439,13 +431,13 @@ function renderProductosAdmin() {
 }
 
 function irA(vista) {
+  $("titulo-vista").textContent = vista.charAt(0).toUpperCase() + vista.slice(1);
   document.querySelectorAll(".vista").forEach(v => v.classList.toggle("activa", v.id === "v-" + vista));
   if (vista === "tickets") cargarTickets();
+  if (vista === "clientes") cargarClientes();
   if (vista === "productos") renderProductosAdmin();
 }
 
-/* ============================ INICIO ============================ */
-// Forzar ocultamiento del overlay a los 2 segundos por seguridad
 setTimeout(ocultarOverlay, 2000);
 cargarProductos();
 cargarHoy();
