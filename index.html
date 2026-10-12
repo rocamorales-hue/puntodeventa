@@ -628,6 +628,25 @@ const leer = (k, def) => { try { const v = localStorage.getItem(k); return v ? J
 const guardar = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
 const icono = (id, cls = "") => `<svg class="ico ${cls}"><use href="#i-${id}"/></svg>`;
 
+/* ---- Fechas del negocio (zona fija, independiente del dispositivo) ---- */
+const OFFSET_MIN_FRONT = -420;   // Hermosillo UTC-7. Ciudad de México = -360
+function msDesdeTexto(t) {
+  t = String(t || "").trim();
+  let m = t.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:[ T,]+(\d{1,2}):(\d{2})(?::(\d{2}))?)?$/);
+  if (m) { const [d, mo, y, h = 0, mi = 0, se = 0] = m.slice(1).map(Number); return Date.UTC(y, mo - 1, d, h, mi, se) - OFFSET_MIN_FRONT * 60000; }
+  m = t.match(/^(\d{4})-(\d{2})-(\d{2})(?:[ T](\d{1,2}):(\d{2})(?::(\d{2}))?)?$/);
+  if (m) { const [y, mo, d, h = 12, mi = 0, se = 0] = m.slice(1).map(Number); return Date.UTC(y, mo - 1, d, h, mi, se) - OFFSET_MIN_FRONT * 60000; }
+  return NaN;
+}
+const diaNegocio = ms => new Date(ms + OFFSET_MIN_FRONT * 60000).toISOString().slice(0, 10);
+const horaNegocio = ms => new Date(ms + OFFSET_MIN_FRONT * 60000).toISOString().slice(11, 16);
+function fechaVentaImport(v) {
+  let ms = Number(v.ts);
+  if (!(ms > 9e11 && ms < 4.1e12)) ms = msDesdeTexto((v.fecha || "") + (v.hora ? " " + v.hora : ""));
+  if (!Number.isFinite(ms)) return null;
+  return { ts: TS.fromMillis(ms), fecha: diaNegocio(ms), hora: horaNegocio(ms) };
+}
+
 let toastTimer;
 function toast(msg, tipo = "") { const t = $("toast"); t.textContent = msg; t.className = tipo; t.style.display = "block"; clearTimeout(toastTimer); toastTimer = setTimeout(() => t.style.display = "none", 3200); }
 function mostrarOverlay(txt) { $("overlay-texto").textContent = txt; $("overlay-carga").style.display = "flex"; }
@@ -2124,9 +2143,11 @@ async function importarDatos(datos) {
     ops.push([col("cotizaciones").doc(String(q.folio)), { ...limpio({ folio: q.folio, fecha: q.fecha || hoy(), cliente: q.cliente || "", telefono: q.telefono || "", total: Number(q.total) || 0, vigencia: q.vigencia || "", estado: q.estado || "Pendiente", items: q.items || [], descuento: Number(q.descuento) || 0, notas: q.notas || "", venta: q.venta || "" }), ts }]);
   });
   (datos.ventas || []).forEach(v => {
-    if (!v || !v.folio || !v.fecha || !Array.isArray(v.items)) { omitidos++; return; }
-    const base = limpio({ ...v, pendiente: undefined, ts: undefined, cobro: undefined });
-    const ts = TS.fromMillis(Number(v.ts) || new Date(v.fecha + "T12:00:00").getTime());
+    if (!v || !v.folio || !Array.isArray(v.items)) { omitidos++; return; }
+    const f = fechaVentaImport(v);
+    if (!f) { omitidos++; return; }
+    const base = limpio({ ...v, fecha: f.fecha, hora: f.hora, pendiente: undefined, ts: undefined, cobro: undefined });
+    const ts = f.ts;
     const cobro = v.cobro ? { ...limpio(v.cobro), ts: TS.fromMillis(Number(v.cobro.ts) || Number(v.ts) || Date.now()) } : null;
     ops.push([col("ventas").doc(String(v.folio)), { ...base, ts, cobro }]);
   });
