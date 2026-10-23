@@ -4,9 +4,9 @@
   <base target="_top">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Panel de Control</title>
+  <title>Panel de Control | Café y Eventos</title>
   
-  <!-- Bootstrap 5 para un diseño limpio, responsivo y profesional -->
+  <!-- Bootstrap 5 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   
   <style>
@@ -37,7 +37,7 @@
       padding: 24px;
       border-radius: 10px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      margin-top: 30px;
+      margin-top: 20px;
       overflow-x: auto;
     }
     table {
@@ -52,7 +52,7 @@
     }
     #loader {
       display: none;
-      margin: 40px auto;
+      margin: 60px auto;
     }
   </style>
 </head>
@@ -86,7 +86,7 @@
 
   <!-- Contenedor Principal -->
   <div class="container-fluid px-4">
-    <div class="d-flex justify-content-between align-items-center mt-4">
+    <div class="d-flex justify-content-between align-items-center mt-4 mb-2">
       <h2 id="titulo-seccion" class="fw-bold text-dark">Ventas</h2>
     </div>
 
@@ -95,11 +95,11 @@
       <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
         <span class="visually-hidden">Cargando...</span>
       </div>
-      <p class="mt-2 text-muted fw-bold">Obteniendo datos...</p>
+      <p class="mt-2 text-muted fw-bold">Conectando con Google Sheets...</p>
     </div>
 
     <!-- Tabla Dinámica -->
-    <div class="table-wrapper" id="table-container">
+    <div class="table-wrapper" id="table-container" style="display: none;">
       <table class="table table-hover align-middle" id="data-table">
         <thead id="table-head"></thead>
         <tbody id="table-body"></tbody>
@@ -108,50 +108,58 @@
   </div>
 
   <script>
-    // Al cargar la página, mostramos la primera pestaña por defecto
+    // 1. Al cargar la página, mostramos "Ventas" por defecto
     document.addEventListener("DOMContentLoaded", function() {
       cargarDatos('Ventas');
     });
 
-    // Función para manejar los clics del menú
+    // 2. Función para manejar los clics del menú y cambiar de pestaña
     function cargarVista(nombreHoja, elemento) {
-      // Actualizar UI del menú
+      // Quitar clase "active" de todos los links
       document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+      // Añadir "active" al link seleccionado
       elemento.classList.add('active');
+      // Cambiar el título
       document.getElementById('titulo-seccion').innerText = nombreHoja;
       
+      // Llamar a la base de datos
       cargarDatos(nombreHoja);
     }
 
-    // Petición al servidor (Apps Script)
+    // 3. Petición a Apps Script para traer los datos
     function cargarDatos(nombreHoja) {
+      // Limpiar tabla y mostrar spinner
       document.getElementById('table-head').innerHTML = '';
       document.getElementById('table-body').innerHTML = '';
       document.getElementById('table-container').style.display = 'none';
       document.getElementById('loader').style.display = 'block';
 
-      // Llamada asíncrona a la función en Código.gs
+      // Llamada asíncrona a la función obtenerDatosHoja() en tu Código.gs
       google.script.run
         .withSuccessHandler(renderizarTabla)
         .withFailureHandler(mostrarError)
         .obtenerDatosHoja(nombreHoja);
     }
 
-    // Procesar y pintar los datos recibidos
+    // 4. Procesar y pintar los datos recibidos en la tabla
     function renderizarTabla(datos) {
+      // Ocultar spinner y mostrar tabla
       document.getElementById('loader').style.display = 'none';
       document.getElementById('table-container').style.display = 'block';
 
+      // Manejo de errores desde el backend
       if (datos.error) {
-        alert("Error del servidor: " + datos.error);
+        document.getElementById('table-body').innerHTML = `<tr><td class="text-danger text-center py-4">Error: ${datos.error}</td></tr>`;
         return;
       }
-      if (datos.length === 0) {
-        document.getElementById('table-body').innerHTML = '<tr><td colspan="100%" class="text-center text-muted py-4">No hay registros en esta hoja.</td></tr>';
+      
+      // Si la hoja está vacía
+      if (!datos || datos.length === 0) {
+        document.getElementById('table-body').innerHTML = '<tr><td class="text-center text-muted py-4">No hay registros en esta hoja.</td></tr>';
         return;
       }
 
-      // 1. Construir Encabezados Dinámicamente
+      // 4a. Construir Encabezados
       let encabezados = Object.keys(datos[0]);
       let trHead = document.createElement('tr');
       encabezados.forEach(enc => {
@@ -161,24 +169,24 @@
       });
       document.getElementById('table-head').appendChild(trHead);
 
-      // 2. Construir Filas
+      // 4b. Construir Filas con los datos
       let tBody = document.getElementById('table-body');
       datos.forEach(fila => {
         let tr = document.createElement('tr');
         encabezados.forEach(enc => {
           let td = document.createElement('td');
-          // Imprime el valor, si está vacío imprime un guion
-          td.textContent = fila[enc] ? fila[enc] : '-';
+          // Si el campo está vacío, ponemos un guion
+          td.textContent = (fila[enc] !== undefined && fila[enc] !== '') ? fila[enc] : '-';
           tr.appendChild(td);
         });
         tBody.appendChild(tr);
       });
     }
 
-    // Manejo de errores de red o ejecución
+    // 5. Manejo de errores de conexión
     function mostrarError(error) {
       document.getElementById('loader').style.display = 'none';
-      alert("Hubo un error al comunicar con el servidor: " + error.message);
+      alert("Hubo un error de conexión: " + error.message);
     }
   </script>
   
