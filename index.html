@@ -1,195 +1,91 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <base target="_top">
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Panel de Control | Café y Eventos</title>
-  
-  <!-- Bootstrap 5 -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  
-  <style>
-    body {
-      background-color: #f4f6f9;
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    }
-    .navbar {
-      background-color: #1a1e23;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    .navbar-brand {
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      color: #ffffff !important;
-    }
-    .nav-link {
-      color: #a8b2bc !important;
-      cursor: pointer;
-      font-weight: 500;
-      transition: color 0.2s;
-    }
-    .nav-link:hover, .nav-link.active {
-      color: #ffffff !important;
-    }
-    .table-wrapper {
-      background: #ffffff;
-      padding: 24px;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      margin-top: 20px;
-      overflow-x: auto;
-    }
-    table {
-      font-size: 0.9rem;
-      white-space: nowrap;
-    }
-    thead th {
-      background-color: #f8f9fa !important;
-      color: #495057 !important;
-      font-weight: 600;
-      border-bottom: 2px solid #dee2e6 !important;
-    }
-    #loader {
-      display: none;
-      margin: 60px auto;
-    }
-  </style>
-</head>
-<body>
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>POS Café Sierra Escondida</title>
+<style>
+:root{--b:#4b2e1e;--a:#b5651d;--bg:#faf6f1;--l:#e8dccf}
+*{box-sizing:border-box}body{margin:0;font:15px system-ui,sans-serif;background:var(--bg);color:var(--b)}
+header{background:var(--b);color:#fff;padding:8px 12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;position:sticky;top:0;z-index:5}
+header h1{font-size:16px;margin:0}nav{display:flex;gap:4px;overflow:auto}
+nav button{background:none;border:0;color:#e9d9c6;padding:8px 10px;border-radius:8px;font:inherit;cursor:pointer;text-transform:capitalize}nav .on{background:var(--a);color:#fff}
+main{padding:12px;max-width:1200px;margin:auto}.cols{display:grid;gap:12px}@media(min-width:900px){.cols{grid-template-columns:1fr 380px}.fab{display:none}}
+.card{background:#fff;border:1px solid var(--l);border-radius:12px;padding:12px;margin-bottom:12px}
+input,select{font:inherit;padding:8px;border:1px solid var(--l);border-radius:8px;width:100%;background:#fff;margin:3px 0}
+.p{background:var(--a);color:#fff;border:0;border-radius:8px;padding:10px 12px;font:inherit;cursor:pointer}
+.s{background:#fff;border:1px solid var(--l);border-radius:8px;padding:6px 9px;cursor:pointer;font:inherit;color:inherit}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(135px,1fr));gap:8px;margin-top:8px}
+.pr{background:#fff;border:1px solid var(--l);border-radius:10px;padding:8px;text-align:left;cursor:pointer;font:inherit;color:inherit}.pr:active{background:#f3e6d6}
+.pr b{display:block;font-size:13px}.pr span{color:var(--a)}
+.chips{display:flex;gap:6px;overflow:auto;margin-top:8px}.chips .s{white-space:nowrap}.chips .on{background:var(--b);color:#fff}
+table{width:100%;border-collapse:collapse}td,th{padding:7px;border-bottom:1px solid var(--l);text-align:left;vertical-align:top}
+.it{padding:6px 0;border-bottom:1px solid var(--l)}.row{display:flex;gap:6px;align-items:center}.row>*{flex:1}.row .s{flex:0}
+.tot{font-size:24px;font-weight:700}.tag{padding:2px 8px;border-radius:99px;font-size:12px;background:#fde8c8}.ok{background:#d6efdf}
+#toast{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);color:#fff;background:var(--b);padding:10px 16px;border-radius:10px;display:none;z-index:9}
+.fab{position:fixed;right:12px;bottom:12px;background:var(--a);color:#fff;padding:12px 16px;border-radius:99px;text-decoration:none;z-index:4;font-weight:700}
+</style></head><body>
+<header><h1>☕ Café Sierra Escondida</h1><nav id="nav"></nav></header>
+<main id="app">Cargando…</main><a class="fab" href="#cart" id="fab"></a><div id="toast"></div>
+<script>
+const $=s=>document.querySelector(s),money=n=>'$'+(+n||0).toLocaleString('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2}),
+esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])),
+fd=t=>new Date(t).toLocaleString('es-MX',{day:'numeric',month:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'});
+function toast(m,e){const t=$('#toast');t.textContent=m;t.style.background=e?'#b3261e':'';t.style.display='block';setTimeout(()=>t.style.display='none',3200)}
+function api(f,...a){return new Promise((ok,no)=>google.script.run.withSuccessHandler(ok).withFailureHandler(e=>{toast(e.message,1);no(e)})[f](...a))}
+let S={prods:[],clients:[],ventas:[],cots:[]},cart=[],ed=null,cot=null,cat='Todas',CATS=[],view='vender',TK=[];
+const VIEWS=['vender','ventas','cotizaciones','clientes','productos','corte'];
+const tot=()=>cart.reduce((s,i)=>s+i.cant*i.precio,0);
+function tickets(){const m={};S.ventas.forEach(v=>{const t=m[v.folio]=m[v.folio]||{folio:v.folio,fecha:v.fecha,cliente:v.cliente,estado:v.estado,metodo:v.metodo,tipo:v.tipo,nota:v.nota,items:[],total:0};t.items.push(v);t.total+=v.total});return Object.values(m).sort((a,b)=>b.fecha-a.fecha)}
+async function load(){S=await api('getData');go()}
+function go(){$('#nav').innerHTML=VIEWS.map(v=>`<button class="${v==view?'on':''}" onclick="view='${v}';go()">${v}</button>`).join('');$('#app').innerHTML=V[view]();if(view=='vender'){grid();cartR()}}
 
-  <!-- Navegación -->
-  <nav class="navbar navbar-expand-lg navbar-dark">
-    <div class="container-fluid px-4">
-      <span class="navbar-brand">PANEL WEB</span>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <a class="nav-link active" onclick="cargarVista('Ventas', this)">Ventas</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" onclick="cargarVista('Cotizaciones', this)">Cotizaciones</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" onclick="cargarVista('Clientes', this)">Clientes</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" onclick="cargarVista('Productos', this)">Productos</a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
+const V={
+vender(){CATS=['Todas',...new Set(S.prods.map(p=>p.cat))];
+return `<div class=cols><div class=card><input id=q placeholder="🔍 Buscar producto…" oninput="grid()"><div class=chips>${CATS.map((c,i)=>`<button class="s ${c==cat?'on':''}" onclick="cat=CATS[${i}];go()">${esc(c)}</button>`).join('')}</div><div class=g id=grid></div></div>
+<div class=card id=cart><b>Ticket ${ed&&ed.folio?'(editando '+esc(ed.folio)+')':cot?'(de '+esc(cot)+')':''}</b>
+<input id=cli list=cl placeholder="Cliente (escribe o elige)" value="${esc(ed?.cliente||'')}"><datalist id=cl>${S.clients.map(c=>`<option value="${esc(c.nombre)}">`).join('')}</datalist>
+<div class=row><select id=tipo><option>Aquí</option><option>Para llevar</option><option>Domicilio</option></select><input id=nota placeholder="Nota" value="${esc(ed?.nota||'')}"></div>
+<div id=items></div><div class=tot id=tot></div>
+<div class=row><select id=met onchange=chg()><option>Efectivo</option><option>Tarjeta</option><option>Transferencia</option></select><input id=rec type=number placeholder="Recibe $" oninput=chg()></div><div id=chg></div>
+<label><input type=checkbox id=prt style="width:auto"> Imprimir ticket</label>
+<div class=row style="margin-top:8px"><button class=p onclick="guardar('Pagado')">Cobrar</button><button class=s onclick="guardar('Pendiente')">Dejar pendiente</button></div>
+<div class=row style="margin-top:6px"><button class=s onclick=cotizar()>Guardar cotización</button><button class=s onclick="cart=[];ed=null;cot=null;go()">Vaciar</button></div></div></div>`},
+ventas(){TK=tickets();return `<div class=card><div class=row><select id=fe onchange=ventasR()><option>Pendiente</option><option>Pagado</option><option>Todos</option></select><input id=fq placeholder="Buscar cliente o folio" oninput=ventasR()></div><div id=vl></div></div>`},
+cotizaciones(){return `<div class=card>${S.cots.length?`<table>${[...S.cots].reverse().map((c,i)=>`<tr><td><b>${esc(c.folio)}</b><br>${fd(c.fecha)}<br><span class=tag>${esc(c.estado)}</span></td><td>${esc(c.cliente)}<br><b>${money(c.total)}</b></td><td><button class=s onclick="cargaCot(${S.cots.length-1-i})">Cargar</button> <button class=s onclick="waCot(${S.cots.length-1-i})">WhatsApp</button> <button class=s onclick="cancCot(${S.cots.length-1-i})">✕</button></td></tr>`).join('')}</table>`:'Sin cotizaciones'}</div>`},
+clientes(){const d={};tickets().filter(t=>t.estado=='Pendiente').forEach(t=>d[t.cliente]=(d[t.cliente]||0)+t.total);
+return `<div class=card><b>Nuevo cliente</b><div class=row><input id=cn placeholder=Nombre><input id=ct placeholder=Teléfono><input id=ce placeholder=Email></div><button class=p onclick=addCli()>Agregar</button></div>
+<div class=card><input placeholder="Buscar…" oninput="filt(this,'#cli_t')"><table id=cli_t>${S.clients.map(c=>`<tr><td>${esc(c.nombre)}</td><td>${esc(c.tel)}</td><td>${d[c.nombre]?'<span class=tag>Debe '+money(d[c.nombre])+'</span>':''}</td></tr>`).join('')}</table></div>`},
+productos(){return `<div class=card><b>Nuevo producto</b><div class=row><input id=pc placeholder=Categoría list=pcl><input id=pn placeholder=Nombre></div><datalist id=pcl>${[...new Set(S.prods.map(p=>p.cat))].map(c=>`<option value="${esc(c)}">`).join('')}</datalist><div class=row><input id=pp type=number placeholder=Precio><input id=pk type=number placeholder=Costo></div><button class=p onclick=addProd()>Agregar</button></div>
+<div class=card><input placeholder="Buscar…" oninput="filt(this,'#pr_t')"><table id=pr_t>${S.prods.map(p=>`<tr><td>${esc(p.nombre)}<br><small>${esc(p.cat)}</small></td><td>${money(p.precio)}</td><td>${money(p.costo)}</td></tr>`).join('')}</table></div>`},
+corte(){const h=new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10);return `<div class=card><input type=date id=cd value="${h}" onchange=corteR()><div id=cr></div></div>`}};
+function filt(i,t){const q=i.value.toLowerCase();document.querySelectorAll(t+' tr').forEach(r=>r.style.display=r.textContent.toLowerCase().includes(q)?'':'none')}
 
-  <!-- Contenedor Principal -->
-  <div class="container-fluid px-4">
-    <div class="d-flex justify-content-between align-items-center mt-4 mb-2">
-      <h2 id="titulo-seccion" class="fw-bold text-dark">Ventas</h2>
-    </div>
+function grid(){const q=($('#q')?.value||'').toLowerCase();$('#grid').innerHTML=S.prods.map((p,i)=>[p,i]).filter(([p])=>(cat=='Todas'||p.cat==cat)&&p.nombre.toLowerCase().includes(q)).slice(0,120).map(([p,i])=>`<button class=pr onclick="addC(${i})"><b>${esc(p.nombre)}</b><span>${money(p.precio)}</span></button>`).join('')}
+function addC(i){const p=S.prods[i],x=cart.find(c=>c.nombre==p.nombre);x?x.cant++:cart.push({nombre:p.nombre,cant:1,precio:p.precio,costo:p.costo});cartR()}
+function cartR(){$('#items').innerHTML=cart.map((c,i)=>`<div class=it>${esc(c.nombre)}<div class=row><button class=s onclick="q(${i},-1)">−</button><b style="text-align:center">${c.cant}</b><button class=s onclick="q(${i},1)">+</button><input type=number step=any value="${c.precio}" onchange="cart[${i}].precio=+this.value;upd()"></div></div>`).join('')||'<small>Toca un producto para agregarlo</small>';upd()}
+function q(i,d){cart[i].cant+=d;if(cart[i].cant<=0)cart.splice(i,1);cartR()}
+function upd(){$('#tot').textContent=money(tot());$('#fab').textContent='🛒 '+money(tot());chg()}
+function chg(){const r=+$('#rec')?.value;$('#chg').textContent=$('#met')?.value=='Efectivo'&&r?'Cambio: '+money(r-tot()):''}
+async function guardar(estado){if(!cart.length)return toast('Carrito vacío',1);
+const o={folio:ed?.folio,fecha:ed?.fecha,cot,cliente:$('#cli').value.trim().toUpperCase(),tipo:$('#tipo').value,nota:$('#nota').value,estado,metodo:estado=='Pagado'?$('#met').value:'Sin registrar',items:cart};
+const f=await api('saveSale',o);toast('Venta '+f+' guardada');
+if($('#prt').checked)printT({folio:f,fecha:Date.now(),cliente:o.cliente,metodo:o.metodo,items:cart,total:tot()});
+cart=[];ed=null;cot=null;load()}
+async function cotizar(){if(!cart.length)return toast('Carrito vacío',1);const n=$('#cli').value.trim().toUpperCase();if(!n)return toast('Pon el cliente',1);
+const c=S.clients.find(c=>c.nombre==n);const f=await api('saveQuote',{cliente:n,tel:c?.tel||'',total:tot(),items:cart});toast('Cotización '+f);cart=[];load()}
 
-    <!-- Spinner de Carga -->
-    <div id="loader" class="text-center">
-      <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
-        <span class="visually-hidden">Cargando...</span>
-      </div>
-      <p class="mt-2 text-muted fw-bold">Conectando con Google Sheets...</p>
-    </div>
-
-    <!-- Tabla Dinámica -->
-    <div class="table-wrapper" id="table-container" style="display: none;">
-      <table class="table table-hover align-middle" id="data-table">
-        <thead id="table-head"></thead>
-        <tbody id="table-body"></tbody>
-      </table>
-    </div>
-  </div>
-
-  <script>
-    // 1. Al cargar la página, mostramos "Ventas" por defecto
-    document.addEventListener("DOMContentLoaded", function() {
-      cargarDatos('Ventas');
-    });
-
-    // 2. Función para manejar los clics del menú y cambiar de pestaña
-    function cargarVista(nombreHoja, elemento) {
-      // Quitar clase "active" de todos los links
-      document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
-      // Añadir "active" al link seleccionado
-      elemento.classList.add('active');
-      // Cambiar el título
-      document.getElementById('titulo-seccion').innerText = nombreHoja;
-      
-      // Llamar a la base de datos
-      cargarDatos(nombreHoja);
-    }
-
-    // 3. Petición a Apps Script para traer los datos
-    function cargarDatos(nombreHoja) {
-      // Limpiar tabla y mostrar spinner
-      document.getElementById('table-head').innerHTML = '';
-      document.getElementById('table-body').innerHTML = '';
-      document.getElementById('table-container').style.display = 'none';
-      document.getElementById('loader').style.display = 'block';
-
-      // Llamada asíncrona a la función obtenerDatosHoja() en tu Código.gs
-      google.script.run
-        .withSuccessHandler(renderizarTabla)
-        .withFailureHandler(mostrarError)
-        .obtenerDatosHoja(nombreHoja);
-    }
-
-    // 4. Procesar y pintar los datos recibidos en la tabla
-    function renderizarTabla(datos) {
-      // Ocultar spinner y mostrar tabla
-      document.getElementById('loader').style.display = 'none';
-      document.getElementById('table-container').style.display = 'block';
-
-      // Manejo de errores desde el backend
-      if (datos.error) {
-        document.getElementById('table-body').innerHTML = `<tr><td class="text-danger text-center py-4">Error: ${datos.error}</td></tr>`;
-        return;
-      }
-      
-      // Si la hoja está vacía
-      if (!datos || datos.length === 0) {
-        document.getElementById('table-body').innerHTML = '<tr><td class="text-center text-muted py-4">No hay registros en esta hoja.</td></tr>';
-        return;
-      }
-
-      // 4a. Construir Encabezados
-      let encabezados = Object.keys(datos[0]);
-      let trHead = document.createElement('tr');
-      encabezados.forEach(enc => {
-        let th = document.createElement('th');
-        th.textContent = enc;
-        trHead.appendChild(th);
-      });
-      document.getElementById('table-head').appendChild(trHead);
-
-      // 4b. Construir Filas con los datos
-      let tBody = document.getElementById('table-body');
-      datos.forEach(fila => {
-        let tr = document.createElement('tr');
-        encabezados.forEach(enc => {
-          let td = document.createElement('td');
-          // Si el campo está vacío, ponemos un guion
-          td.textContent = (fila[enc] !== undefined && fila[enc] !== '') ? fila[enc] : '-';
-          tr.appendChild(td);
-        });
-        tBody.appendChild(tr);
-      });
-    }
-
-    // 5. Manejo de errores de conexión
-    function mostrarError(error) {
-      document.getElementById('loader').style.display = 'none';
-      alert("Hubo un error de conexión: " + error.message);
-    }
-  </script>
-  
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+function ventasR(){const e=$('#fe').value,q=$('#fq').value.toLowerCase();TK=tickets();
+$('#vl').innerHTML='<table>'+TK.map((t,i)=>[t,i]).filter(([t])=>(e=='Todos'||t.estado==e)&&(t.folio+t.cliente).toLowerCase().includes(q)).slice(0,150).map(([t,i])=>`<tr><td><b>${esc(t.folio)}</b><br><small>${fd(t.fecha)}</small></td><td>${esc(t.cliente)}<br><small>${t.items.map(x=>x.cant+'× '+esc(x.producto)).join(', ')}</small></td><td><b>${money(t.total)}</b><br><span class="tag ${t.estado=='Pagado'?'ok':''}">${esc(t.estado)}</span></td><td>${t.estado!='Pagado'?`<button class=s onclick="pagar(${i})">Cobrar</button> `:''}<button class=s onclick="edit(${i})">✎</button> <button class=s onclick="printT(TK[${i}])">🖨</button> <button class=s onclick="del(${i})">🗑</button></td></tr>`).join('')+'</table>'}
+async function pagar(i){const m=prompt('Método de pago: Efectivo, Tarjeta o Transferencia','Efectivo');if(!m)return;await api('setPaid',TK[i].folio,m);toast('Cobrado');load()}
+async function del(i){if(!confirm('¿Borrar el ticket '+TK[i].folio+'?'))return;await api('deleteSale',TK[i].folio);toast('Borrado');load()}
+function edit(i){const t=TK[i];ed={folio:t.folio,fecha:t.fecha,cliente:t.cliente,nota:t.nota};cart=t.items.map(x=>({nombre:x.producto,cant:x.cant,precio:x.precio,costo:x.costo}));view='vender';go()}
+function cargaCot(i){const c=S.cots[i];cart=c.items.map(x=>({...x}));cot=c.folio;ed={cliente:c.cliente};ed.folio=null;view='vender';go()}
+function waCot(i){const c=S.cots[i];const t=`Cotización ${c.folio} - Café Sierra Escondida\n`+c.items.map(x=>`${x.cant} x ${x.nombre} - ${money(x.cant*x.precio)}`).join('\n')+`\nTotal: ${money(c.total)}\nVigencia: ${new Date(c.vigencia).toLocaleDateString('es-MX')}`;
+window.open('https://wa.me/'+String(c.tel||'').replace(/\D/g,'')+'?text='+encodeURIComponent(t))}
+async function cancCot(i){if(!confirm('¿Cancelar cotización?'))return;await api('setQuote',S.cots[i].folio,'Cancelada');load()}
+async function addCli(){if(!$('#cn').value.trim())return;await api('saveClient',{nombre:$('#cn').value.trim(),tel:$('#ct').value,email:$('#ce').value});toast('Cliente agregado');load()}
+async function addProd(){if(!$('#pn').value.trim())return;await api('saveProduct',{cat:$('#pc').value||'Otros',nombre:$('#pn').value.trim(),precio:+$('#pp').value,costo:+$('#pk').value});toast('Producto agregado');load()}
+function corteR(){const d=$('#cd').value,T=tickets().filter(t=>new Date(t.fecha-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10)==d),P=T.filter(t=>t.estado=='Pagado'),m={};
+P.forEach(t=>m[t.metodo]=(m[t.metodo]||0)+t.total);const tv=P.reduce((s,t)=>s+t.total,0),ut=T.reduce((s,t)=>s+t.items.reduce((a,x)=>a+x.total-x.cant*x.costo,0),0),pend=tickets().filter(t=>t.estado=='Pendiente').reduce((s,t)=>s+t.total,0);
+$('#cr').innerHTML=`<p>Tickets: <b>${T.length}</b> · Cobrado: <b>${money(tv)}</b> · Utilidad bruta del día: <b>${money(ut)}</b></p><table>${Object.keys(m).map(k=>`<tr><td>${esc(k)}</td><td>${money(m[k])}</td></tr>`).join('')}</table><p>Por cobrar (total acumulado): <b>${money(pend)}</b></p>`}
+new MutationObserver(()=>{if(view=='ventas'&&$('#vl')&&!$('#vl').innerHTML)ventasR();if(view=='corte'&&$('#cr')&&!$('#cr').innerHTML)corteR()}).observe(document.body,{childList:true,subtree:true});
+function printT(t){const w=window.open('','','width=320,height=600');w.document.write(`<pre style="font:13px monospace;width:260px">☕ CAFÉ SIERRA ESCONDIDA\nTicket ${t.folio}\n${fd(t.fecha)}\nCliente: ${t.cliente||'-'}\n------------------------\n`+t.items.map(x=>`${x.cant} x ${x.nombre||x.producto}\n     ${money(x.cant*x.precio)}`).join('\n')+`\n------------------------\nTOTAL: ${money(t.total)}\nPago: ${t.metodo||''}\n¡Gracias!</pre>`);w.document.close();w.print()}
+load();
+</script></body></html>
