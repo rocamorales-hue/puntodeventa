@@ -1,102 +1,143 @@
 <!DOCTYPE html><html lang="es"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1"><title>POS Café Sierra Escondida</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#3b2417">
+<title>POS Café Sierra Escondida</title>
 <style>
-:root{--b:#4b2e1e;--a:#b5651d;--bg:#faf6f1;--l:#e8dccf}
-*{box-sizing:border-box}body{margin:0;font:15px system-ui,sans-serif;background:var(--bg);color:var(--b)}
-header{background:var(--b);color:#fff;padding:8px 12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;position:sticky;top:0;z-index:5}
-header h1{font-size:16px;margin:0}nav{display:flex;gap:4px;overflow:auto}
-nav button{background:none;border:0;color:#e9d9c6;padding:8px 10px;border-radius:8px;font:inherit;cursor:pointer;text-transform:capitalize}nav .on{background:var(--a);color:#fff}
-main{padding:12px;max-width:1200px;margin:auto}.cols{display:grid;gap:12px}@media(min-width:900px){.cols{grid-template-columns:1fr 380px}.fab{display:none}}
-.card{background:#fff;border:1px solid var(--l);border-radius:12px;padding:12px;margin-bottom:12px}
-input,select{font:inherit;padding:8px;border:1px solid var(--l);border-radius:8px;width:100%;background:#fff;margin:3px 0}
-.p{background:var(--a);color:#fff;border:0;border-radius:8px;padding:10px 12px;font:inherit;cursor:pointer}
-.s{background:#fff;border:1px solid var(--l);border-radius:8px;padding:6px 9px;cursor:pointer;font:inherit;color:inherit}
-.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(135px,1fr));gap:8px;margin-top:8px}
-.pr{background:#fff;border:1px solid var(--l);border-radius:10px;padding:8px;text-align:left;cursor:pointer;font:inherit;color:inherit}.pr:active{background:#f3e6d6}
-.pr b{display:block;font-size:13px}.pr span{color:var(--a)}
-.chips{display:flex;gap:6px;overflow:auto;margin-top:8px}.chips .s{white-space:nowrap}.chips .on{background:var(--b);color:#fff}
-table{width:100%;border-collapse:collapse}td,th{padding:7px;border-bottom:1px solid var(--l);text-align:left;vertical-align:top}
-.it{padding:6px 0;border-bottom:1px solid var(--l)}.row{display:flex;gap:6px;align-items:center}.row>*{flex:1}.row .s{flex:0}
-.tot{font-size:24px;font-weight:700}.tag{padding:2px 8px;border-radius:99px;font-size:12px;background:#fde8c8}.ok{background:#d6efdf}
-#toast{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);color:#fff;background:var(--b);padding:10px 16px;border-radius:10px;display:none;z-index:9}
-.fab{position:fixed;right:12px;bottom:12px;background:var(--a);color:#fff;padding:12px 16px;border-radius:99px;text-decoration:none;z-index:4;font-weight:700}
+:root{--bg:#f6f1ea;--card:#fff;--tx:#2b1b12;--mu:#8a7565;--ln:#eadfd2;--ac:#b5651d;--ac2:#8f4d12;--ok:#2e8b57;--bad:#c0392b;--sb:#3b2417;--r:14px;--sh:0 1px 3px rgba(60,35,15,.08)}
+@media(prefers-color-scheme:dark){:root{--bg:#171210;--card:#241c17;--tx:#f3e9de;--mu:#a8957f;--ln:#382d25;--sb:#0f0b09;--sh:none}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{height:100%}
+body{margin:0;font:15px/1.35 system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);color:var(--tx)}
+button{font:inherit;color:inherit;cursor:pointer}input,select{font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--ln);border-radius:10px;padding:10px 12px;width:100%;outline:none}
+input:focus,select:focus{border-color:var(--ac)}
+.app{display:grid;grid-template-columns:84px 1fr;height:100%}
+.side{background:var(--sb);display:flex;flex-direction:column;align-items:center;padding:12px 6px;gap:4px;overflow:auto}
+.logo{font-size:26px;margin-bottom:8px}
+.side button{width:68px;background:none;border:0;border-radius:12px;padding:9px 2px;color:#cdb9a6;font-size:11px;display:flex;flex-direction:column;align-items:center;gap:2px}
+.side button i{font-style:normal;font-size:21px}.side button.on{background:var(--ac);color:#fff}
+.main{overflow:auto;padding:16px;min-width:0}
+.pos{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:16px;height:100%}
+.cat{display:flex;flex-direction:column;min-height:0}.gridwrap{overflow:auto;flex:1;padding-bottom:80px}
+.top{display:flex;gap:8px;align-items:center}
+.chips{display:flex;gap:8px;overflow:auto;padding:10px 0;scrollbar-width:none}
+.chip{white-space:nowrap;background:var(--card);border:1px solid var(--ln);border-radius:99px;padding:7px 14px}.chip.on{background:var(--tx);color:var(--bg);border-color:var(--tx)}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.pr{background:var(--card);border:1px solid var(--ln);border-radius:var(--r);padding:12px;text-align:left;display:flex;flex-direction:column;gap:8px;min-height:104px;box-shadow:var(--sh);transition:transform .08s}
+.pr:active{transform:scale(.96)}.pr .av{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;color:#fff;font-weight:700}
+.pr b{font-weight:600;font-size:13px;line-height:1.25;flex:1}.pr span{color:var(--ac);font-weight:700}
+.cartp{background:var(--card);border:1px solid var(--ln);border-radius:var(--r);display:flex;flex-direction:column;min-height:0;box-shadow:var(--sh);overflow:hidden}
+.ch{padding:14px 14px 8px;display:flex;justify-content:space-between;align-items:center}.ch h3{margin:0;font-size:17px}
+.cb{padding:0 14px;display:grid;gap:8px}
+.seg{display:flex;background:var(--bg);border-radius:10px;padding:3px;gap:3px}.seg button{flex:1;border:0;background:none;border-radius:8px;padding:8px 4px;font-size:13px}.seg .on{background:var(--card);box-shadow:var(--sh);font-weight:600}
+.items{flex:1;overflow:auto;padding:8px 14px}.it{display:grid;grid-template-columns:1fr auto;gap:6px 10px;padding:10px 0;border-bottom:1px solid var(--ln)}
+.it .nm{font-size:14px}.it .sub{font-weight:700;text-align:right}
+.qty{display:flex;align-items:center;gap:4px}.qty button{width:32px;height:32px;border-radius:9px;border:1px solid var(--ln);background:var(--bg);font-size:18px;line-height:1}.qty b{min-width:26px;text-align:center}
+.qty input{width:84px;padding:6px 8px;margin-left:auto;text-align:right}
+.foot{padding:12px 14px 14px;border-top:1px solid var(--ln);display:grid;gap:8px}
+.tl{display:flex;justify-content:space-between;align-items:baseline}.tl b{font-size:28px}
+.p,.s{border-radius:12px;padding:13px 14px;border:0;font-weight:600}.p{background:var(--ac);color:#fff}.p:active{background:var(--ac2)}.s{background:var(--bg);border:1px solid var(--ln)}.w{width:100%}.row{display:flex;gap:8px}.row>*{flex:1}
+.sm{padding:6px 10px;font-size:13px;border-radius:9px;font-weight:500}.danger{color:var(--bad)}
+.card{background:var(--card);border:1px solid var(--ln);border-radius:var(--r);padding:14px;box-shadow:var(--sh)}
+.list{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));margin-top:12px}
+.tag{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;background:#f7dcb4;color:#6b3d05}.tag.ok{background:#cdeedb;color:#14532d}.tag.x{background:#f5cfcb;color:#7a1d14}
+.mu{color:var(--mu);font-size:13px}.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:12px 0}.kpi b{display:block;font-size:22px}
+h2{margin:0 0 4px;font-size:20px}
+.bar{display:none}
+#modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:30;padding:12px}
+#modal .box{background:var(--card);border-radius:18px;padding:20px;width:100%;max-width:420px;display:grid;gap:12px;max-height:94vh;overflow:auto}
+.big{font-size:38px;font-weight:800;text-align:center}.quick{display:flex;flex-wrap:wrap;gap:6px}.quick .s{padding:8px 12px;font-weight:500}
+#chg{text-align:center;font-size:18px;font-weight:700;color:var(--ok);min-height:24px}
+#toast{position:fixed;top:14px;left:50%;transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:11px 18px;border-radius:99px;z-index:50;display:none;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+.x{display:none}
+@media(max-width:1000px){.pos{grid-template-columns:minmax(0,1fr)}
+ .cartp{position:fixed;inset:0;border-radius:0;z-index:20;transform:translateY(100%);transition:transform .25s}.cartp.open{transform:none}.x{display:inline-block}
+ .bar{display:flex;position:fixed;left:16px;right:16px;bottom:16px;z-index:10;background:var(--ac);color:#fff;border:0;border-radius:16px;padding:15px 18px;justify-content:space-between;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,.3)}}
+@media(max-width:700px){.app{grid-template-columns:1fr;grid-template-rows:1fr 62px}.side{order:2;flex-direction:row;justify-content:space-around;padding:4px;gap:0}.logo{display:none}.side button{width:auto;flex:1;padding:6px 0;font-size:10px}
+ .main{padding:12px}.bar{bottom:76px}.g{grid-template-columns:repeat(auto-fill,minmax(125px,1fr))}.list{grid-template-columns:1fr}.cartp{padding-bottom:env(safe-area-inset-bottom)}}
 </style></head><body>
-<header><h1>☕ Café Sierra Escondida</h1><nav id="nav"></nav></header>
-<main id="app">Cargando…</main><a class="fab" href="#cart" id="fab"></a><div id="toast"></div>
+<div class="app"><nav class="side" id="nav"></nav><main class="main" id="app"><p class="mu">Cargando…</p></main></div>
+<div id="modal" onclick="if(event.target==this)closeM()"><div class="box" id="mbox"></div></div><div id="toast"></div>
 <script>
+const URL_API='https://script.google.com/macros/s/AKfycbyZsbFkMYhcfYQ8mk9Ca5ani7by_i-cFpplgzcDJyaGlj0SZmC2AdS18WiG1ZdCzZBj/exec';
 const $=s=>document.querySelector(s),money=n=>'$'+(+n||0).toLocaleString('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2}),
 esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])),
-fd=t=>new Date(t).toLocaleString('es-MX',{day:'numeric',month:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'});
-function toast(m,e){const t=$('#toast');t.textContent=m;t.style.background=e?'#b3261e':'';t.style.display='block';setTimeout(()=>t.style.display='none',3200)}
-const URL_API='https://script.google.com/macros/s/AKfycbyZsbFkMYhcfYQ8mk9Ca5ani7by_i-cFpplgzcDJyaGlj0SZmC2AdS18WiG1ZdCzZBj/exec';
+fd=t=>new Date(t).toLocaleString('es-MX',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}),
+dkey=t=>new Date(t-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10);
+function toast(m,e){const t=$('#toast');t.textContent=m;t.style.background=e?'#c0392b':'';t.style.color=e?'#fff':'';t.style.display='block';clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',3200)}
 let KEY='';try{KEY=localStorage.getItem('pos_key')||''}catch(e){}
-async function api(f,...a){
- try{
-  if(window.google&&google.script&&google.script.run)
-   return await new Promise((ok,no)=>google.script.run.withSuccessHandler(ok).withFailureHandler(no)[f](...a));
-  if(!KEY){KEY=prompt('Clave del POS')||'';try{localStorage.setItem('pos_key',KEY)}catch(e){}}
-  const r=await(await fetch(URL_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({fn:f,args:a,key:KEY})})).json();
-  if(!r.ok){if(/Clave/.test(r.error)){KEY='';try{localStorage.removeItem('pos_key')}catch(e){}}throw new Error(r.error)}
-  return r.data;
- }catch(e){toast(e.message||'Error de conexión',1);throw e}
-}
-let S={prods:[],clients:[],ventas:[],cots:[]},cart=[],ed=null,cot=null,cat='Todas',CATS=[],view='vender',TK=[];
-const VIEWS=['vender','ventas','cotizaciones','clientes','productos','corte'];
-const tot=()=>cart.reduce((s,i)=>s+i.cant*i.precio,0);
+async function api(f,...a){try{
+ if(window.google&&google.script&&google.script.run)return await new Promise((ok,no)=>google.script.run.withSuccessHandler(ok).withFailureHandler(no)[f](...a));
+ if(!KEY){KEY=prompt('Clave del POS')||'';try{localStorage.setItem('pos_key',KEY)}catch(e){}}
+ const r=await(await fetch(URL_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({fn:f,args:a,key:KEY})})).json();
+ if(!r.ok){if(/Clave/.test(r.error)){KEY='';try{localStorage.removeItem('pos_key')}catch(e){}}throw new Error(r.error)}return r.data
+}catch(e){toast(e.message||'Error de conexión',1);throw e}}
+
+let S={prods:[],clients:[],ventas:[],cots:[]},cart=[],ed=null,cot=null,cat='Todas',CATS=[],view='vender',TK=[],X={cli:'',nota:''},tipo='Aquí',pm='Efectivo',fe='Pendiente';
+const NAV=[['vender','🧾','Vender'],['ventas','📋','Ventas'],['cotizaciones','📝','Cotiz.'],['clientes','👥','Clientes'],['productos','📦','Productos'],['corte','📊','Corte']];
+const tot=()=>cart.reduce((s,i)=>s+i.cant*i.precio,0),cnt=()=>cart.reduce((s,i)=>s+i.cant,0);
+const hue=s=>{let h=0;for(const c of String(s))h=(h*31+c.charCodeAt(0))%360;return `hsl(${h} 45% 42%)`};
 function tickets(){const m={};S.ventas.forEach(v=>{const t=m[v.folio]=m[v.folio]||{folio:v.folio,fecha:v.fecha,cliente:v.cliente,estado:v.estado,metodo:v.metodo,tipo:v.tipo,nota:v.nota,items:[],total:0};t.items.push(v);t.total+=v.total});return Object.values(m).sort((a,b)=>b.fecha-a.fecha)}
 async function load(){S=await api('getData');go()}
-function go(){$('#nav').innerHTML=VIEWS.map(v=>`<button class="${v==view?'on':''}" onclick="view='${v}';go()">${v}</button>`).join('');$('#app').innerHTML=V[view]();if(view=='vender'){grid();cartR()}}
+function go(){$('#nav').innerHTML='<div class=logo>☕</div>'+NAV.map(n=>`<button class="${n[0]==view?'on':''}" onclick="view='${n[0]}';go()"><i>${n[1]}</i>${n[2]}</button>`).join('');
+ $('#app').innerHTML=V[view]();if(view=='vender'){chipsR();grid();cartR()}if(view=='ventas')ventasR();if(view=='corte')corteR()}
+function modal(h){$('#mbox').innerHTML=h;$('#modal').style.display='flex'}function closeM(){$('#modal').style.display='none'}
 
 const V={
-vender(){CATS=['Todas',...new Set(S.prods.map(p=>p.cat))];
-return `<div class=cols><div class=card><input id=q placeholder="🔍 Buscar producto…" oninput="grid()"><div class=chips>${CATS.map((c,i)=>`<button class="s ${c==cat?'on':''}" onclick="cat=CATS[${i}];go()">${esc(c)}</button>`).join('')}</div><div class=g id=grid></div></div>
-<div class=card id=cart><b>Ticket ${ed&&ed.folio?'(editando '+esc(ed.folio)+')':cot?'(de '+esc(cot)+')':''}</b>
-<input id=cli list=cl placeholder="Cliente (escribe o elige)" value="${esc(ed?.cliente||'')}"><datalist id=cl>${S.clients.map(c=>`<option value="${esc(c.nombre)}">`).join('')}</datalist>
-<div class=row><select id=tipo><option>Aquí</option><option>Para llevar</option><option>Domicilio</option></select><input id=nota placeholder="Nota" value="${esc(ed?.nota||'')}"></div>
-<div id=items></div><div class=tot id=tot></div>
-<div class=row><select id=met onchange=chg()><option>Efectivo</option><option>Tarjeta</option><option>Transferencia</option></select><input id=rec type=number placeholder="Recibe $" oninput=chg()></div><div id=chg></div>
-<label><input type=checkbox id=prt style="width:auto"> Imprimir ticket</label>
-<div class=row style="margin-top:8px"><button class=p onclick="guardar('Pagado')">Cobrar</button><button class=s onclick="guardar('Pendiente')">Dejar pendiente</button></div>
-<div class=row style="margin-top:6px"><button class=s onclick=cotizar()>Guardar cotización</button><button class=s onclick="cart=[];ed=null;cot=null;go()">Vaciar</button></div></div></div>`},
-ventas(){TK=tickets();return `<div class=card><div class=row><select id=fe onchange=ventasR()><option>Pendiente</option><option>Pagado</option><option>Todos</option></select><input id=fq placeholder="Buscar cliente o folio" oninput=ventasR()></div><div id=vl></div></div>`},
-cotizaciones(){return `<div class=card>${S.cots.length?`<table>${[...S.cots].reverse().map((c,i)=>`<tr><td><b>${esc(c.folio)}</b><br>${fd(c.fecha)}<br><span class=tag>${esc(c.estado)}</span></td><td>${esc(c.cliente)}<br><b>${money(c.total)}</b></td><td><button class=s onclick="cargaCot(${S.cots.length-1-i})">Cargar</button> <button class=s onclick="waCot(${S.cots.length-1-i})">WhatsApp</button> <button class=s onclick="cancCot(${S.cots.length-1-i})">✕</button></td></tr>`).join('')}</table>`:'Sin cotizaciones'}</div>`},
+vender(){return `<div class=pos><section class=cat><div class=top><input id=q placeholder="🔍  Buscar producto…" oninput=grid()></div><div class=chips id=chips></div><div class=gridwrap><div class=g id=grid></div></div></section>
+<aside class=cartp id=cartp><div class=ch><h3 id=ctitle></h3><div><button class="s sm" onclick="clearCart()">Vaciar</button> <button class="s sm x" onclick="cartToggle(0)">✕ Cerrar</button></div></div>
+<div class=cb><input id=cli list=cl placeholder="👤 Cliente (escribe o elige)" value="${esc(X.cli)}" oninput="X.cli=this.value"><datalist id=cl>${S.clients.map(c=>`<option value="${esc(c.nombre)}">`).join('')}</datalist>
+<div class=seg>${['Aquí','Para llevar','Domicilio'].map(t=>`<button class="${t==tipo?'on':''}" onclick="tipo='${t}';document.querySelectorAll('#cartp .seg button').forEach(b=>b.classList.toggle('on',b.textContent=='${t}'))">${t}</button>`).join('')}</div>
+<input id=nota placeholder="📝 Nota (opcional)" value="${esc(X.nota)}" oninput="X.nota=this.value"></div>
+<div class=items id=items></div>
+<div class=foot><div class=tl><span class=mu id=ccount></span><b id=tot></b></div><div class=row><button class=p onclick=payOpen()>💵 Cobrar</button><button class=s onclick="guardar('Pendiente')">Dejar pendiente</button></div><button class="s w" onclick=cotizar()>Guardar como cotización</button></div></aside>
+<button class=bar onclick="cartToggle(1)"><span id=bcount></span><span id=btot></span></button></div>`},
+ventas(){return `<h2>Ventas</h2><div class=top><input id=fq placeholder="🔍 Buscar cliente, folio o producto" oninput=ventasR()></div><div class=chips>${['Pendiente','Pagado','Todos'].map(e=>`<button class="chip ${e==fe?'on':''}" onclick="fe='${e}';go()">${e}</button>`).join('')}</div><div class=list id=vl></div>`},
+cotizaciones(){return `<h2>Cotizaciones</h2><div class=list>${[...S.cots].map((c,i)=>[c,i]).reverse().map(([c,i])=>`<div class=card><div class=tl><b>${esc(c.folio)}</b><span class="tag ${c.estado=='Convertida'?'ok':c.estado=='Cancelada'?'x':''}">${esc(c.estado)}</span></div><div>${esc(c.cliente)}</div><div class=mu>${fd(c.fecha)} · vence ${new Date(c.vigencia).toLocaleDateString('es-MX')}</div><div class=mu>${c.items.map(x=>x.cant+'× '+esc(x.nombre)).join(', ')}</div><div class=tl style="margin-top:8px"><b>${money(c.total)}</b><span><button class="s sm" onclick="cargaCot(${i})">Cargar</button> <button class="s sm" onclick="waCot(${i})">WhatsApp</button> <button class="s sm danger" onclick="cancCot(${i})">✕</button></span></div></div>`).join('')||'<p class=mu>Sin cotizaciones</p>'}</div>`},
 clientes(){const d={};tickets().filter(t=>t.estado=='Pendiente').forEach(t=>d[t.cliente]=(d[t.cliente]||0)+t.total);
-return `<div class=card><b>Nuevo cliente</b><div class=row><input id=cn placeholder=Nombre><input id=ct placeholder=Teléfono><input id=ce placeholder=Email></div><button class=p onclick=addCli()>Agregar</button></div>
-<div class=card><input placeholder="Buscar…" oninput="filt(this,'#cli_t')"><table id=cli_t>${S.clients.map(c=>`<tr><td>${esc(c.nombre)}</td><td>${esc(c.tel)}</td><td>${d[c.nombre]?'<span class=tag>Debe '+money(d[c.nombre])+'</span>':''}</td></tr>`).join('')}</table></div>`},
-productos(){return `<div class=card><b>Nuevo producto</b><div class=row><input id=pc placeholder=Categoría list=pcl><input id=pn placeholder=Nombre></div><datalist id=pcl>${[...new Set(S.prods.map(p=>p.cat))].map(c=>`<option value="${esc(c)}">`).join('')}</datalist><div class=row><input id=pp type=number placeholder=Precio><input id=pk type=number placeholder=Costo></div><button class=p onclick=addProd()>Agregar</button></div>
-<div class=card><input placeholder="Buscar…" oninput="filt(this,'#pr_t')"><table id=pr_t>${S.prods.map(p=>`<tr><td>${esc(p.nombre)}<br><small>${esc(p.cat)}</small></td><td>${money(p.precio)}</td><td>${money(p.costo)}</td></tr>`).join('')}</table></div>`},
-corte(){const h=new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10);return `<div class=card><input type=date id=cd value="${h}" onchange=corteR()><div id=cr></div></div>`}};
-function filt(i,t){const q=i.value.toLowerCase();document.querySelectorAll(t+' tr').forEach(r=>r.style.display=r.textContent.toLowerCase().includes(q)?'':'none')}
+return `<h2>Clientes</h2><div class=card><div class=row><input id=cn placeholder=Nombre><input id=ct placeholder=Teléfono inputmode=tel><input id=ce placeholder=Email></div><button class="p" style="margin-top:8px" onclick=addCli()>＋ Agregar cliente</button></div>
+<div class=top style="margin-top:12px"><input placeholder="🔍 Buscar…" oninput="filt(this)"></div><div class=list>${S.clients.map(c=>`<div class="card f"><div class=tl><b>${esc(c.nombre)}</b>${d[c.nombre]?`<span class=tag>Debe ${money(d[c.nombre])}</span>`:''}</div><div class=mu>${esc(c.tel)||'Sin teléfono'}</div></div>`).join('')}</div>`},
+productos(){return `<h2>Productos</h2><div class=card><div class=row><input id=pc placeholder=Categoría list=pcl><input id=pn placeholder=Nombre></div><datalist id=pcl>${[...new Set(S.prods.map(p=>p.cat))].map(c=>`<option value="${esc(c)}">`).join('')}</datalist><div class=row style="margin-top:8px"><input id=pp type=number inputmode=decimal placeholder=Precio><input id=pk type=number inputmode=decimal placeholder=Costo></div><button class=p style="margin-top:8px" onclick=addProd()>＋ Agregar producto</button></div>
+<div class=top style="margin-top:12px"><input placeholder="🔍 Buscar…" oninput="filt(this)"></div><div class=list>${S.prods.map(p=>`<div class="card f"><b>${esc(p.nombre)}</b><div class=mu>${esc(p.cat)}</div><div class=tl><span>Precio <b style="font-size:16px">${money(p.precio)}</b></span><span class=mu>Costo ${money(p.costo)}</span></div></div>`).join('')}</div>`},
+corte(){return `<h2>Corte</h2><input type=date id=cd value="${dkey(Date.now())}" onchange=corteR() style="max-width:200px"><div id=cr></div>`}};
+function filt(i){const q=i.value.toLowerCase();document.querySelectorAll('.f').forEach(r=>r.style.display=r.textContent.toLowerCase().includes(q)?'':'none')}
 
-function grid(){const q=($('#q')?.value||'').toLowerCase();$('#grid').innerHTML=S.prods.map((p,i)=>[p,i]).filter(([p])=>(cat=='Todas'||p.cat==cat)&&p.nombre.toLowerCase().includes(q)).slice(0,120).map(([p,i])=>`<button class=pr onclick="addC(${i})"><b>${esc(p.nombre)}</b><span>${money(p.precio)}</span></button>`).join('')}
+function chipsR(){CATS=['Todas',...new Set(S.prods.map(p=>p.cat))];$('#chips').innerHTML=CATS.map((c,i)=>`<button class="chip ${c==cat?'on':''}" onclick="cat=CATS[${i}];chipsR();grid()">${esc(c)}</button>`).join('')}
+function grid(){const q=($('#q')?.value||'').toLowerCase();$('#grid').innerHTML=S.prods.map((p,i)=>[p,i]).filter(([p])=>(cat=='Todas'||p.cat==cat)&&p.nombre.toLowerCase().includes(q)).slice(0,150).map(([p,i])=>`<button class=pr onclick="addC(${i})"><div class=av style="background:${hue(p.cat)}">${esc(p.nombre[0])}</div><b>${esc(p.nombre)}</b><span>${money(p.precio)}</span></button>`).join('')||'<p class=mu>Sin resultados</p>'}
 function addC(i){const p=S.prods[i],x=cart.find(c=>c.nombre==p.nombre);x?x.cant++:cart.push({nombre:p.nombre,cant:1,precio:p.precio,costo:p.costo});cartR()}
-function cartR(){$('#items').innerHTML=cart.map((c,i)=>`<div class=it>${esc(c.nombre)}<div class=row><button class=s onclick="q(${i},-1)">−</button><b style="text-align:center">${c.cant}</b><button class=s onclick="q(${i},1)">+</button><input type=number step=any value="${c.precio}" onchange="cart[${i}].precio=+this.value;upd()"></div></div>`).join('')||'<small>Toca un producto para agregarlo</small>';upd()}
+function cartR(){$('#ctitle').textContent=ed&&ed.folio?'Editando '+ed.folio:cot?'Desde '+cot:'Ticket actual';
+ $('#items').innerHTML=cart.map((c,i)=>`<div class=it><div class=nm>${esc(c.nombre)}</div><div class=sub id=s${i}>${money(c.cant*c.precio)}</div><div class=qty><button onclick="q(${i},-1)">−</button><b>${c.cant}</b><button onclick="q(${i},1)">+</button></div><div class=qty><input type=number step=any inputmode=decimal value="${c.precio}" onchange="cart[${i}].precio=+this.value;cartR()"></div></div>`).join('')||'<p class=mu style="text-align:center;margin-top:30px">Toca un producto para agregarlo</p>';
+ $('#tot').textContent=money(tot());$('#ccount').textContent=cnt()+' artículos';$('#bcount').textContent='🛒 '+cnt()+' artículos · Ver ticket';$('#btot').textContent=money(tot())}
 function q(i,d){cart[i].cant+=d;if(cart[i].cant<=0)cart.splice(i,1);cartR()}
-function upd(){$('#tot').textContent=money(tot());$('#fab').textContent='🛒 '+money(tot());chg()}
-function chg(){const r=+$('#rec')?.value;$('#chg').textContent=$('#met')?.value=='Efectivo'&&r?'Cambio: '+money(r-tot()):''}
-async function guardar(estado){if(!cart.length)return toast('Carrito vacío',1);
-const o={folio:ed?.folio,fecha:ed?.fecha,cot,cliente:$('#cli').value.trim().toUpperCase(),tipo:$('#tipo').value,nota:$('#nota').value,estado,metodo:estado=='Pagado'?$('#met').value:'Sin registrar',items:cart};
-const f=await api('saveSale',o);toast('Venta '+f+' guardada');
-if($('#prt').checked)printT({folio:f,fecha:Date.now(),cliente:o.cliente,metodo:o.metodo,items:cart,total:tot()});
-cart=[];ed=null;cot=null;load()}
-async function cotizar(){if(!cart.length)return toast('Carrito vacío',1);const n=$('#cli').value.trim().toUpperCase();if(!n)return toast('Pon el cliente',1);
-const c=S.clients.find(c=>c.nombre==n);const f=await api('saveQuote',{cliente:n,tel:c?.tel||'',total:tot(),items:cart});toast('Cotización '+f);cart=[];load()}
+function cartToggle(o){$('#cartp').classList.toggle('open',!!o)}
+function clearCart(){cart=[];ed=null;cot=null;X={cli:'',nota:''};go()}
 
-function ventasR(){const e=$('#fe').value,q=$('#fq').value.toLowerCase();TK=tickets();
-$('#vl').innerHTML='<table>'+TK.map((t,i)=>[t,i]).filter(([t])=>(e=='Todos'||t.estado==e)&&(t.folio+t.cliente).toLowerCase().includes(q)).slice(0,150).map(([t,i])=>`<tr><td><b>${esc(t.folio)}</b><br><small>${fd(t.fecha)}</small></td><td>${esc(t.cliente)}<br><small>${t.items.map(x=>x.cant+'× '+esc(x.producto)).join(', ')}</small></td><td><b>${money(t.total)}</b><br><span class="tag ${t.estado=='Pagado'?'ok':''}">${esc(t.estado)}</span></td><td>${t.estado!='Pagado'?`<button class=s onclick="pagar(${i})">Cobrar</button> `:''}<button class=s onclick="edit(${i})">✎</button> <button class=s onclick="printT(TK[${i}])">🖨</button> <button class=s onclick="del(${i})">🗑</button></td></tr>`).join('')+'</table>'}
-async function pagar(i){const m=prompt('Método de pago: Efectivo, Tarjeta o Transferencia','Efectivo');if(!m)return;await api('setPaid',TK[i].folio,m);toast('Cobrado');load()}
-async function del(i){if(!confirm('¿Borrar el ticket '+TK[i].folio+'?'))return;await api('deleteSale',TK[i].folio);toast('Borrado');load()}
-function edit(i){const t=TK[i];ed={folio:t.folio,fecha:t.fecha,cliente:t.cliente,nota:t.nota};cart=t.items.map(x=>({nombre:x.producto,cant:x.cant,precio:x.precio,costo:x.costo}));view='vender';go()}
-function cargaCot(i){const c=S.cots[i];cart=c.items.map(x=>({...x}));cot=c.folio;ed={cliente:c.cliente};ed.folio=null;view='vender';go()}
-function waCot(i){const c=S.cots[i];const t=`Cotización ${c.folio} - Café Sierra Escondida\n`+c.items.map(x=>`${x.cant} x ${x.nombre} - ${money(x.cant*x.precio)}`).join('\n')+`\nTotal: ${money(c.total)}\nVigencia: ${new Date(c.vigencia).toLocaleDateString('es-MX')}`;
-window.open('https://wa.me/'+String(c.tel||'').replace(/\D/g,'')+'?text='+encodeURIComponent(t))}
-async function cancCot(i){if(!confirm('¿Cancelar cotización?'))return;await api('setQuote',S.cots[i].folio,'Cancelada');load()}
-async function addCli(){if(!$('#cn').value.trim())return;await api('saveClient',{nombre:$('#cn').value.trim(),tel:$('#ct').value,email:$('#ce').value});toast('Cliente agregado');load()}
-async function addProd(){if(!$('#pn').value.trim())return;await api('saveProduct',{cat:$('#pc').value||'Otros',nombre:$('#pn').value.trim(),precio:+$('#pp').value,costo:+$('#pk').value});toast('Producto agregado');load()}
-function corteR(){const d=$('#cd').value,T=tickets().filter(t=>new Date(t.fecha-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10)==d),P=T.filter(t=>t.estado=='Pagado'),m={};
-P.forEach(t=>m[t.metodo]=(m[t.metodo]||0)+t.total);const tv=P.reduce((s,t)=>s+t.total,0),ut=T.reduce((s,t)=>s+t.items.reduce((a,x)=>a+x.total-x.cant*x.costo,0),0),pend=tickets().filter(t=>t.estado=='Pendiente').reduce((s,t)=>s+t.total,0);
-$('#cr').innerHTML=`<p>Tickets: <b>${T.length}</b> · Cobrado: <b>${money(tv)}</b> · Utilidad bruta del día: <b>${money(ut)}</b></p><table>${Object.keys(m).map(k=>`<tr><td>${esc(k)}</td><td>${money(m[k])}</td></tr>`).join('')}</table><p>Por cobrar (total acumulado): <b>${money(pend)}</b></p>`}
-new MutationObserver(()=>{if(view=='ventas'&&$('#vl')&&!$('#vl').innerHTML)ventasR();if(view=='corte'&&$('#cr')&&!$('#cr').innerHTML)corteR()}).observe(document.body,{childList:true,subtree:true});
+function payOpen(){if(!cart.length)return toast('El carrito está vacío',1);pm='Efectivo';
+ modal(`<h2>Cobrar</h2><div class=big>${money(tot())}</div><div class=seg>${['Efectivo','Tarjeta','Transferencia'].map(m=>`<button class="${m==pm?'on':''}" onclick="setPm(this,'${m}')">${m}</button>`).join('')}</div>
+ <div id=cash><input id=rec type=number inputmode=decimal placeholder="Recibe $" oninput=chg()><div class=quick style="margin-top:8px">${[tot(),50,100,200,500,1000].map(v=>`<button class=s onclick="$('#rec').value=${v};chg()">${money(v)}</button>`).join('')}</div><div id=chg></div></div>
+ <label class=mu><input type=checkbox id=prt style="width:auto"> Imprimir ticket</label><button class="p w" onclick="guardar('Pagado')">Confirmar cobro</button><button class="s w" onclick=closeM()>Cancelar</button>`)}
+function setPm(b,m){pm=m;b.parentNode.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x==b));$('#cash').style.display=m=='Efectivo'?'':'none'}
+function chg(){const r=+$('#rec').value;$('#chg').textContent=r?(r>=tot()?'Cambio: '+money(r-tot()):'Faltan '+money(tot()-r)):''}
+async function guardar(estado){if(!cart.length)return toast('El carrito está vacío',1);
+ const o={folio:ed?.folio,fecha:ed?.fecha,cot,cliente:X.cli.trim().toUpperCase(),tipo,nota:X.nota,estado,metodo:estado=='Pagado'?pm:'Sin registrar',items:cart},pr=$('#prt')?.checked;
+ const f=await api('saveSale',o);toast('✓ Venta '+f+' guardada');if(pr)printT({folio:f,fecha:Date.now(),cliente:o.cliente,metodo:o.metodo,items:cart,total:tot()});
+ closeM();cart=[];ed=null;cot=null;X={cli:'',nota:''};load()}
+async function cotizar(){if(!cart.length)return toast('El carrito está vacío',1);const n=X.cli.trim().toUpperCase();if(!n)return toast('Pon el nombre del cliente',1);
+ const c=S.clients.find(c=>c.nombre==n);const f=await api('saveQuote',{cliente:n,tel:c?.tel||'',total:tot(),items:cart});toast('✓ Cotización '+f);cart=[];X={cli:'',nota:''};load()}
+
+function ventasR(){const q=($('#fq')?.value||'').toLowerCase();TK=tickets();
+ $('#vl').innerHTML=TK.map((t,i)=>[t,i]).filter(([t])=>(fe=='Todos'||t.estado==fe)&&(t.folio+t.cliente+t.items.map(x=>x.producto).join(' ')).toLowerCase().includes(q)).slice(0,120).map(([t,i])=>`<div class=card><div class=tl><b>${esc(t.folio)} · ${esc(t.cliente||'Mostrador')}</b><span class="tag ${t.estado=='Pagado'?'ok':''}">${esc(t.estado)}</span></div><div class=mu>${fd(t.fecha)} · ${esc(t.tipo||'')} ${t.metodo&&t.metodo!='Sin registrar'?'· '+esc(t.metodo):''}</div><div class=mu style="margin:4px 0">${t.items.map(x=>x.cant+'× '+esc(x.producto)).join(', ')}</div><div class=tl><b style="font-size:20px">${money(t.total)}</b><span>${t.estado!='Pagado'?`<button class="p sm" onclick="pagar(${i})">Cobrar</button> `:''}<button class="s sm" onclick="edit(${i})">✎</button> <button class="s sm" onclick="printT(TK[${i}])">🖨</button> <button class="s sm danger" onclick="del(${i})">🗑</button></span></div></div>`).join('')||'<p class=mu>Sin resultados</p>'}
+function pagar(i){const t=TK[i];modal(`<h2>Cobrar ${esc(t.folio)}</h2><div class=big>${money(t.total)}</div><div class=seg>${['Efectivo','Tarjeta','Transferencia'].map((m,k)=>`<button class="${k?'':'on'}" onclick="setPm(this,'${m}');this.parentNode.nextElementSibling&&0">${m}</button>`).join('')}</div><button class="p w" onclick="pagarOk(${i})">Confirmar cobro</button><button class="s w" onclick=closeM()>Cancelar</button>`);pm='Efectivo'}
+async function pagarOk(i){await api('setPaid',TK[i].folio,pm);closeM();toast('✓ Cobrado');load()}
+async function del(i){if(!confirm('¿Borrar el ticket '+TK[i].folio+'?'))return;await api('deleteSale',TK[i].folio);toast('Ticket borrado');load()}
+function edit(i){const t=TK[i];ed={folio:t.folio,fecha:t.fecha};X={cli:t.cliente||'',nota:t.nota||''};tipo=t.tipo||'Aquí';cart=t.items.map(x=>({nombre:x.producto,cant:x.cant,precio:x.precio,costo:x.costo}));view='vender';go();cartToggle(1)}
+function cargaCot(i){const c=S.cots[i];cart=c.items.map(x=>({...x}));cot=c.folio;ed=null;X={cli:c.cliente,nota:''};view='vender';go();cartToggle(1)}
+function waCot(i){const c=S.cots[i],t=`Cotización ${c.folio} - Café Sierra Escondida\n`+c.items.map(x=>`${x.cant} x ${x.nombre} - ${money(x.cant*x.precio)}`).join('\n')+`\nTotal: ${money(c.total)}\nVigencia: ${new Date(c.vigencia).toLocaleDateString('es-MX')}`;window.open('https://wa.me/'+String(c.tel||'').replace(/\D/g,'')+'?text='+encodeURIComponent(t))}
+async function cancCot(i){if(!confirm('¿Cancelar la cotización?'))return;await api('setQuote',S.cots[i].folio,'Cancelada');load()}
+async function addCli(){if(!$('#cn').value.trim())return toast('Falta el nombre',1);await api('saveClient',{nombre:$('#cn').value.trim(),tel:$('#ct').value,email:$('#ce').value});toast('✓ Cliente agregado');load()}
+async function addProd(){if(!$('#pn').value.trim())return toast('Falta el nombre',1);await api('saveProduct',{cat:$('#pc').value||'Otros',nombre:$('#pn').value.trim(),precio:+$('#pp').value,costo:+$('#pk').value});toast('✓ Producto agregado');load()}
+function corteR(){const d=$('#cd').value,all=tickets(),T=all.filter(t=>dkey(t.fecha)==d),P=T.filter(t=>t.estado=='Pagado'),m={},pr={};
+ P.forEach(t=>m[t.metodo]=(m[t.metodo]||0)+t.total);T.forEach(t=>t.items.forEach(x=>pr[x.producto]=(pr[x.producto]||0)+x.cant));
+ const tv=P.reduce((s,t)=>s+t.total,0),ut=T.reduce((s,t)=>s+t.items.reduce((a,x)=>a+x.total-x.cant*x.costo,0),0),pend=all.filter(t=>t.estado=='Pendiente').reduce((s,t)=>s+t.total,0),top=Object.entries(pr).sort((a,b)=>b[1]-a[1]).slice(0,6);
+ $('#cr').innerHTML=`<div class=kpis><div class="card kpi"><span class=mu>Cobrado</span><b>${money(tv)}</b></div><div class="card kpi"><span class=mu>Tickets</span><b>${T.length}</b></div><div class="card kpi"><span class=mu>Utilidad bruta</span><b>${money(ut)}</b></div><div class="card kpi"><span class=mu>Por cobrar (total)</span><b>${money(pend)}</b></div></div>
+ <div class=list><div class=card><b>Por método de pago</b>${Object.keys(m).map(k=>`<div class=tl><span>${esc(k)}</span><b style="font-size:16px">${money(m[k])}</b></div>`).join('')||'<p class=mu>Sin cobros</p>'}</div><div class=card><b>Más vendidos</b>${top.map(([k,v])=>`<div class=tl><span>${esc(k)}</span><b style="font-size:16px">${v}</b></div>`).join('')||'<p class=mu>Sin ventas</p>'}</div></div>`}
 function printT(t){const w=window.open('','','width=320,height=600');w.document.write(`<pre style="font:13px monospace;width:260px">☕ CAFÉ SIERRA ESCONDIDA\nTicket ${t.folio}\n${fd(t.fecha)}\nCliente: ${t.cliente||'-'}\n------------------------\n`+t.items.map(x=>`${x.cant} x ${x.nombre||x.producto}\n     ${money(x.cant*x.precio)}`).join('\n')+`\n------------------------\nTOTAL: ${money(t.total)}\nPago: ${t.metodo||''}\n¡Gracias!</pre>`);w.document.close();w.print()}
 load();
 </script></body></html>
