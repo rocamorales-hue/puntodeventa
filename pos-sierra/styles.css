@@ -110,3 +110,7 @@ h2{margin:0;font-size:18px}
 .amt{font-size:20px}
 .danger{color:var(--bad)}
 .form{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+
+/* ===== Indicadores (etapa 3) ===== */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin:16px 0}
+.kpi b{display:block;font-size:24px;margin-top:6px;letter-spacing:-.02em}
