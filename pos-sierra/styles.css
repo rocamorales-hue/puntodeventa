@@ -134,3 +134,8 @@ h2{margin:0;font-size:18px}
 .rfilters{display:grid;gap:10px;margin:12px 0}
 .rfilters .row2{grid-template-columns:1fr 1fr}
 .up{color:var(--ok)}.dn{color:var(--bad)}
+
+/* ===== Existencias en el catálogo (etapa 5) ===== */
+.stk{font-size:11px;font-weight:650;color:var(--mute)}
+.stk.low{color:var(--accent)}
+.stk.out{color:var(--bad)}
