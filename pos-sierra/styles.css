@@ -144,3 +144,10 @@ h2{margin:0;font-size:18px}
 .row2.r3{grid-template-columns:repeat(3,1fr)}
 .r3 .btn{font-size:12px;padding:0 4px}
 .splitrow{display:grid;grid-template-columns:1fr 1fr 44px;gap:8px;align-items:center}
+
+/* ===== Aviso "Procesando…" (etapa 7) ===== */
+#busy{position:fixed;inset:0;z-index:45;background:rgba(10,18,13,.28);display:flex;align-items:center;justify-content:center}
+#busy[hidden]{display:none}
+.busybox{display:flex;gap:12px;align-items:center;background:var(--surface);padding:14px 22px;border-radius:999px;box-shadow:var(--shadow);font-weight:650}
+.spin{width:18px;height:18px;border:3px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
