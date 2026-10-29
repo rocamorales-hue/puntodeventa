@@ -114,3 +114,23 @@ h2{margin:0;font-size:18px}
 /* ===== Indicadores (etapa 3) ===== */
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin:16px 0}
 .kpi b{display:block;font-size:24px;margin-top:6px;letter-spacing:-.02em}
+
+/* ===== Barra de estado y reportes (etapa 4) ===== */
+.stage{display:flex;flex-direction:column;min-width:0;min-height:0;height:100%}
+.stage .main{flex:1;min-height:0}
+.statusbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:5px 18px;font-size:12px;color:var(--mute);border-bottom:1px solid var(--line);background:var(--bg)}
+.statusbar .dot{width:7px;height:7px;border-radius:50%;margin-right:-8px}
+.statusbar .dot.on{background:var(--ok)}.statusbar .dot.off{background:var(--bad)}
+.statusbar button{margin-left:auto;min-width:32px;min-height:28px;border-radius:8px;color:var(--mute)}
+.statusbar button:hover{background:var(--sage)}
+@media(max-width:760px){.statusbar{gap:10px;padding:4px 12px}.statusbar span:nth-of-type(2){display:none}}
+.bar{display:grid;grid-template-columns:minmax(70px,120px) 1fr auto;gap:8px;align-items:center;margin:5px 0;font-size:13px}
+.bar span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar i{display:block;height:10px;border-radius:6px;background:var(--accent);opacity:.85}
+.rtable{width:100%;border-collapse:collapse;font-size:13px}
+.rtable th{text-align:left;color:var(--mute);font-weight:600}
+.rtable td,.rtable th{padding:7px 6px;border-bottom:1px solid var(--line)}
+.rtable .n{text-align:right}
+.rfilters{display:grid;gap:10px;margin:12px 0}
+.rfilters .row2{grid-template-columns:1fr 1fr}
+.up{color:var(--ok)}.dn{color:var(--bad)}
