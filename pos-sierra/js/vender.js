@@ -63,7 +63,7 @@
     const list = S.prods.filter(p => (V.cat === 'Todas' || p.cat === V.cat) && p.nombre.toLowerCase().includes(q))
       .sort((a, b) => (V.favs.includes(b.nombre) - V.favs.includes(a.nombre)) || ((pop[b.nombre] || 0) - (pop[a.nombre] || 0))).slice(0, 120);
     $('#grid').innerHTML = list.map(p => `<div class="prod">
-      <button class="add" data-a="add" data-v="${esc(p.nombre)}"><div class="av" style="background:${hue(p.cat)}">${esc(p.nombre[0] || '?')}</div><b>${esc(p.nombre)}</b><span class="pr">${money(p.precio)}</span></button>
+      <button class="add" data-a="add" data-v="${esc(p.nombre)}"><div class="av" style="background:${hue(p.cat)}">${esc(p.nombre[0] || '?')}</div><b>${esc(p.nombre)}</b><span class="pr">${money(p.precio)}</span>${p.stock == null ? '' : `<span class="stk ${p.stock <= 0 ? 'out' : p.stock <= p.min ? 'low' : ''}">${p.stock <= 0 ? 'Agotado' : p.stock + ' disponibles'}</span>`}</button>
       <button class="fav" data-a="fav" data-v="${esc(p.nombre)}" aria-pressed="${V.favs.includes(p.nombre)}" aria-label="Marcar favorito">${V.favs.includes(p.nombre) ? '★' : '☆'}</button></div>`).join('')
       || '<p class="mu">No hay productos con ese nombre. Prueba con otra búsqueda o categoría.</p>';
   }
@@ -82,9 +82,11 @@
     $('#bcount').textContent = '🛒 ' + count() + ' artículo(s) · Ver ticket'; $('#btot').textContent = money(total());
   }
 
+  function warn(n) { const p = S.prods.find(x => x.nombre === n), c = V.cart.find(x => x.nombre === n); if (p && p.stock != null && c && c.cant > p.stock) toast('Solo hay ' + p.stock + ' en existencia de ' + p.nombre + '.', true); }
+
   const H = {
-    add(_, b) { const p = S.prods.find(x => x.nombre === b.dataset.v), x = V.cart.find(c => c.nombre === p.nombre); x ? x.cant++ : V.cart.push({ nombre: p.nombre, cant: 1, precio: p.precio, costo: p.costo }); cart(); },
-    inc(i) { V.cart[i].cant++; cart(); },
+    add(_, b) { const p = S.prods.find(x => x.nombre === b.dataset.v), x = V.cart.find(c => c.nombre === p.nombre); x ? x.cant++ : V.cart.push({ nombre: p.nombre, cant: 1, precio: p.precio, costo: p.costo }); warn(p.nombre); cart(); },
+    inc(i) { V.cart[i].cant++; warn(V.cart[i].nombre); cart(); },
     dec(i) { if (--V.cart[i].cant <= 0) V.cart.splice(i, 1); cart(); },
     edit(i) { V.edit = i; cart(); },
     fav(_, b) { const n = b.dataset.v, k = V.favs.indexOf(n); k < 0 ? V.favs.push(n) : V.favs.splice(k, 1); store.set('favs', V.favs); grid(); },

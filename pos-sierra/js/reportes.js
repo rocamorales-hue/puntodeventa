@@ -4,7 +4,7 @@
   const dk = t => new Date(t - new Date().getTimezoneOffset() * 6e4).toISOString().slice(0, 10);
   const DAY = 864e5, today = () => dk(Date.now());
   const R = { tab: 'ventas', a: today().slice(0, 8) + '01', b: today() };
-  const TABS = [['ventas', 'Ventas'], ['productos', 'Productos'], ['clientes', 'Clientes'], ['cotiz', 'Cotizaciones'], ['proy', 'Proyección']];
+  const TABS = [['ventas', 'Ventas'], ['productos', 'Productos'], ['clientes', 'Clientes'], ['cotiz', 'Cotizaciones'], ['inv', 'Inventario'], ['proy', 'Proyección']];
   const metodo = m => String(m || 'Sin registrar').startsWith('Multipagos') ? 'Multipagos' : (m || 'Sin registrar');
   const nombre = c => c || 'Mostrador';
   const n0 = v => Math.round(v).toLocaleString('es-MX');
@@ -49,7 +49,7 @@
   }
   function body() {
     if (!R.a || !R.b || R.a > R.b) { $('#rr').innerHTML = '<p class="mu">Elige un periodo válido: "Desde" debe ser anterior a "Hasta".</p>'; return; }
-    $('#rr').innerHTML = ({ ventas, productos, clientes, cotiz, proy })[R.tab]();
+    $('#rr').innerHTML = ({ ventas, productos, clientes, cotiz, inv, proy })[R.tab]();
   }
 
   /* --- Ventas --- */
@@ -64,7 +64,8 @@
     return `<div class="kpis">${kpi('Ventas del periodo', money(tot), delta(tot, ptot))}${kpi('Tickets', T.length, delta(T.length, P.length))}${kpi('Ticket promedio', money(T.length ? tot / T.length : 0))}${kpi('Promedio por día', money(tot / n))}</div>
       <div class="list">${box('Ventas por día', bars(porDia))}${box('Por hora del día', bars(hora))}${box('Por día de la semana', bars(sem))}
       ${box('Por método de pago', bars(desc(group(T, t => metodo(t.metodo), t => t.total))))}${box('Por tipo de servicio', bars(desc(group(T, t => t.tipo || 'Aquí', t => t.total))))}
-      ${box('Historial de cortes semanales', table(['Fecha', 'Cobrado'], cortes))}</div>`;
+      ${box('Historial de cortes semanales', table(['Fecha', 'Cobrado'], cortes))}
+      ${box('Tickets borrados en el periodo', table(['Fecha', 'Folio', 'Cliente', 'Total'], (S.borrados || []).filter(b => dk(b.fecha) >= R.a && dk(b.fecha) <= R.b).reverse().map(b => [new Date(b.fecha).toLocaleDateString('es-MX'), esc(b.folio), esc(b.cliente || 'Mostrador'), money(b.total)])))}</div>`;
   }
 
   /* --- Productos --- */
@@ -108,6 +109,19 @@
     const prox = S.cots.filter(c => c.estado === 'Vigente' && c.vigencia >= now && c.vigencia - now <= 7 * DAY).map(c => [esc(c.folio + ' · ' + c.cliente), Math.ceil((c.vigencia - now) / DAY) + ' días', money(c.total)]);
     return `<div class="kpis">${kpi('Emitidas', C.length)}${kpi('Convertidas en venta', conv)}${kpi('Conversión', (C.length ? conv / C.length * 100 : 0).toFixed(0) + '%')}${kpi('Importe cotizado', money(C.reduce((s, c) => s + c.total, 0)))}</div>
       <div class="list">${box('Embudo por estado', bars(g, n0))}${box('Por vencer en 7 días', table(['Cotización', 'Vence en', 'Total'], prox))}</div>`;
+  }
+
+  /* --- Inventario: alertas, rotación y reabasto --- */
+  function inv() {
+    const C = S.prods.filter(p => p.stock != null);
+    if (!C.length) return '<div class="card"><b>Aún no hay productos con control de existencia.</b><p class="mu">Ve a Más > Inventario y toca "Activar control" en los productos que quieras vigilar.</p></div>';
+    const L = lines(range(tickets(), dk(Date.now() - 29 * DAY), today())), vend = Object.fromEntries(group(L, x => x.producto, x => x.cant));
+    const rows = C.map(p => { const d = (vend[p.nombre] || 0) / 30; return { p, d, cob: d > 0 ? p.stock / d : Infinity, sug: Math.max(0, Math.ceil(d * 15 - p.stock)) }; });
+    const alerta = rows.filter(r => r.p.stock <= r.p.min).sort((a, b) => a.p.stock - b.p.stock).map(r => [esc(r.p.nombre), r.p.stock <= 0 ? 'Agotado' : r.p.stock, r.p.min]);
+    const rot = rows.filter(r => r.d > 0).sort((a, b) => a.cob - b.cob).slice(0, 12).map(r => [esc(r.p.nombre), r.d.toFixed(2) + '/día', Math.floor(r.cob) + ' días']);
+    const sug = rows.filter(r => r.sug > 0).sort((a, b) => b.sug - a.sug).slice(0, 15).map(r => [esc(r.p.nombre), r.p.stock, r.sug]);
+    return `<p class="mu">Estos tres reportes usan las ventas de los últimos 30 días, sin importar el filtro de fechas.</p><div class="list">${box('Alertas de existencia baja o agotado', table(['Producto', 'Existencia', 'Mínimo'], alerta))}
+      ${box('Rotación y días de cobertura', table(['Producto', 'Venta promedio', 'Alcanza para'], rot))}${box('Sugerencia de reabasto (cubrir 15 días)', table(['Producto', 'Hay', 'Pedir'], sug))}</div>`;
   }
 
   /* --- Proyección --- */

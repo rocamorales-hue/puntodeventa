@@ -39,7 +39,7 @@ const S = { prods: [], clients: [], ventas: [], cots: [] };
 const views = {};
 let view = 'vender';
 const NAV = [['vender', '🧾', 'Vender'], ['ventas', '📋', 'Ventas'], ['clientes', '👥', 'Clientes'], ['mas', '⋯', 'Más']];
-const MORE = [['cotizaciones', 'Cotizaciones'], ['productos', 'Productos'], ['corte', 'Corte'], ['reportes', 'Reportes'], ['configuracion', 'Configuración']];
+const MORE = [['cotizaciones', 'Cotizaciones'], ['inventario', 'Inventario'], ['productos', 'Productos'], ['corte', 'Corte'], ['reportes', 'Reportes'], ['configuracion', 'Configuración']];
 
 function go(v) {
   view = v;
