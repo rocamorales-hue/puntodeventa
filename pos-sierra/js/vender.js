@@ -1,8 +1,10 @@
 'use strict';
 /* ===== Pantalla Vender: catálogo, ticket y cobro rápido ===== */
 (() => {
-  const V = { cart: [], cat: 'Todas', q: '', cli: '', tipo: 'Aquí', nota: '', edit: -1, busy: false, ed: null, cot: null, favs: store.get('favs', []) };
-  const total = () => V.cart.reduce((s, i) => s + i.cant * i.precio, 0);
+  const V = { cart: [], cat: 'Todas', q: '', cli: '', tipo: 'Aquí', nota: '', edit: -1, busy: false, ed: null, cot: null, dsc: { t: '$', v: 0 }, favs: store.get('favs', []) };
+  const sub = () => V.cart.reduce((s, i) => s + i.cant * i.precio, 0);
+  const dsc = () => { const s = sub(), d = V.dsc.t === '%' ? s * V.dsc.v / 100 : V.dsc.v; return Math.min(s, Math.max(0, Math.round(d * 100) / 100)); };
+  const total = () => Math.round((sub() - dsc()) * 100) / 100;
   const count = () => V.cart.reduce((s, i) => s + i.cant, 0);
   const hue = s => { let h = 0; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) % 360; return `hsl(${h} 40% 38%)`; };
 
@@ -30,6 +32,7 @@
           </div>
           <div class="items" id="items"></div>
           <div class="t-foot">
+            <div class="tl"><button class="btn sm ghost" data-a="disc" id="dbtn">Descuento</button><span class="mu" id="dline"></span></div>
             <div class="total"><span class="mu" id="ccount"></span><b id="tot"></b></div>
             <div class="quick">
               <button class="btn primary" data-a="pay" data-m="Efectivo">Efectivo exacto</button>
@@ -79,6 +82,8 @@
       || '<div class="empty">El ticket está vacío.<br>Toca un producto para agregarlo.</div>';
     const p = $('.price-in'); if (p) { p.focus(); p.select(); p.onchange = e => { V.cart[+e.target.dataset.i].precio = Math.max(0, +e.target.value || 0); V.edit = -1; cart(); }; p.onblur = () => { V.edit = -1; cart(); }; }
     $('#ttl').textContent = V.ed ? 'Editando ' + V.ed.folio : V.cot ? 'Desde ' + V.cot : 'Ticket actual';
+    $('#dline').textContent = dsc() > 0 ? 'Subtotal ' + money(sub()) + ' · Descuento −' + money(dsc()) : '';
+    $('#dbtn').textContent = dsc() > 0 ? 'Editar descuento' : 'Descuento';
     $('#tot').textContent = money(total()); $('#ccount').textContent = count() + ' artículo(s)';
     $('#bcount').textContent = '🛒 ' + count() + ' artículo(s) · Ver ticket'; $('#btot').textContent = money(total());
   }
@@ -103,8 +108,21 @@
       const n = V.cli.trim().toUpperCase();
       if (!n) return toast('Escribe el nombre del cliente para guardar la cotización.', true);
       const c = S.clients.find(c => c.nombre.toUpperCase() === n);
-      const f = await api('saveQuote', { cliente: n, tel: c ? c.tel : '', total: total(), items: V.cart });
+      const f = await api('saveQuote', { cliente: n, tel: c ? c.tel : '', total: total(), descuento: dsc(), items: V.cart });
       toast('Cotización ' + f + ' guardada'); reset(); await load();
+    },
+    disc() {
+      if (!V.cart.length) return toast('Agrega productos antes de aplicar un descuento.', true);
+      let t = V.dsc.t;
+      modal(`<h2>Descuento</h2><div class="seg" id="dt" style="grid-template-columns:1fr 1fr"><button data-t="%" aria-pressed="${t === '%'}">Porcentaje (%)</button><button data-t="$" aria-pressed="${t === '$'}">Monto ($)</button></div>
+        <input id="dv" type="number" min="0" step="any" inputmode="decimal" placeholder="Cantidad" aria-label="Cantidad del descuento" value="${V.dsc.v || ''}"><div class="mu" id="dp" aria-live="polite"></div>
+        <button class="btn primary" id="dok">Aplicar descuento</button><button class="btn ghost" id="dno">Quitar descuento</button>`);
+      const calc = () => { const v = +$('#dv').value || 0; return t === '%' ? sub() * v / 100 : v; };
+      const prev = () => { const d = calc(); $('#dp').textContent = d > sub() + 0.001 ? 'El descuento no puede ser mayor al subtotal.' : 'Total con descuento: ' + money(sub() - Math.min(d, sub())); };
+      $('#dv').oninput = prev; $('#dv').focus(); prev();
+      $('#dt').onclick = e => { const b = e.target.closest('[data-t]'); if (!b) return; t = b.dataset.t; $('#dt').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); prev(); };
+      $('#dno').onclick = () => { V.dsc = { t: '$', v: 0 }; closeM(); cart(); };
+      $('#dok').onclick = () => { const v = +$('#dv').value || 0; if (v < 0 || (t === '%' && v > 100) || calc() > sub() + 0.001) return toast('Revisa la cantidad del descuento.', true); V.dsc = { t, v }; closeM(); cart(); };
     },
     credit() { save('Pagado', 'Crédito cliente'); },
     split() {
@@ -145,7 +163,7 @@
   };
   function onClick(e) { const b = e.target.closest('[data-a]'); if (b && H[b.dataset.a]) H[b.dataset.a](+b.dataset.i, b); }
 
-  function reset() { V.cart = []; V.cli = ''; V.nota = ''; V.edit = -1; V.ed = null; V.cot = null; }
+  function reset() { V.cart = []; V.cli = ''; V.nota = ''; V.edit = -1; V.ed = null; V.cot = null; V.dsc = { t: '$', v: 0 }; }
 
   async function save(estado, metodo) {
     if (V.busy) return;
@@ -154,7 +172,7 @@
     V.busy = true;
     try {
       const cot = V.cot;
-      const folio = await api('saveSale', { folio: V.ed ? V.ed.folio : undefined, fecha: V.ed ? V.ed.fecha : undefined, cliente: V.cli.trim().toUpperCase(), tipo: V.tipo, nota: V.nota, estado, metodo: estado === 'Pagado' ? metodo : 'Sin registrar', items: V.cart });
+      const folio = await api('saveSale', { descuento: dsc(), folio: V.ed ? V.ed.folio : undefined, fecha: V.ed ? V.ed.fecha : undefined, cliente: V.cli.trim().toUpperCase(), tipo: V.tipo, nota: V.nota, estado, metodo: estado === 'Pagado' ? metodo : 'Sin registrar', items: V.cart });
       if (cot) await api('setQuote', cot, 'Convertida');
       toast('Venta ' + folio + ' guardada'); reset(); await load();
     } finally { V.busy = false; }
@@ -164,7 +182,7 @@
   window.Vender = {
     load(items, m) {
       V.cart = items.map(x => ({ nombre: x.nombre || x.producto, cant: +x.cant || 1, precio: +x.precio || 0, costo: +x.costo || 0 }));
-      V.cli = m.cli || ''; V.nota = m.nota || ''; V.tipo = m.tipo || 'Aquí'; V.ed = m.ed || null; V.cot = m.cot || null; V.edit = -1;
+      V.cli = m.cli || ''; V.nota = m.nota || ''; V.tipo = m.tipo || 'Aquí'; V.ed = m.ed || null; V.cot = m.cot || null; V.edit = -1; V.dsc = { t: '$', v: +m.desc > 0 ? +m.desc : 0 };
       go('vender'); H.open();
     }
   };

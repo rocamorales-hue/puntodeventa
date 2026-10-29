@@ -20,13 +20,13 @@
       root.onclick = e => {
         const b = e.target.closest('[data-a]'); if (!b) return;
         const c = L[+b.dataset.i];
-        ({ load: () => Vender.load(c.items, { cli: c.cliente, cot: c.folio }), wa: () => wa(c), print: () => printQ(c), cancel: () => cancel(c) })[b.dataset.a]();
+        ({ load: () => Vender.load(c.items, { cli: c.cliente, cot: c.folio, desc: c.descuento }), wa: () => wa(c), print: () => printQ(c), cancel: () => cancel(c) })[b.dataset.a]();
       };
     }
   };
 
   function wa(c) {
-    const t = `Cotización ${c.folio} - Café Sierra Escondida\n` + c.items.map(x => `${x.cant} x ${x.nombre || x.producto} - ${money(x.cant * x.precio)}`).join('\n') + `\nTotal: ${money(c.total)}\nVigencia: ${fday(c.vigencia)}`;
+    const t = `Cotización ${c.folio} - Café Sierra Escondida\n` + c.items.map(x => `${x.cant} x ${x.nombre || x.producto} - ${money(x.cant * x.precio)}`).join('\n') + (c.descuento > 0 ? `\nDescuento: -${money(c.descuento)}` : '') + `\nTotal: ${money(c.total)}\nVigencia: ${fday(c.vigencia)}`;
     window.open('https://wa.me/' + String(c.tel || '').replace(/\D/g, '') + '?text=' + encodeURIComponent(t));
   }
   async function cancel(c) {
@@ -41,7 +41,7 @@
       <div><h1>COTIZACIÓN</h1><p>Folio: ${esc(c.folio)}<br>Fecha: ${fday(c.fecha)}<br>Vigencia: ${fday(c.vigencia)}</p></div></header>
       <h3>Cliente: ${esc(c.cliente)}</h3><table><tr><th>Cant.</th><th>Descripción</th><th class=num>Precio unitario</th><th class=num>Importe</th></tr>
       ${c.items.map(x => `<tr><td>${x.cant}</td><td>${esc(x.nombre || x.producto)}</td><td class=num>${money(x.precio)}</td><td class=num>${money(x.cant * x.precio)}</td></tr>`).join('')}</table>
-      <div class=total><b>Total: ${money(c.total)}</b></div><p>Condiciones: ${esc(k.notas || 'Precios sujetos a la vigencia indicada.')}</p><p>Datos de pago: ${esc(k.datosBancarios || '')}</p><p>Gracias por su preferencia.</p></body></html>`);
+      ${c.descuento > 0 ? `<div class=total>Descuento: −${money(c.descuento)}</div>` : ''}<div class=total><b>Total: ${money(c.total)}</b></div><p>Condiciones: ${esc(k.notas || 'Precios sujetos a la vigencia indicada.')}</p><p>Datos de pago: ${esc(k.datosBancarios || '')}</p><p>Gracias por su preferencia.</p></body></html>`);
     w.document.close(); w.print();
   }
 })();

@@ -21,8 +21,24 @@ $('#modal').addEventListener('click', e => { if (e.target.id === 'modal') closeM
 
 const net = { ok: true, last: null };
 
-/* API: google.script.run si corre dentro de Apps Script; fetch POST si está alojado aparte */
+/* Aviso de "Procesando…": bloquea toques repetidos mientras se guarda */
+const LABELS = { saveSale: 'Guardando venta…', setPaid: 'Registrando cobro…', deleteSale: 'Borrando ticket…', saveQuote: 'Guardando cotización…', addPayment: 'Guardando abono…', closeWeeklyCut: 'Guardando corte…', adjustStock: 'Actualizando inventario…', setMinStock: 'Guardando mínimo…', saveClient: 'Guardando cliente…', saveProduct: 'Guardando producto…', saveConfig: 'Guardando configuración…', setQuote: 'Actualizando cotización…' };
+const SILENT = { getData: 1, getConfig: 1 };
+let busyN = 0, busyT;
+function busy(d, label) {
+  busyN += d;
+  let el = $('#busy');
+  if (!el) { el = document.createElement('div'); el.id = 'busy'; el.setAttribute('role', 'status'); el.hidden = true; el.innerHTML = '<div class="busybox"><span class="spin"></span><span id="busytxt"></span></div>'; document.body.appendChild(el); }
+  clearTimeout(busyT);
+  if (busyN > 0) { $('#busytxt').textContent = label || 'Procesando…'; busyT = setTimeout(() => el.hidden = false, 120); } else el.hidden = true;
+}
 async function api(fn, ...args) {
+  const loud = !SILENT[fn]; if (loud) busy(1, LABELS[fn]);
+  try { return await rawApi(fn, ...args); } finally { if (loud) busy(-1); }
+}
+
+/* API: google.script.run si corre dentro de Apps Script; fetch POST si está alojado aparte */
+async function rawApi(fn, ...args) {
   try {
     if (window.google && google.script && google.script.run)
       return await new Promise((ok, no) => google.script.run.withSuccessHandler(ok).withFailureHandler(no)[fn](...args));
@@ -52,7 +68,11 @@ function go(v) {
 }
 document.addEventListener('click', e => { const b = e.target.closest('[data-go]'); if (b) go(b.dataset.go); });
 
-async function load() { Object.assign(S, await api('getData')); net.ok = true; net.last = new Date(); go(view); renderStatus(); }
+async function load() {
+  net.loading = true; renderStatus();
+  try { Object.assign(S, await api('getData')); net.ok = true; net.last = new Date(); } finally { net.loading = false; }
+  go(view); renderStatus();
+}
 
 /* Barra de estado discreta: conexión, última actualización, ventas de hoy y por cobrar */
 function renderStatus() {
@@ -61,7 +81,7 @@ function renderStatus() {
   const T = typeof tickets === 'function' ? tickets() : [];
   const h = T.filter(t => k(t.fecha) === hoy), pend = T.filter(t => t.estado !== 'Pagado');
   const on = net.ok && navigator.onLine;
-  sb.innerHTML = `<span class="dot ${on ? 'on' : 'off'}"></span><span>${on ? 'Conectado' : 'Sin conexión'}</span>` +
+  sb.innerHTML = `<span class="dot ${on ? 'on' : 'off'}"></span><span>${net.loading ? 'Actualizando…' : on ? 'Conectado' : 'Sin conexión'}</span>` +
     (net.last ? `<span>Actualizado ${net.last.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' })}</span>` : '') +
     (T.length ? `<span>Hoy ${money(h.reduce((s, t) => s + t.total, 0))} · ${h.length} tickets</span><span>${pend.length} por cobrar</span>` : '') +
     '<button id="sbr" aria-label="Actualizar datos" title="Actualizar datos">↻</button>';
