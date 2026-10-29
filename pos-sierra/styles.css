@@ -151,3 +151,12 @@ h2{margin:0;font-size:18px}
 .busybox{display:flex;gap:12px;align-items:center;background:var(--surface);padding:14px 22px;border-radius:999px;box-shadow:var(--shadow);font-weight:650}
 .spin{width:18px;height:18px;border:3px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:sp .8s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
+
+/* ===== Clientes (etapa 8) ===== */
+.pagehead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap}.toolbar>*{flex:1;min-width:170px}
+.chead{display:flex;gap:12px;align-items:center}
+.cav{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;color:#fff;font-weight:700;flex:none}
+.cli{cursor:pointer;transition:border-color .15s}.cli:hover{border-color:var(--accent)}
+.cact{display:flex;gap:8px;flex-wrap:wrap}
+.chead b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
