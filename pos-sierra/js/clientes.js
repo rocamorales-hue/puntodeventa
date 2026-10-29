@@ -21,7 +21,7 @@
         <div class="list" id="cl"></div>`;
       $('#add').onclick = add;
       $('#cq').oninput = e => { q = e.target.value; list(); };
-      $('#cl').onclick = e => { const b = e.target.closest('[data-n]'); if (b) abono(b.dataset.n); };
+      $('#cl').onclick = e => { const b = e.target.closest('[data-n]'), s = e.target.closest('[data-s]'); if (b) abono(b.dataset.n); if (s) stmt(s.dataset.s); };
       list();
     }
   };
@@ -34,8 +34,20 @@
       const s = Math.round((d[n] || 0) * 100) / 100;
       return `<div class="card"><div class="tl"><b>${esc(n)}</b><span class="tag ${s > 0 ? '' : 'ok'}">${s > 0 ? 'Debe ' + money(s) : 'Sin saldo'}</span></div>
         <div class="mu">${esc(tel[n]) || 'Sin teléfono'}</div>
-        ${s > 0 ? `<button class="btn sm primary" style="margin-top:10px" data-n="${esc(n)}">Registrar abono</button>` : ''}</div>`;
+        <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">${s > 0 ? `<button class="btn sm primary" data-n="${esc(n)}">Registrar abono</button>` : ''}<button class="btn sm ghost" data-s="${esc(n)}">Estado de cuenta</button></div></div>`;
     }).join('') || '<p class="mu">No hay clientes con ese nombre.</p>';
+  }
+
+  function stmt(n) {
+    const T = tickets().filter(t => up(t.cliente) === n).sort((a, b) => a.fecha - b.fecha), A = (S.abonos || []).filter(a => up(a.cliente) === n).sort((a, b) => a.fecha - b.fecha);
+    const pend = T.filter(t => t.estado !== 'Pagado').reduce((s, t) => s + t.total, 0), ab = A.reduce((s, a) => s + a.monto, 0);
+    const w = window.open('', '_blank');
+    w.document.write(`<html><head><title>Estado de cuenta</title><style>body{font:14px Arial;margin:28px;color:#1f2937}table{width:100%;border-collapse:collapse;margin:10px 0 22px}td,th{border:1px solid #ddd;padding:8px;text-align:left}th{background:#f3ece3}.n{text-align:right}h1{font-size:22px;margin:0}</style></head><body>
+      <h1>Estado de cuenta — ${esc(n)}</h1><p>Café Sierra Escondida · ${new Date().toLocaleDateString('es-MX')}</p>
+      <h3>Ventas</h3><table><tr><th>Fecha</th><th>Folio</th><th>Concepto</th><th>Estado</th><th class=n>Total</th></tr>${T.map(t => `<tr><td>${fdate(t.fecha)}</td><td>${esc(t.folio)}</td><td>${t.items.map(x => esc(x.producto)).join(', ')}</td><td>${esc(t.estado)}</td><td class=n>${money(t.total)}</td></tr>`).join('') || '<tr><td colspan=5>Sin ventas</td></tr>'}</table>
+      <h3>Abonos</h3><table><tr><th>Fecha</th><th>Método</th><th class=n>Monto</th></tr>${A.map(a => `<tr><td>${fdate(a.fecha)}</td><td>${esc(a.metodo)}</td><td class=n>${money(a.monto)}</td></tr>`).join('') || '<tr><td colspan=3>Sin abonos</td></tr>'}</table>
+      <p>Pendiente: ${money(pend)} · Abonos: ${money(ab)}</p><h2>Saldo a pagar: ${money(Math.max(0, pend - ab))}</h2></body></html>`);
+    w.document.close(); w.print();
   }
 
   async function add() {

@@ -22,7 +22,7 @@
   function summary() {
     const all = tickets(), T = all.filter(t => dkey(t.fecha) === day), P = T.filter(t => t.estado === 'Pagado');
     const met = {}, prod = {};
-    P.forEach(t => met[t.metodo] = (met[t.metodo] || 0) + t.total);
+    P.forEach(t => { const m = String(t.metodo).startsWith('Multipagos') ? 'Multipagos' : t.metodo; met[m] = (met[m] || 0) + t.total; });
     T.forEach(t => t.items.forEach(x => prod[x.producto] = (prod[x.producto] || 0) + x.cant));
     const cobrado = P.reduce((s, t) => s + t.total, 0);
     const util = P.reduce((s, t) => s + t.items.reduce((a, x) => a + x.total - x.cant * x.costo, 0), 0);

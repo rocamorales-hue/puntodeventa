@@ -36,8 +36,9 @@
               <button class="btn primary" data-a="pay" data-m="Débito">Tarjeta</button>
               <button class="btn primary" data-a="pay" data-m="Transferencia">Transferencia</button>
             </div>
-            <div class="row2">
-              <button class="btn" data-a="cash">Efectivo con cambio</button>
+            <div class="row2 r3">
+              <button class="btn" data-a="cash">Efectivo + cambio</button>
+              <button class="btn" data-a="split">Dividir pago</button>
               <button class="btn" data-a="credit">A crédito</button>
             </div>
             <div class="row2"><button class="btn ghost" data-a="pend">Dejar pendiente</button><button class="btn ghost" data-a="quote">Guardar cotización</button></div>
@@ -106,6 +107,29 @@
       toast('Cotización ' + f + ' guardada'); reset(); await load();
     },
     credit() { save('Pagado', 'Crédito cliente'); },
+    split() {
+      if (!V.cart.length) return toast('El ticket está vacío. Agrega un producto.', true);
+      const R = [{ m: 'Efectivo', v: total() }], M = ['Efectivo', 'Débito', 'Transferencia'];
+      const diff = () => Math.round((R.reduce((s, r) => s + (+r.v || 0), 0) - total()) * 100) / 100;
+      const hint = () => {
+        const d = diff(), ok = d === 0 && R.every(r => +r.v > 0);
+        $('#sh').textContent = d === 0 ? '✓ Los montos cuadran con el total.' : d < 0 ? 'Falta por repartir ' + money(-d) : 'Se pasa por ' + money(d);
+        $('#sh').style.color = d === 0 ? 'var(--ok)' : 'var(--bad)'; $('#sok').disabled = !ok;
+      };
+      const draw = () => {
+        modal(`<h2>Dividir pago</h2><div class="big">${money(total())}</div>
+          ${R.map((r, i) => `<div class="splitrow"><select data-i="${i}" aria-label="Método">${M.map(m => `<option value="${m}" ${m === r.m ? 'selected' : ''}>${m === 'Débito' ? 'Tarjeta' : m}</option>`).join('')}</select><input type="number" min="0" step="0.01" inputmode="decimal" data-v="${i}" value="${r.v}" aria-label="Monto"><button class="btn sm ghost" data-x="${i}" ${R.length === 1 ? 'disabled' : ''} aria-label="Quitar método">✕</button></div>`).join('')}
+          <button class="btn ghost" id="sa">Agregar otro método</button><div id="sh" class="mu" aria-live="polite"></div>
+          <button class="btn primary" id="sok">Confirmar cobro</button><button class="btn ghost" id="sno">Cancelar</button>`);
+        hint(); $('#sno').onclick = closeM;
+        $('#sa').onclick = () => { R.push({ m: M.find(m => !R.some(r => r.m === m)) || 'Efectivo', v: Math.max(0, -diff()) }); draw(); };
+        $('#sok').onclick = () => { closeM(); save('Pagado', 'Multipagos: ' + R.map(r => r.m + ' ' + money(r.v)).join(' + ')); };
+        $('#mbox').onclick = e => { const x = e.target.closest('[data-x]'); if (x) { R.splice(+x.dataset.x, 1); draw(); } };
+        $('#mbox').oninput = e => { if (e.target.dataset.v !== undefined) { R[+e.target.dataset.v].v = Math.max(0, +e.target.value || 0); hint(); } };
+        $('#mbox').onchange = e => { if (e.target.dataset.i !== undefined) R[+e.target.dataset.i].m = e.target.value; };
+      };
+      draw();
+    },
     cash() {
       if (!V.cart.length) return toast('El ticket está vacío. Agrega un producto.', true);
       modal(`<h2>Efectivo con cambio</h2><div class="big">${money(total())}</div>
