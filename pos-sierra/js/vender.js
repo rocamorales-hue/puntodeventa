@@ -1,7 +1,7 @@
 'use strict';
 /* ===== Pantalla Vender: catálogo, ticket y cobro rápido ===== */
 (() => {
-  const V = { cart: [], cat: 'Todas', q: '', cli: '', tipo: 'Aquí', nota: '', edit: -1, busy: false, ed: null, cot: null, dsc: { t: '$', v: 0 }, favs: store.get('favs', []) };
+  const V = { cart: [], cat: 'Todas', q: '', cli: '', tipo: 'Aquí', nota: '', edit: -1, busy: false, ed: null, cot: null, dsc: { t: '$', v: 0 }, favs: store.get('favs', []), mode: store.get('mode', 'lista'), flash: null, vis: [] };
   const sub = () => V.cart.reduce((s, i) => s + i.cant * i.precio, 0);
   const dsc = () => { const s = sub(), d = V.dsc.t === '%' ? s * V.dsc.v / 100 : V.dsc.v; return Math.min(s, Math.max(0, Math.round(d * 100) / 100)); };
   const total = () => Math.round((sub() - dsc()) * 100) / 100;
@@ -16,19 +16,21 @@
     render(root) {
       root.innerHTML = `<div class="pos">
         <section class="catalog">
-          <input id="q" type="search" placeholder="Buscar producto" aria-label="Buscar producto" value="${esc(V.q)}">
+          <div class="catbar"><input id="q" type="search" placeholder="Buscar producto… (ej. 3x café y Enter)" aria-label="Buscar producto" value="${esc(V.q)}" autocomplete="off">
+            <div class="vmode" role="group" aria-label="Vista del catálogo"><button data-a="mode" data-v="lista" aria-pressed="${V.mode === 'lista'}" aria-label="Vista de lista">${ICONS.lista}</button><button data-a="mode" data-v="mosaico" aria-pressed="${V.mode === 'mosaico'}" aria-label="Vista de mosaico">${ICONS.mas}</button></div></div>
           <div class="chips" id="chips"></div>
-          <div class="grid" id="grid"></div>
+          <div class="grid ${V.mode === 'lista' ? 'rows' : ''}" id="grid"></div>
         </section>
         <aside class="ticket" id="ticket" aria-label="Ticket actual">
-          <div class="t-head"><h2 id="ttl">Ticket actual</h2>
+          <div class="t-head"><div><h2 id="ttl">Ticket actual</h2><div class="mu" id="tsub"></div></div>
             <span><button class="btn sm ghost" data-a="clear">Vaciar</button> <button class="btn sm ghost t-close" data-a="close">Cerrar</button></span></div>
           <div class="t-fields">
             <input id="cli" list="cl" placeholder="Cliente (opcional)" aria-label="Cliente" value="${esc(V.cli)}" autocomplete="off">
             <datalist id="cl">${S.clients.map(c => `<option value="${esc(c.nombre)}">`).join('')}</datalist>
             <div class="seg" role="group" aria-label="Tipo de servicio">${['Aquí', 'Para llevar', 'Domicilio'].map(t =>
               `<button data-a="tipo" data-v="${t}" aria-pressed="${t === V.tipo}">${t}</button>`).join('')}</div>
-            <input id="nota" placeholder="Nota del pedido (dirección, mesa…)" aria-label="Nota del pedido" value="${esc(V.nota)}">
+            <button class="linkbtn" data-a="note" id="nbtn" ${V.nota ? 'hidden' : ''}>＋ Agregar nota al pedido</button>
+            <input id="nota" placeholder="Nota del pedido (dirección, mesa…)" aria-label="Nota del pedido" value="${esc(V.nota)}" ${V.nota ? '' : 'hidden'}>
           </div>
           <div class="items" id="items"></div>
           <div class="t-foot">
@@ -51,6 +53,11 @@
       </div>`;
       root.onclick = onClick;
       $('#q').oninput = e => { V.q = e.target.value; grid(); };
+      $('#q').onkeydown = e => {
+        if (e.key === 'Escape') { V.q = ''; e.target.value = ''; grid(); }
+        if (e.key === 'Enter' && V.vis.length) { const k = parse(); H.add(null, { dataset: { v: V.vis[0].nombre } }, k.n); V.q = ''; e.target.value = ''; grid(); }
+      };
+      if (window.innerWidth > 1000) $('#q').focus();
       $('#cli').oninput = e => V.cli = e.target.value;
       $('#nota').oninput = e => V.nota = e.target.value;
       chips(); grid(); cart();
@@ -58,22 +65,30 @@
   };
 
   function chips() {
-    const cats = ['Todas', ...new Set(S.prods.map(p => p.cat))];
+    const cats = ['Todas', ...(V.favs.length ? ['★ Favoritos'] : []), ...new Set(S.prods.map(p => p.cat))];
     $('#chips').innerHTML = cats.map(c => `<button class="chip" data-a="cat" data-v="${esc(c)}" aria-pressed="${c === V.cat}">${esc(c)}</button>`).join('');
   }
 
+  /* "3x café" agrega 3 piezas del primer resultado al presionar Enter */
+  function parse() { const m = V.q.match(/^\s*(\d+)\s*[x*]\s*(.*)$/i); return m ? { n: Math.max(1, +m[1]), t: m[2] } : { n: 1, t: V.q }; }
+  const inCart = n => { const c = V.cart.find(x => x.nombre === n); return c ? c.cant : 0; };
+
   function grid() {
-    const pop = popularity(), q = V.q.toLowerCase();
-    const list = S.prods.filter(p => (V.cat === 'Todas' || p.cat === V.cat) && p.nombre.toLowerCase().includes(q))
-      .sort((a, b) => (V.favs.includes(b.nombre) - V.favs.includes(a.nombre)) || ((pop[b.nombre] || 0) - (pop[a.nombre] || 0))).slice(0, 120);
-    $('#grid').innerHTML = list.map(p => `<div class="prod">
-      <button class="add" data-a="add" data-v="${esc(p.nombre)}"><div class="av" style="background:${hue(p.cat)}">${esc(p.nombre[0] || '?')}</div><b>${esc(p.nombre)}</b><span class="pr">${money(p.precio)}</span>${p.stock == null ? '' : `<span class="stk ${p.stock <= 0 ? 'out' : p.stock <= p.min ? 'low' : ''}">${p.stock <= 0 ? 'Agotado' : p.stock + ' disponibles'}</span>`}</button>
-      <button class="fav" data-a="fav" data-v="${esc(p.nombre)}" aria-pressed="${V.favs.includes(p.nombre)}" aria-label="Marcar favorito">${V.favs.includes(p.nombre) ? '★' : '☆'}</button></div>`).join('')
+    const pop = popularity(), q = parse().t.toLowerCase().trim();
+    const list = S.prods.filter(p => (V.cat === 'Todas' || (V.cat === '★ Favoritos' ? V.favs.includes(p.nombre) : p.cat === V.cat)) && p.nombre.toLowerCase().includes(q))
+      .sort((a, b) => (V.favs.includes(b.nombre) - V.favs.includes(a.nombre)) || ((pop[b.nombre] || 0) - (pop[a.nombre] || 0))).slice(0, 150);
+    V.vis = list;
+    const stk = p => p.stock == null ? '' : `<span class="stk ${p.stock <= 0 ? 'out' : p.stock <= p.min ? 'low' : ''}">${p.stock <= 0 ? 'Agotado' : p.stock + ' disp.'}</span>`;
+    const fav = p => `<button class="fav" data-a="fav" data-v="${esc(p.nombre)}" aria-pressed="${V.favs.includes(p.nombre)}" aria-label="Marcar favorito">${V.favs.includes(p.nombre) ? '★' : '☆'}</button>`;
+    const badge = p => inCart(p.nombre) ? `<span class="qb">×${inCart(p.nombre)}</span>` : '';
+    $('#grid').innerHTML = list.map(p => V.mode === 'lista'
+      ? `<div class="prow"><button class="add" data-a="add" data-v="${esc(p.nombre)}"><span class="pn"><b>${esc(p.nombre)}</b><small>${esc(p.cat)} ${stk(p)}</small></span>${badge(p)}<span class="pr">${money(p.precio)}</span></button>${fav(p)}</div>`
+      : `<div class="prod"><button class="add" data-a="add" data-v="${esc(p.nombre)}"><div class="av" style="background:${hue(p.cat)}">${esc(p.nombre[0] || '?')}</div><b>${esc(p.nombre)}</b><span class="pr">${money(p.precio)}</span>${stk(p)}${badge(p)}</button>${fav(p)}</div>`).join('')
       || '<p class="mu">No hay productos con ese nombre. Prueba con otra búsqueda o categoría.</p>';
   }
 
   function cart() {
-    $('#items').innerHTML = V.cart.map((c, i) => `<div class="line">
+    $('#items').innerHTML = V.cart.map((c, i) => `<div class="line${c.nombre === V.flash ? ' flash' : ''}">
       <div class="nm">${esc(c.nombre)}</div><div class="sub">${money(c.cant * c.precio)}</div>
       <div class="qty"><button data-a="dec" data-i="${i}" aria-label="Quitar uno">−</button><b>${c.cant}</b><button data-a="inc" data-i="${i}" aria-label="Agregar uno">+</button></div>
       <div style="text-align:right">${V.edit === i
@@ -81,21 +96,25 @@
         : `<button class="btn sm ghost" data-a="edit" data-i="${i}">${money(c.precio)} c/u ✎</button>`}</div></div>`).join('')
       || '<div class="empty">El ticket está vacío.<br>Toca un producto para agregarlo.</div>';
     const p = $('.price-in'); if (p) { p.focus(); p.select(); p.onchange = e => { V.cart[+e.target.dataset.i].precio = Math.max(0, +e.target.value || 0); V.edit = -1; cart(); }; p.onblur = () => { V.edit = -1; cart(); }; }
+    $('#tsub').textContent = count() ? count() + ' artículo(s) · ' + V.cart.length + ' producto(s)' : '';
+    const fl = document.querySelector('.line.flash'); if (fl) fl.scrollIntoView({ block: 'nearest' }); V.flash = null;
     $('#ttl').textContent = V.ed ? 'Editando ' + V.ed.folio : V.cot ? 'Desde ' + V.cot : 'Ticket actual';
     $('#dline').textContent = dsc() > 0 ? 'Subtotal ' + money(sub()) + ' · Descuento −' + money(dsc()) : '';
     $('#dbtn').textContent = dsc() > 0 ? 'Editar descuento' : 'Descuento';
     $('#tot').textContent = money(total()); $('#ccount').textContent = count() + ' artículo(s)';
-    $('#bcount').textContent = '🛒 ' + count() + ' artículo(s) · Ver ticket'; $('#btot').textContent = money(total());
+    $('#bcount').textContent = count() + ' artículo(s) · Ver ticket'; $('#btot').textContent = money(total());
   }
 
   function warn(n) { const p = S.prods.find(x => x.nombre === n), c = V.cart.find(x => x.nombre === n); if (p && p.stock != null && c && c.cant > p.stock) toast('Solo hay ' + p.stock + ' en existencia de ' + p.nombre + '.', true); }
 
   const H = {
-    add(_, b) { const p = S.prods.find(x => x.nombre === b.dataset.v), x = V.cart.find(c => c.nombre === p.nombre); x ? x.cant++ : V.cart.push({ nombre: p.nombre, cant: 1, precio: p.precio, costo: p.costo }); warn(p.nombre); cart(); },
-    inc(i) { V.cart[i].cant++; warn(V.cart[i].nombre); cart(); },
-    dec(i) { if (--V.cart[i].cant <= 0) V.cart.splice(i, 1); cart(); },
+    add(_, b, n) { n = n || 1; const p = S.prods.find(x => x.nombre === b.dataset.v), x = V.cart.find(c => c.nombre === p.nombre); x ? x.cant += n : V.cart.push({ nombre: p.nombre, cant: n, precio: p.precio, costo: p.costo }); V.flash = p.nombre; warn(p.nombre); cart(); grid(); },
+    note() { $('#nbtn').hidden = true; $('#nota').hidden = false; $('#nota').focus(); },
+    mode(_, b) { V.mode = b.dataset.v; store.set('mode', V.mode); views.vender.render($('#app')); },
+    inc(i) { V.cart[i].cant++; warn(V.cart[i].nombre); cart(); grid(); },
+    dec(i) { if (--V.cart[i].cant <= 0) V.cart.splice(i, 1); cart(); grid(); },
     edit(i) { V.edit = i; cart(); },
-    fav(_, b) { const n = b.dataset.v, k = V.favs.indexOf(n); k < 0 ? V.favs.push(n) : V.favs.splice(k, 1); store.set('favs', V.favs); grid(); },
+    fav(_, b) { const n = b.dataset.v, k = V.favs.indexOf(n); k < 0 ? V.favs.push(n) : V.favs.splice(k, 1); store.set('favs', V.favs); if (!V.favs.length && V.cat === '★ Favoritos') V.cat = 'Todas'; chips(); grid(); },
     cat(_, b) { V.cat = b.dataset.v; chips(); grid(); },
     tipo(_, b) { V.tipo = b.dataset.v; document.querySelectorAll('.seg button').forEach(x => x.setAttribute('aria-pressed', x === b)); },
     clear() { reset(); go('vender'); },
