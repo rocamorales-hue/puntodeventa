@@ -166,3 +166,44 @@ h2{margin:0;font-size:18px}
 .fl input{font-weight:400;color:var(--ink)}
 .tag.x{background:#f6dcd8;color:#8f332a}
 @media(prefers-color-scheme:dark){.tag.x{background:#4a2420;color:#f0a49c}}
+
+/* ===== Vender: más peso al ticket, catálogo en lista, íconos de línea (etapa 10) ===== */
+.pos{grid-template-columns:minmax(0,1fr) minmax(430px,42%);gap:22px}
+.rail .logo{width:44px;height:44px;border-radius:14px;background:rgba(255,255,255,.08);display:grid;place-items:center;color:#e3ebe2;font-size:0;margin-bottom:16px}
+.rail .logo svg{width:24px;height:24px}
+.rail button i{display:grid;place-items:center;font-size:0}
+.rail button svg{width:22px;height:22px}
+.rail button span{font-weight:600;letter-spacing:.01em}
+.menu .btn{display:flex;align-items:center;gap:12px}.menu .btn svg{width:20px;height:20px;color:var(--accent);flex:none}
+.catbar{display:flex;gap:10px;align-items:center}.catbar input{flex:1;min-height:50px;font-size:16px}
+.vmode{display:flex;background:var(--sage);border-radius:12px;padding:3px;gap:3px}
+.vmode button{width:44px;height:44px;border-radius:10px;display:grid;place-items:center;color:var(--mute)}
+.vmode button svg{width:19px;height:19px}
+.vmode button[aria-pressed=true]{background:var(--surface);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.grid.rows{display:flex;flex-direction:column;gap:6px}
+.prow{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:12px}
+.prow:hover{border-color:var(--accent)}
+.prow .add{display:flex;align-items:center;gap:12px;width:100%;min-height:54px;padding:8px 52px 8px 14px;text-align:left}
+.prow .add:active{background:var(--sage);border-radius:12px}
+.prow .pn{flex:1;min-width:0;display:flex;flex-direction:column}
+.prow .pn b{font-weight:650;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.prow .pn small{color:var(--mute);font-size:12px}
+.prow .pr{font-weight:750;font-size:16px;color:var(--accent)}
+.prow .fav{position:absolute;top:50%;right:6px;transform:translateY(-50%);width:40px;height:40px;border-radius:10px;color:var(--mute);font-size:18px}
+.prow .fav[aria-pressed=true]{color:var(--accent)}
+.qb{background:var(--accent);color:var(--on-accent);font-size:12px;font-weight:750;border-radius:999px;padding:2px 9px}
+.prod .qb{position:absolute;top:10px;left:10px}
+.t-head h2{font-size:20px}
+.t-fields{gap:8px;padding:12px 18px}
+.seg button{min-height:38px}
+.linkbtn{justify-self:start;color:var(--accent);font-weight:650;min-height:30px}
+.items{padding:0 20px}
+.line{padding:14px 0;gap:8px 12px}
+.line .nm{font-size:16px;font-weight:650}.line .sub{font-size:17px}
+.qty button{width:44px;height:44px;font-size:20px}.qty b{min-width:32px;font-size:16px}
+.line.flash{animation:flash 1s ease-out}
+@keyframes flash{from{background:var(--sage)}to{background:transparent}}
+.total b{font-size:38px}
+.t-foot{gap:10px}
+.quick .btn{min-height:50px;font-size:14px}
+@media(max-width:1000px){.pos{grid-template-columns:minmax(0,1fr)}}
