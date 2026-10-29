@@ -3,7 +3,7 @@
 function tickets() {
   const m = {};
   S.ventas.forEach(v => {
-    const t = m[v.folio] = m[v.folio] || { folio: v.folio, fecha: v.fecha, cliente: v.cliente, estado: v.estado, metodo: v.metodo, tipo: v.tipo, items: [], total: 0 };
+    const t = m[v.folio] = m[v.folio] || { folio: v.folio, fecha: v.fecha, cliente: v.cliente, estado: v.estado, metodo: v.metodo, tipo: v.tipo, nota: v.nota, items: [], total: 0 };
     t.items.push(v); t.total += v.total;
   });
   return Object.values(m).sort((a, b) => b.fecha - a.fecha);
@@ -24,7 +24,7 @@ const fdate = t => new Date(t).toLocaleString('es-MX', { day: 'numeric', month: 
       root.onclick = e => {
         const c = e.target.closest('[data-e]'); if (c) { F.est = c.dataset.e; views.ventas.render(root); return; }
         const b = e.target.closest('[data-a]'); if (!b) return;
-        const t = TK[+b.dataset.i]; ({ cobrar: () => cobrar(t), print: () => printT(t), del: () => del(t) })[b.dataset.a]();
+        const t = TK[+b.dataset.i]; ({ edit: () => Vender.load(t.items, { cli: t.cliente, nota: t.nota, tipo: t.tipo, ed: { folio: t.folio, fecha: t.fecha } }), cobrar: () => cobrar(t), print: () => printT(t), del: () => del(t) })[b.dataset.a]();
       };
       list();
     }
@@ -39,6 +39,7 @@ const fdate = t => new Date(t).toLocaleString('es-MX', { day: 'numeric', month: 
       <div class="mu" style="margin:4px 0">${t.items.map(x => x.cant + '× ' + esc(x.producto)).join(', ')}</div>
       <div class="tl"><b class="amt">${money(t.total)}</b><span>
         ${t.estado !== 'Pagado' ? `<button class="btn sm primary" data-a="cobrar" data-i="${i}">Cobrar</button> ` : ''}
+        <button class="btn sm ghost" data-a="edit" data-i="${i}">Editar</button>
         <button class="btn sm ghost" data-a="print" data-i="${i}">Imprimir</button>
         <button class="btn sm ghost danger" data-a="del" data-i="${i}">Borrar</button></span></div></div>`).join('')
       || '<p class="mu">No hay ventas con ese filtro.</p>';
