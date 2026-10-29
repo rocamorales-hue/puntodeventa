@@ -160,3 +160,9 @@ h2{margin:0;font-size:18px}
 .cli{cursor:pointer;transition:border-color .15s}.cli:hover{border-color:var(--accent)}
 .cact{display:flex;gap:8px;flex-wrap:wrap}
 .chead b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ===== Productos (etapa 9) ===== */
+.fl{display:grid;gap:4px;font-size:12px;font-weight:650;color:var(--mute)}
+.fl input{font-weight:400;color:var(--ink)}
+.tag.x{background:#f6dcd8;color:#8f332a}
+@media(prefers-color-scheme:dark){.tag.x{background:#4a2420;color:#f0a49c}}
