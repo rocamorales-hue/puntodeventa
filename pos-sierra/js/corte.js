@@ -26,7 +26,7 @@
     T.forEach(t => t.items.forEach(x => prod[x.producto] = (prod[x.producto] || 0) + x.cant));
     const cobrado = P.reduce((s, t) => s + t.total, 0);
     const util = P.reduce((s, t) => s + t.items.reduce((a, x) => a + x.total - x.cant * x.costo, 0), 0);
-    const pend = all.filter(t => t.estado !== 'Pagado').reduce((s, t) => s + t.total, 0);
+    const pend = all.filter(t => t.estado !== 'Pagado').reduce((s, t) => s + t.resta, 0);
     const top = Object.entries(prod).sort((a, b) => b[1] - a[1]).slice(0, 6);
     $('#cr').innerHTML = `<div class="kpis">
       <div class="card kpi"><span class="mu">Cobrado del día</span><b>${money(cobrado)}</b></div>

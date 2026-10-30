@@ -13,8 +13,8 @@
   function stats() {
     const m = {}, get = n => m[n] || (m[n] = { n, tel: '', email: '', tk: 0, compras: 0, last: 0, pend: 0, ab: 0, saldo: 0 });
     S.clients.forEach(c => { const o = get(up(c.nombre)); o.tel = c.tel || ''; o.email = c.email || ''; });
-    tickets().forEach(t => { const k = up(t.cliente); if (!k) return; const o = get(k); o.tk++; o.compras += t.total; o.last = Math.max(o.last, t.fecha); if (t.estado !== 'Pagado') o.pend += t.total; });
-    (S.abonos || []).forEach(a => { const k = up(a.cliente); if (k) get(k).ab += a.monto; });
+    tickets().forEach(t => { const k = up(t.cliente); if (!k) return; const o = get(k); o.tk++; o.compras += t.total; o.last = Math.max(o.last, t.fecha); if (t.estado !== 'Pagado') o.pend += t.resta; });
+    (S.abonos || []).forEach(a => { const k = up(a.cliente); if (k && !a.folio) get(k).ab += a.monto; });
     Object.values(m).forEach(o => o.saldo = Math.round((o.pend - o.ab) * 100) / 100);
     return m;
   }
@@ -108,12 +108,12 @@
 
   function stmt(n) {
     const T = tickets().filter(t => up(t.cliente) === n).sort((a, b) => a.fecha - b.fecha), A = (S.abonos || []).filter(a => up(a.cliente) === n).sort((a, b) => a.fecha - b.fecha);
-    const pend = T.filter(t => t.estado !== 'Pagado').reduce((s, t) => s + t.total, 0), ab = A.reduce((s, a) => s + a.monto, 0);
+    const PT = T.filter(t => t.estado !== 'Pagado'), pf = new Set(PT.map(t => t.folio)), pend = PT.reduce((s, t) => s + t.total, 0), ab = A.filter(a => !a.folio || pf.has(String(a.folio))).reduce((s, a) => s + a.monto, 0);
     const w = window.open('', '_blank');
     w.document.write(`<html><head><title>Estado de cuenta</title><style>body{font:14px Arial;margin:28px;color:#1f2937}table{width:100%;border-collapse:collapse;margin:10px 0 22px}td,th{border:1px solid #ddd;padding:8px;text-align:left}th{background:#f3ece3}.n{text-align:right}h1{font-size:22px;margin:0}</style></head><body>
       <h1>Estado de cuenta — ${esc(n)}</h1><p>Café Sierra Escondida · ${new Date().toLocaleDateString('es-MX')}</p>
       <h3>Ventas</h3><table><tr><th>Fecha</th><th>Folio</th><th>Concepto</th><th>Estado</th><th class=n>Total</th></tr>${T.map(t => `<tr><td>${fdate(t.fecha)}</td><td>${esc(t.folio)}</td><td>${t.items.map(x => esc(x.producto)).join(', ')}</td><td>${esc(t.estado)}</td><td class=n>${money(t.total)}</td></tr>`).join('') || '<tr><td colspan=5>Sin ventas</td></tr>'}</table>
-      <h3>Abonos</h3><table><tr><th>Fecha</th><th>Método</th><th class=n>Monto</th></tr>${A.map(a => `<tr><td>${fdate(a.fecha)}</td><td>${esc(a.metodo)}</td><td class=n>${money(a.monto)}</td></tr>`).join('') || '<tr><td colspan=3>Sin abonos</td></tr>'}</table>
+      <h3>Abonos</h3><table><tr><th>Fecha</th><th>Aplicado a</th><th>Método</th><th class=n>Monto</th></tr>${A.map(a => `<tr><td>${fdate(a.fecha)}</td><td>${esc(a.folio || 'Cuenta general')}</td><td>${esc(a.metodo)}</td><td class=n>${money(a.monto)}</td></tr>`).join('') || '<tr><td colspan=4>Sin abonos</td></tr>'}</table>
       <p>Pendiente: ${money(pend)} · Abonos: ${money(ab)}</p><h2>Saldo a pagar: ${money(Math.max(0, pend - ab))}</h2></body></html>`);
     w.document.close(); w.print();
   }

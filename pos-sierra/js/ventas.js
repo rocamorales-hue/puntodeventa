@@ -6,6 +6,13 @@ function tickets() {
     const t = m[v.folio] = m[v.folio] || { folio: v.folio, fecha: v.fecha, cliente: v.cliente, estado: v.estado, metodo: v.metodo, tipo: v.tipo, nota: v.nota, items: [], total: 0, desc: 0 };
     t.items.push(v); t.total += v.total; t.desc += v.desc || 0;
   });
+  /* Abonos aplicados a cada ticket pendiente: resta = total - abonado */
+  const ab = {}; (S.abonos || []).forEach(a => { if (a.folio) ab[String(a.folio)] = (ab[String(a.folio)] || 0) + a.monto; });
+  Object.values(m).forEach(t => {
+    const pend = t.estado !== 'Pagado';
+    t.abonado = pend ? Math.round((ab[t.folio] || 0) * 100) / 100 : 0;
+    t.resta = pend ? Math.max(0, Math.round((t.total - t.abonado) * 100) / 100) : 0;
+  });
   return Object.values(m).sort((a, b) => b.fecha - a.fecha);
 }
 const fdate = t => new Date(t).toLocaleString('es-MX', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
@@ -66,14 +73,14 @@ const fdate = t => new Date(t).toLocaleString('es-MX', { day: 'numeric', month: 
 
   function list() {
     TK = filtered();
-    const tot = TK.reduce((s, t) => s + t.total, 0), pend = TK.filter(t => t.estado !== 'Pagado').reduce((s, t) => s + t.total, 0);
+    const tot = TK.reduce((s, t) => s + t.total, 0), pend = TK.reduce((s, t) => s + t.resta, 0);
     $('#vs').textContent = TK.length + ' ticket(s) · ' + money(tot) + (pend ? ' · por cobrar ' + money(pend) : '');
     $('#vl').innerHTML = TK.slice(0, F.lim).map((t, i) => `<div class="card">
-      <div class="tl"><b>${esc(t.folio)} · ${esc(t.cliente || 'Mostrador')}</b><span class="tag ${t.estado === 'Pagado' ? 'ok' : ''}">${esc(t.estado)}</span></div>
+      <div class="tl"><b>${esc(t.folio)} · ${esc(t.cliente || 'Mostrador')}</b><span class="tag ${t.estado === 'Pagado' ? 'ok' : ''}">${t.abonado > 0 ? 'Resta ' + money(t.resta) : esc(t.estado)}</span></div>
       <div class="mu">${fdate(t.fecha)} · ${esc(t.tipo || '')}${t.metodo && t.metodo !== 'Sin registrar' ? ' · ' + esc(t.metodo) : ''}</div>
-      <div class="mu" style="margin:4px 0">${t.items.map(x => x.cant + '× ' + esc(x.producto)).join(', ')}${t.desc > 0 ? ' · Descuento −' + money(t.desc) : ''}</div>
+      <div class="mu" style="margin:4px 0">${t.items.map(x => x.cant + '× ' + esc(x.producto)).join(', ')}${t.desc > 0 ? ' · Descuento −' + money(t.desc) : ''}${t.abonado > 0 ? ' · Abonado ' + money(t.abonado) : ''}</div>
       <div class="tl"><b class="amt">${money(t.total)}</b><span>
-        ${t.estado !== 'Pagado' ? `<button class="btn sm primary" data-a="cobrar" data-i="${i}">Cobrar</button> ` : ''}
+        ${t.estado !== 'Pagado' ? `<button class="btn sm primary" data-a="cobrar" data-i="${i}">Cobrar / abonar</button> ` : ''}
         <button class="btn sm ghost" data-a="edit" data-i="${i}">Editar</button>
         <button class="btn sm ghost" data-a="print" data-i="${i}">Imprimir</button>
         <button class="btn sm ghost danger" data-a="del" data-i="${i}">Borrar</button></span></div></div>`).join('')
@@ -81,18 +88,42 @@ const fdate = t => new Date(t).toLocaleString('es-MX', { day: 'numeric', month: 
     $('#vm').innerHTML = TK.length > F.lim ? `<button class="btn ghost" data-more="1">Mostrar más (${TK.length - F.lim} restantes)</button>` : '';
   }
 
+  /* Cobrar un ticket pendiente: completo o solo una parte (abono) */
   function cobrar(t) {
-    modal(`<h2>Cobrar ${esc(t.folio)}</h2><div class="big">${money(t.total)}</div>
+    const pagos = (S.abonos || []).filter(a => a.folio && String(a.folio) === t.folio), resta = t.resta;
+    modal(`<h2>Cobrar ${esc(t.folio)}</h2>
+      <div class="tl"><span class="mu">Total del ticket</span><b>${money(t.total)}</b></div>
+      ${t.abonado > 0 ? `<div class="tl"><span class="mu">Ya abonado</span><b>${money(t.abonado)}</b></div>` : ''}
+      <div class="tl"><span>Por cobrar</span><b class="amt">${money(resta)}</b></div>
+      <label class="fl">Monto a cobrar ahora<input id="cm" type="number" min="0" step="0.01" inputmode="decimal" value="${resta.toFixed(2)}"></label>
+      <div class="amounts"><button class="btn sm" data-q="${resta.toFixed(2)}">Todo (${money(resta)})</button><button class="btn sm" data-q="${(resta / 2).toFixed(2)}">La mitad</button></div>
+      <div class="mu" id="ch" aria-live="polite"></div>
       <div class="quick">${['Efectivo', 'Débito', 'Transferencia'].map(m => `<button class="btn primary" data-m="${m}">${m === 'Débito' ? 'Tarjeta' : m}</button>`).join('')}</div>
       <button class="btn ghost" id="nc">Cancelar</button>`);
-    $('#nc').onclick = closeM;
+    const monto = () => Math.round((+$('#cm').value || 0) * 100) / 100;
+    const hint = () => { const m = monto(); $('#ch').textContent = !(m > 0) ? '' : m > resta + 0.004 ? 'El monto es mayor a lo que resta.' : m >= resta - 0.004 ? 'Se liquida el ticket completo.' : 'Quedarán por cobrar ' + money(resta - m) + '.'; };
+    $('#cm').oninput = hint; hint(); $('#nc').onclick = closeM;
     $('#mbox').onclick = async e => {
+      const q = e.target.closest('[data-q]'); if (q) { $('#cm').value = q.dataset.q; hint(); return; }
       const b = e.target.closest('[data-m]'); if (!b) return;
-      await api('setPaid', t.folio, b.dataset.m); closeM(); toast('Cobrado ' + t.folio); load();
+      const m = monto(), met = b.dataset.m;
+      if (!(m > 0)) return toast('Escribe el monto que vas a cobrar.', true);
+      if (m > resta + 0.004) return toast('El monto no puede ser mayor a lo que resta: ' + money(resta) + '.', true);
+      if (m >= resta - 0.004) {
+        let metodo = met;
+        if (pagos.length) { /* si hubo abonos previos, el método queda como pago dividido con el desglose real */
+          const por = {}; pagos.forEach(a => por[a.metodo] = (por[a.metodo] || 0) + a.monto); por[met] = (por[met] || 0) + resta;
+          metodo = 'Multipagos: ' + Object.entries(por).map(([k, v]) => k + ' ' + money(v)).join(' + ');
+        }
+        await api('setPaid', t.folio, metodo); closeM(); toast('Ticket ' + t.folio + ' liquidado');
+      } else {
+        await api('addPayment', t.cliente || '', t.folio, m, met, '', 'Abono a ' + t.folio); closeM(); toast('Abono de ' + money(m) + ' registrado. Resta ' + money(resta - m));
+      }
+      load();
     };
   }
   async function del(t) {
-    if (!confirm('¿Borrar el ticket ' + t.folio + '? Esta acción no se puede deshacer.')) return;
+    if (!confirm('¿Borrar el ticket ' + t.folio + '? Esta acción no se puede deshacer.' + (t.abonado > 0 ? '\n\nOjo: tiene abonos por ' + money(t.abonado) + ' que no se devuelven automáticamente.' : ''))) return;
     await api('deleteSale', t.folio); toast('Ticket ' + t.folio + ' borrado'); load();
   }
   function printT(t) {
