@@ -17,7 +17,7 @@
       root.innerHTML = `<div class="pos">
         <section class="catalog">
           <div class="catbar"><input id="q" type="search" placeholder="Buscar producto… (ej. 3x café y Enter)" aria-label="Buscar producto" value="${esc(V.q)}" autocomplete="off">
-            <div class="vmode" role="group" aria-label="Vista del catálogo"><button data-a="mode" data-v="lista" aria-pressed="${V.mode === 'lista'}" aria-label="Vista de lista">${ICONS.lista}</button><button data-a="mode" data-v="mosaico" aria-pressed="${V.mode === 'mosaico'}" aria-label="Vista de mosaico">${ICONS.mas}</button></div></div>
+            <div class="vmode" role="group" aria-label="Vista del catálogo"><button data-a="mode" data-v="lista" aria-pressed="${V.mode === 'lista'}" aria-label="Vista de lista">${ICONS.lista}</button><button data-a="mode" data-v="mosaico" aria-pressed="${V.mode === 'mosaico'}" aria-label="Vista de mosaico">${ICONS.mas}</button></div><button class="btn" data-a="libre" title="Vender algo que no está en el catálogo">＋ Otro artículo</button></div>
           <div class="chips" id="chips"></div>
           <div class="grid ${V.mode === 'lista' ? 'rows' : ''}" id="grid"></div>
         </section>
@@ -27,26 +27,26 @@
           <div class="t-fields">
             <input id="cli" list="cl" placeholder="Cliente (opcional)" aria-label="Cliente" value="${esc(V.cli)}" autocomplete="off">
             <datalist id="cl">${S.clients.map(c => `<option value="${esc(c.nombre)}">`).join('')}</datalist>
-            <div class="seg" role="group" aria-label="Tipo de servicio">${['Aquí', 'Para llevar', 'Domicilio'].map(t =>
-              `<button data-a="tipo" data-v="${t}" aria-pressed="${t === V.tipo}">${t}</button>`).join('')}</div>
-            <button class="linkbtn" data-a="note" id="nbtn" ${V.nota ? 'hidden' : ''}>＋ Agregar nota al pedido</button>
-            <input id="nota" placeholder="Nota del pedido (dirección, mesa…)" aria-label="Nota del pedido" value="${esc(V.nota)}" ${V.nota ? '' : 'hidden'}>
+            <button class="linkbtn" data-a="det" id="detbtn">${V.nota || V.tipo !== 'Aquí' ? 'Detalles del pedido ▾' : '＋ Nota o tipo de servicio'}</button>
+            <div id="det" ${V.nota || V.tipo !== 'Aquí' ? '' : 'hidden'}>
+              <input id="nota" placeholder="Nota (dirección, mesa…)" aria-label="Nota del pedido" value="${esc(V.nota)}">
+              <div class="seg" role="group" aria-label="Tipo de servicio" style="margin-top:8px">${['Aquí', 'Para llevar', 'Domicilio'].map(t => `<button data-a="tipo" data-v="${t}" aria-pressed="${t === V.tipo}">${t}</button>`).join('')}</div>
+            </div>
           </div>
           <div class="items" id="items"></div>
           <div class="t-foot">
-            <div class="tl"><button class="btn sm ghost" data-a="disc" id="dbtn">Descuento</button><span class="mu" id="dline"></span></div>
+            <button class="linkbtn" data-a="disc" id="dline" hidden></button>
             <div class="total"><span class="mu" id="ccount"></span><b id="tot"></b></div>
             <div class="quick">
               <button class="btn primary" data-a="pay" data-m="Efectivo">Efectivo exacto</button>
               <button class="btn primary" data-a="pay" data-m="Débito">Tarjeta</button>
               <button class="btn primary" data-a="pay" data-m="Transferencia">Transferencia</button>
             </div>
-            <div class="row2 r3">
-              <button class="btn" data-a="cash">Efectivo + cambio</button>
-              <button class="btn" data-a="split">Dividir pago</button>
-              <button class="btn" data-a="credit">A crédito</button>
-            </div>
-            <div class="row2"><button class="btn ghost" data-a="pend">Dejar pendiente</button><button class="btn ghost" data-a="quote">Guardar cotización</button></div>
+            <details class="more"><summary>Más formas de cobrar y opciones</summary>
+              <div class="row2 r3"><button class="btn" data-a="cash">Efectivo + cambio</button><button class="btn" data-a="split">Dividir pago</button><button class="btn" data-a="credit">A crédito</button></div>
+              <div class="row2"><button class="btn ghost" data-a="pend">Dejar pendiente</button><button class="btn ghost" data-a="quote">Guardar cotización</button></div>
+              <button class="btn ghost" data-a="disc" id="dbtn">Descuento</button>
+            </details>
           </div>
         </aside>
         <button class="totalbar" data-a="open"><span id="bcount"></span><span id="btot"></span></button>
@@ -84,7 +84,7 @@
     $('#grid').innerHTML = list.map(p => V.mode === 'lista'
       ? `<div class="prow"><button class="add" data-a="add" data-v="${esc(p.nombre)}"><span class="pn"><b>${esc(p.nombre)}</b><small>${esc(p.cat)} ${stk(p)}</small></span>${badge(p)}<span class="pr">${money(p.precio)}</span></button>${fav(p)}</div>`
       : `<div class="prod"><button class="add" data-a="add" data-v="${esc(p.nombre)}"><div class="av" style="background:${hue(p.cat)}">${esc(p.nombre[0] || '?')}</div><b>${esc(p.nombre)}</b><span class="pr">${money(p.precio)}</span>${stk(p)}${badge(p)}</button>${fav(p)}</div>`).join('')
-      || '<p class="mu">No hay productos con ese nombre. Prueba con otra búsqueda o categoría.</p>';
+      || `<p class="mu">No hay productos con ese nombre.</p>${parse().t.trim() ? `<button class="btn" data-a="libre" data-v="${esc(parse().t.trim())}">＋ Vender «${esc(parse().t.trim())}» como artículo libre</button>` : ''}`;
   }
 
   function cart() {
@@ -100,6 +100,7 @@
     const fl = document.querySelector('.line.flash'); if (fl) fl.scrollIntoView({ block: 'nearest' }); V.flash = null;
     $('#ttl').textContent = V.ed ? 'Editando ' + V.ed.folio : V.cot ? 'Desde ' + V.cot : 'Ticket actual';
     $('#dline').textContent = dsc() > 0 ? 'Subtotal ' + money(sub()) + ' · Descuento −' + money(dsc()) : '';
+    $('#dline').hidden = !(dsc() > 0);
     $('#dbtn').textContent = dsc() > 0 ? 'Editar descuento' : 'Descuento';
     $('#tot').textContent = money(total()); $('#ccount').textContent = count() + ' artículo(s)';
     $('#bcount').textContent = count() + ' artículo(s) · Ver ticket'; $('#btot').textContent = money(total());
@@ -109,7 +110,27 @@
 
   const H = {
     add(_, b, n) { n = n || 1; const p = S.prods.find(x => x.nombre === b.dataset.v), x = V.cart.find(c => c.nombre === p.nombre); x ? x.cant += n : V.cart.push({ nombre: p.nombre, cant: n, precio: p.precio, costo: p.costo }); V.flash = p.nombre; warn(p.nombre); cart(); grid(); },
-    note() { $('#nbtn').hidden = true; $('#nota').hidden = false; $('#nota').focus(); },
+    det() { const d = $('#det'); d.hidden = !d.hidden; if (!d.hidden) $('#nota').focus(); },
+    libre(_, b) {
+      const pre = (b && b.dataset && b.dataset.v) || '';
+      modal(`<h2>Artículo libre</h2><p class="mu">Para vender algo que no está en el catálogo.</p>
+        <label class="fl">Descripción<input id="lf" value="${esc(pre)}" placeholder="Ej. Flete, servicio, producto especial" autocomplete="off"></label>
+        <div class="form" style="grid-template-columns:1fr 1fr 1fr"><label class="fl">Precio<input id="lp" type="number" min="0" step="any" inputmode="decimal"></label>
+          <label class="fl">Cantidad<input id="lc" type="number" min="0" step="any" value="1" inputmode="decimal"></label>
+          <label class="fl">Costo<input id="lk" type="number" min="0" step="any" inputmode="decimal" placeholder="Opcional"></label></div>
+        <label style="display:flex;gap:10px;align-items:center;font-size:14px"><input type="checkbox" id="lg" style="width:20px;min-height:20px"> Guardar también en el catálogo</label>
+        <button class="btn primary" id="lok">Agregar al ticket</button><button class="btn ghost" id="lno">Cancelar</button>`);
+      $(pre ? '#lp' : '#lf').focus(); $('#lno').onclick = closeM;
+      $('#lok').onclick = () => {
+        const nombre = $('#lf').value.trim(), precio = +$('#lp').value, cant = +$('#lc').value || 1, costo = +$('#lk').value || 0, guardar = $('#lg').checked;
+        if (!nombre) return toast('Escribe una descripción.', true);
+        if (!(precio > 0)) return toast('Escribe un precio mayor a cero.', true);
+        const x = V.cart.find(c => c.nombre === nombre && c.precio === precio);
+        x ? x.cant += cant : V.cart.push({ nombre, cant, precio, costo });
+        V.flash = nombre; closeM(); cart(); grid();
+        if (guardar) api('saveProduct', { cat: 'Otros', nombre, precio, costo }).then(() => { toast('Guardado en el catálogo'); load(); }).catch(() => {});
+      };
+    },
     mode(_, b) { V.mode = b.dataset.v; store.set('mode', V.mode); views.vender.render($('#app')); },
     inc(i) { V.cart[i].cant++; warn(V.cart[i].nombre); cart(); grid(); },
     dec(i) { if (--V.cart[i].cant <= 0) V.cart.splice(i, 1); cart(); grid(); },
