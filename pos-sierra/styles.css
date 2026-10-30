@@ -230,3 +230,9 @@ details.more>*:not(summary){margin-top:8px}
 .pill:not([data-s=ok]){opacity:.92}
 @keyframes pulse{50%{transform:scale(1.55);opacity:.45}}
 @media(max-width:760px){.pill{left:50%;transform:translateX(-50%);bottom:auto;top:6px}}
+
+/* ===== Corrección: lo que lleva "hidden" debe ocultarse siempre (etapa 12) ===== */
+[hidden]{display:none!important}
+.qty-in{width:66px;min-height:44px;padding:0 4px;text-align:center;font-weight:700;font-size:16px;border-radius:10px;-moz-appearance:textfield;appearance:textfield}
+.qty-in::-webkit-inner-spin-button,.qty-in::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+@media(max-height:780px){.qty-in{min-height:38px}}
