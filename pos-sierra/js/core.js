@@ -2,6 +2,7 @@
 /* ===== Núcleo: API, estado, navegación y utilidades ===== */
 const URL_API = 'https://script.google.com/macros/s/AKfycbyZsbFkMYhcfYQ8mk9Ca5ani7by_i-cFpplgzcDJyaGlj0SZmC2AdS18WiG1ZdCzZBj/exec';
 
+const VERSION = '1.12';
 const $ = (s, r = document) => r.querySelector(s);
 const money = n => '$' + (+n || 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -100,7 +101,7 @@ function renderStatus() {
   const k = t => new Date(t - new Date().getTimezoneOffset() * 6e4).toISOString().slice(0, 10), hoy = k(Date.now());
   const T = typeof tickets === 'function' ? tickets() : [];
   const h = T.filter(t => k(t.fecha) === hoy), pend = T.filter(t => t.estado !== 'Pagado');
-  const tip = lbl + (net.last ? ' · actualizado ' + net.last.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' }) : '') +
+  const tip = 'POS v' + VERSION + ' · ' + lbl + (net.last ? ' · actualizado ' + net.last.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' }) : '') +
     (T.length ? ' · hoy ' + money(h.reduce((s, t) => s + t.total, 0)) + ' · ' + pend.length + ' por cobrar' : '') + ' (toca para actualizar)';
   el.dataset.s = st; el.title = tip; el.setAttribute('aria-label', tip);
   el.innerHTML = '<span class="dot"></span><span class="lbl">' + lbl + '</span>';

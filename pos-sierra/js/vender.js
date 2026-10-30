@@ -52,6 +52,15 @@
         <button class="totalbar" data-a="open"><span id="bcount"></span><span id="btot"></span></button>
       </div>`;
       root.onclick = onClick;
+      /* cantidad escrita a mano en cada línea del ticket (0 la quita) */
+      $('#items').onchange = e => {
+        const t = e.target; if (t.dataset.q === undefined) return;
+        const i = +t.dataset.q, v = parseFloat(t.value);
+        if (!(v > 0)) V.cart.splice(i, 1); else { V.cart[i].cant = v; warn(V.cart[i].nombre); }
+        cart(); grid();
+      };
+      $('#items').onfocusin = e => { if (e.target.dataset.q !== undefined) e.target.select(); };
+      $('#items').onkeydown = e => { if (e.target.dataset.q !== undefined && e.key === 'Enter') e.target.blur(); };
       $('#q').oninput = e => { V.q = e.target.value; grid(); };
       $('#q').onkeydown = e => {
         if (e.key === 'Escape') { V.q = ''; e.target.value = ''; grid(); }
@@ -90,7 +99,7 @@
   function cart() {
     $('#items').innerHTML = V.cart.map((c, i) => `<div class="line${c.nombre === V.flash ? ' flash' : ''}">
       <div class="nm">${esc(c.nombre)}</div><div class="sub">${money(c.cant * c.precio)}</div>
-      <div class="qty"><button data-a="dec" data-i="${i}" aria-label="Quitar uno">−</button><b>${c.cant}</b><button data-a="inc" data-i="${i}" aria-label="Agregar uno">+</button></div>
+      <div class="qty"><button data-a="dec" data-i="${i}" aria-label="Quitar uno">−</button><input class="qty-in" type="number" min="0" step="any" inputmode="decimal" value="${c.cant}" data-q="${i}" aria-label="Cantidad de ${esc(c.nombre)}"><button data-a="inc" data-i="${i}" aria-label="Agregar uno">+</button></div>
       <div style="text-align:right">${V.edit === i
         ? `<input class="price-in" type="number" min="0" step="any" inputmode="decimal" value="${c.precio}" aria-label="Precio unitario" data-i="${i}">`
         : `<button class="btn sm ghost" data-a="edit" data-i="${i}">${money(c.precio)} c/u ✎</button>`}</div></div>`).join('')
