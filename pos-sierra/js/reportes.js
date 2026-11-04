@@ -24,9 +24,9 @@
 
   views.reportes = {
     render(root) {
-      root.innerHTML = `<h2>Reportes</h2>
+      root.innerHTML = `<div class="pagehead"><h2>Reportes</h2><button class="btn primary" id="rpdf" title="Resumen ejecutivo del periodo elegido, listo para guardar como PDF">Reporte ejecutivo (PDF)</button></div>
         <div class="rfilters"><div class="chips" id="rt">${TABS.map(([k, l]) => `<button class="chip" data-t="${k}" aria-pressed="${k === R.tab}">${l}</button>`).join('')}</div>
-        <div class="chips">${[['hoy', 'Hoy'], ['7', '7 días'], ['mes', 'Este mes'], ['anio', 'Este año']].map(([k, l]) => `<button class="chip" data-p="${k}">${l}</button>`).join('')}</div>
+        <div class="chips">${[['hoy', 'Hoy'], ['7', '7 días'], ['mes', 'Este mes'], ['mesant', 'Mes pasado'], ['anio', 'Este año']].map(([k, l]) => `<button class="chip" data-p="${k}">${l}</button>`).join('')}</div>
         <div class="row2"><input type="date" id="ra" value="${R.a}" aria-label="Desde"><input type="date" id="rb" value="${R.b}" aria-label="Hasta"></div></div>
         <div id="rr"></div>
         <button class="btn" id="rx" style="margin-top:14px">Exportar ventas del periodo (CSV)</button>`;
@@ -38,12 +38,14 @@
       $('#ra').onchange = e => { R.a = e.target.value; body(); };
       $('#rb').onchange = e => { R.b = e.target.value; body(); };
       $('#rx').onclick = csv;
+      $('#rpdf').onclick = () => Ejecutivo.abrir(R.a, R.b);
       body();
     }
   };
 
   function preset(p) {
     const t = today(), d = new Date();
+    if (p === 'mesant') { R.a = dk(new Date(d.getFullYear(), d.getMonth() - 1, 1).getTime()); R.b = dk(new Date(d.getFullYear(), d.getMonth(), 0).getTime()); return; }
     R.b = t;
     R.a = p === 'hoy' ? t : p === '7' ? dk(Date.now() - 6 * DAY) : p === 'mes' ? t.slice(0, 8) + '01' : d.getFullYear() + '-01-01';
   }
@@ -88,14 +90,14 @@
   /* --- Clientes --- */
   function clientes() {
     const all = tickets(), T = range(all, R.a, R.b), now = Date.now();
-    const pend = all.filter(t => t.estado !== 'Pagado'), ab = (S.abonos || []).reduce((s, a) => s + a.monto, 0);
-    const B = [['0-7 días', 0, 7], ['8-15 días', 8, 15], ['16-30 días', 16, 30], ['Más de 30 días', 31, 1e9]].map(([l, lo, hi]) => [l, pend.filter(t => { const d = (now - t.fecha) / DAY; return d >= lo && d < hi + 1; }).reduce((s, t) => s + t.total, 0)]);
+    const pend = all.filter(t => t.estado !== 'Pagado'), ab = (S.abonos || []).filter(a => !a.folio).reduce((s, a) => s + a.monto, 0);
+    const B = [['0-7 días', 0, 7], ['8-15 días', 8, 15], ['16-30 días', 16, 30], ['Más de 30 días', 31, 1e9]].map(([l, lo, hi]) => [l, pend.filter(t => { const d = (now - t.fecha) / DAY; return d >= lo && d < hi + 1; }).reduce((s, t) => s + t.resta, 0)]);
     const mejores = desc(group(T, t => nombre(t.cliente), t => t.total)).slice(0, 10);
     const freq = {}; T.forEach(t => freq[nombre(t.cliente)] = (freq[nombre(t.cliente)] || 0) + 1);
     const last = {}, first = {}; all.forEach(t => { const c = nombre(t.cliente); last[c] = Math.max(last[c] || 0, t.fecha); first[c] = Math.min(first[c] || 1e15, t.fecha); });
     const inact = Object.entries(last).filter(([c, f]) => c !== 'Mostrador' && (now - f) / DAY > 30).sort((x, y) => x[1] - y[1]).slice(0, 12).map(([c, f]) => [esc(c), Math.floor((now - f) / DAY) + ' días']);
     const act = Object.keys(freq).filter(c => c !== 'Mostrador'), nuevos = act.filter(c => dk(first[c]) >= R.a).length;
-    return `<div class="list">${box('Antigüedad de saldos' + (ab ? ' <span class="mu">(sin descontar abonos: ' + money(ab) + ')</span>' : ''), bars(B))}
+    return `<div class="list">${box('Antigüedad de saldos' + (ab ? ' <span class="mu">(sin descontar abonos generales: ' + money(ab) + ')</span>' : ''), bars(B))}
       ${box('Mejores clientes (importe)', table(['Cliente', 'Compra', 'Tickets'], mejores.map(([c, v]) => [esc(c), money(v), freq[c]])))}
       ${box('Clientes nuevos vs. recurrentes', table(['Tipo', 'Clientes'], [['Nuevos en el periodo', nuevos], ['Recurrentes', act.length - nuevos]]))}
       ${box('Inactivos (más de 30 días sin comprar)', table(['Cliente', 'Sin comprar'], inact))}</div>`;
