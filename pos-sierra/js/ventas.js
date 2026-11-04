@@ -128,9 +128,9 @@ const fdate = t => new Date(t).toLocaleString('es-MX', { day: 'numeric', month: 
   }
   function printT(t) {
     const w = window.open('', '', 'width=320,height=600');
-    w.document.write(`<pre style="font:13px monospace;width:260px">☕ CAFÉ SIERRA ESCONDIDA\nTicket ${esc(t.folio)}\n${fdate(t.fecha)}\nCliente: ${esc(t.cliente || '-')}\n------------------------\n` +
+    w.document.write(`<pre style="font:13px monospace;width:260px">${esc(((S.config || {}).nombre || 'Café Sierra Escondida').toUpperCase())}${(S.config || {}).telefono ? '\nTel. ' + esc(S.config.telefono) : ''}\nTicket ${esc(t.folio)}\n${fdate(t.fecha)}\nCliente: ${esc(t.cliente || '-')}\n------------------------\n` +
       t.items.map(x => `${x.cant} x ${esc(x.producto)}\n     ${money(x.cant * x.precio)}`).join('\n') +
-      `\n------------------------\n${t.desc > 0 ? 'Descuento: -' + money(t.desc) + '\n' : ''}TOTAL: ${money(t.total)}\nPago: ${esc(t.metodo || '')}\n¡Gracias!</pre>`);
+      `\n------------------------\n${t.desc > 0 ? 'Descuento: -' + money(t.desc) + '\n' : ''}TOTAL: ${money(t.total)}\nPago: ${esc(t.metodo || '')}\n${esc((S.config || {}).ticketLeyenda || '¡Gracias!')}</pre>`);
     w.document.close(); w.print();
   }
 })();

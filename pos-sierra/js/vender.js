@@ -157,7 +157,7 @@
       const n = V.cli.trim().toUpperCase();
       if (!n) return toast('Escribe el nombre del cliente para guardar la cotización.', true);
       const c = S.clients.find(c => c.nombre.toUpperCase() === n);
-      const f = await api('saveQuote', { cliente: n, tel: c ? c.tel : '', total: total(), descuento: dsc(), items: V.cart });
+      const f = await api('saveQuote', { cliente: n, tel: c ? c.tel : '', total: total(), descuento: dsc(), notas: V.nota, vigDias: +(S.config || {}).vigenciaDias || 15, items: V.cart });
       toast('Cotización ' + f + ' guardada'); reset(); await load();
     },
     disc() {

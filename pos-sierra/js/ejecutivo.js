@@ -27,7 +27,7 @@ const Ejecutivo = (() => {
     const lab = k => mode === 'm' ? at(k + '-15').toLocaleDateString('es-MX', { month: 'short', year: '2-digit' }) : +k.slice(8) + '/' + +k.slice(5, 7);
     const W = 700, H = 150, L = 46, n = keys.length, step = (W - L) / n, bw = Math.max(2, step - Math.min(4, step * .25)), mx = Math.max(1, ...keys.map(k => g[k] || 0)), every = Math.ceil(n / 14);
     return `<svg viewBox="0 0 ${W} ${H + 22}" width="100%" role="img" aria-label="Ventas en el tiempo"><text x="0" y="10" font-size="9" fill="#667068">${m0(mx)}</text><line x1="${L}" y1="${H}" x2="${W}" y2="${H}" stroke="#d9dbd2"/>
-      ${keys.map((k, i) => { const v = g[k] || 0, h = v / mx * (H - 18); return `<rect x="${L + i * step}" y="${H - h}" width="${bw}" height="${h}" rx="1.5" fill="#a35d17"/>${i % every === 0 ? `<text x="${L + i * step + bw / 2}" y="${H + 12}" font-size="8.5" text-anchor="middle" fill="#667068">${lab(k)}</text>` : ''}`; }).join('')}</svg>
+      ${keys.map((k, i) => { const v = g[k] || 0, h = v / mx * (H - 18); return `<rect x="${L + i * step}" y="${H - h}" width="${bw}" height="${h}" rx="1.5" fill="${brand()}"/>${i % every === 0 ? `<text x="${L + i * step + bw / 2}" y="${H + 12}" font-size="8.5" text-anchor="middle" fill="#667068">${lab(k)}</text>` : ''}`; }).join('')}</svg>
       <div class="mu">Ventas por ${mode === 'd' ? 'día' : mode === 'w' ? 'semana (inicia lunes)' : 'mes'}</div>`;
   }
 
@@ -60,10 +60,12 @@ const Ejecutivo = (() => {
       if (prod[0]) ins.push(`Producto estrella: <b>${esc(prod[0][0])}</b>, con ${m0(prod[0][1])} (${(prod[0][1] / ventas * 100).toFixed(0)}% de la venta).`);
       let acc = 0, na = 0; for (const [, v] of prod) { na++; acc += v; if (acc / ventas >= .8) break; }
       ins.push(`<b>${na}</b> de ${prod.length} productos vendidos concentran el 80% de los ingresos.`);
-      const bm = prod.slice(0, 8).filter(([k, v]) => v > 0 && pUtil[k] / v < .25 && pUtil[k] / v >= 0 && (L.find(x => x.producto === k) || {}).costo > 0)[0];
+      const bm = prod.slice(0, 8).filter(([k, v]) => v > 0 && pUtil[k] / v < ((+(S.config || {}).margenMin || 30) / 100) && pUtil[k] / v >= 0 && (L.find(x => x.producto === k) || {}).costo > 0)[0];
       if (bm) ins.push(`Atención: <b>${esc(bm[0])}</b> vende ${m0(bm[1])} con un margen de solo ${(pUtil[bm[0]] / bm[1] * 100).toFixed(0)}%.`);
     } else ins.push('No hay ventas registradas en este periodo.');
     if (cartera > 0) ins.push(`La cartera por cobrar es de <b>${m0(cartera)}</b>${edad[3][1] > 0 ? `; ${(edad[3][1] / cartera * 100).toFixed(0)}% tiene más de 30 días` : ''}.`);
+    const meta = +(S.config || {}).metaMensual || 0;
+    if (meta > 0 && a.slice(0, 7) === b.slice(0, 7)) ins.push(`Meta mensual de ${m0(meta)}: llevas el <b>${(ventas / meta * 100).toFixed(0)}%</b>${ventas >= meta ? ' (meta alcanzada)' : ''}.`);
     if (sinCosto) ins.push(`${sinCosto} producto(s) vendidos no tienen costo capturado, por lo que la utilidad real podría ser menor.`);
     if (bajo.length + ago.length) ins.push(`Inventario: ${ago.length} agotado(s) y ${bajo.length} por debajo del mínimo.`);
 
@@ -75,14 +77,14 @@ const Ejecutivo = (() => {
 @page{size:letter;margin:13mm}*{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 body{font:11.5px/1.45 Arial,Helvetica,sans-serif;color:#1c2620;margin:0 auto;max-width:800px;padding:14px}
 .bar{background:#fbf4e4;border:1px solid #f1e2c3;border-radius:8px;padding:10px 12px;margin-bottom:12px;display:flex;gap:12px;align-items:center;justify-content:space-between}
-.bar button{background:#a35d17;color:#fff;border:0;border-radius:8px;padding:9px 14px;font-weight:700;cursor:pointer}
-header{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid #a35d17;padding-bottom:8px}
+.bar button{background:${brand()};color:#fff;border:0;border-radius:8px;padding:9px 14px;font-weight:700;cursor:pointer}
+header{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid ${brand()};padding-bottom:8px}
 h1{font-size:22px;margin:0;color:#1f3028}.sub{color:#667068}.mu{color:#667068;font-size:10.5px}
 .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}.k{border:1px solid #e1e2da;border-radius:8px;padding:8px 10px}.k small{color:#667068;display:block;font-size:10px}.k b{font-size:18px;display:block}
 h2{font-size:12.5px;margin:15px 0 6px;color:#1f3028;border-bottom:1px solid #e1e2da;padding-bottom:3px;text-transform:uppercase;letter-spacing:.05em}
 .cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}.sec{break-inside:avoid}
 table{width:100%;border-collapse:collapse}th{text-align:left;color:#667068;font-size:9.5px;text-transform:uppercase}td,th{padding:4px 5px;border-bottom:1px solid #eee}.n{text-align:right}
-.hb{display:grid;grid-template-columns:105px 1fr 62px;gap:6px;align-items:center;margin:3px 0}.hb span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.hb b{text-align:right}.tr{background:#eef1ec;border-radius:4px;height:8px}.tr i{display:block;height:8px;border-radius:4px;background:#a35d17}
+.hb{display:grid;grid-template-columns:105px 1fr 62px;gap:6px;align-items:center;margin:3px 0}.hb span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.hb b{text-align:right}.tr{background:#eef1ec;border-radius:4px;height:8px}.tr i{display:block;height:8px;border-radius:4px;background:${brand()}}
 .up{color:#2f8056;font-weight:700}.dn{color:#b9473d;font-weight:700}ul{margin:4px 0 0 16px;padding:0}li{margin:3px 0}
 .foot{margin-top:16px;color:#8a938c;font-size:9.5px;border-top:1px solid #e1e2da;padding-top:6px}
 @media print{.bar{display:none}body{padding:0;max-width:none}}

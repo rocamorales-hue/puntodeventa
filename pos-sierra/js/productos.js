@@ -36,7 +36,7 @@
   function list() {
     const q = F.q.toLowerCase(), base = F.f === 'Inactivos' ? (S.inactivos || []) : S.prods;
     L = base.filter(p => (p.nombre + ' ' + p.cat).toLowerCase().includes(q) && (F.cat === 'Todas' || p.cat === F.cat) && ({
-      'Todos': true, 'Inactivos': true, 'Sin costo': !(p.costo > 0), 'Margen bajo': p.precio > 0 && mg(p) < 30, 'Sin ventas (30 días)': !V30[p.nombre] })[F.f]);
+      'Todos': true, 'Inactivos': true, 'Sin costo': !(p.costo > 0), 'Margen bajo': p.precio > 0 && mg(p) < (+(S.config || {}).margenMin || 30), 'Sin ventas (30 días)': !V30[p.nombre] })[F.f]);
     L.sort(({ 'Nombre': (a, b) => a.nombre.localeCompare(b.nombre), 'Precio (mayor)': (a, b) => b.precio - a.precio, 'Margen (menor)': (a, b) => mg(a) - mg(b), 'Más vendidos (30 días)': (a, b) => (V30[b.nombre] || 0) - (V30[a.nombre] || 0) })[F.s]);
     $('#pn').textContent = L.length + ' producto(s)';
     $('#pl').innerHTML = L.slice(0, 150).map((p, i) => {

@@ -128,12 +128,13 @@
 
   /* --- Proyección --- */
   function proy() {
+    const meta = +(S.config || {}).metaMensual || 0;
     const all = tickets(), d = new Date(), ym = dk(d).slice(0, 7), dim = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate(), dd = d.getDate();
     const mes = group(all, t => dk(t.fecha).slice(0, 7), t => t.total), m = Object.fromEntries(mes), actual = m[ym] || 0;
     const prev = mes.filter(([k]) => k < ym), prom = prev.length ? prev.reduce((s, r) => s + r[1], 0) / prev.length : 0;
     const meses = []; for (let i = 11; i >= 0; i--) { const x = new Date(d.getFullYear(), d.getMonth() - i, 1), k = dk(x.getTime() + 6 * 36e5).slice(0, 7), ky = (x.getFullYear() - 1) + k.slice(4); meses.push([k, m[k] || 0, m[ky] || 0]); }
     const L = lines(range(all, dk(Date.now() - 27 * DAY), today())), sem = desc(group(L, x => x.producto, x => x.cant / 4)).slice(0, 10);
-    return `<div class="kpis">${kpi('Ventas del mes en curso', money(actual), 'Día ' + dd + ' de ' + dim)}${kpi('Proyección al cierre del mes', money(actual / dd * dim), 'Al ritmo actual por día')}${kpi('Promedio mensual histórico', money(prom), prev.length + ' meses con ventas')}</div>
+    return `<div class="kpis">${kpi('Ventas del mes en curso', money(actual), 'Día ' + dd + ' de ' + dim)}${kpi('Proyección al cierre del mes', money(actual / dd * dim), 'Al ritmo actual por día')}${kpi('Promedio mensual histórico', money(prom), prev.length + ' meses con ventas')}${meta > 0 ? kpi('Avance de la meta mensual', (actual / meta * 100).toFixed(0) + '%', 'Meta ' + money(meta)) : ''}</div>
       <div class="list">${box('Tendencia mensual (12 meses)', table(['Mes', 'Ventas', 'Año anterior'], meses.map(([k, v, y]) => [k, money(v), y ? money(y) : '—'])))}
       ${box('Demanda estimada por semana (según las últimas 4 semanas)', bars(sem, v => v.toFixed(1)))}</div>`;
   }

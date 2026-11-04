@@ -1,6 +1,7 @@
 'use strict';
 /* ===== Pantalla Clientes: resumen, filtros, ficha con historial, abonos y cobranza ===== */
 (() => {
+  const DI = () => +(S.config || {}).diasInactivo || 30;
   const D = 864e5, F = { f: 'Todos', s: 'Nombre', q: '' };
   const FILTROS = ['Todos', 'Con saldo', 'Sin saldo', 'Activos', 'Inactivos'];
   const SORTS = ['Nombre', 'Mayor saldo', 'Compró más recientemente', 'Mayor compra total'];
@@ -23,12 +24,12 @@
   views.clientes = {
     render(root) {
       ST = stats();
-      const A = Object.values(ST), con = A.filter(o => o.saldo > 0), act = A.filter(o => o.last && days(o.last) <= 30);
+      const A = Object.values(ST), con = A.filter(o => o.saldo > 0), act = A.filter(o => o.last && days(o.last) <= DI());
       root.innerHTML = `<div class="pagehead"><h2>Clientes</h2><button class="btn primary" data-a="new">＋ Nuevo cliente</button></div>
         <div class="kpis"><div class="card kpi"><span class="mu">Clientes</span><b>${A.length}</b></div>
           <div class="card kpi"><span class="mu">Con saldo pendiente</span><b>${con.length}</b></div>
           <div class="card kpi"><span class="mu">Por cobrar</span><b>${money(con.reduce((s, o) => s + o.saldo, 0))}</b></div>
-          <div class="card kpi"><span class="mu">Activos (últimos 30 días)</span><b>${act.length}</b></div></div>
+          <div class="card kpi"><span class="mu">Activos (últimos ${DI()} días)</span><b>${act.length}</b></div></div>
         <div class="toolbar"><input id="cq" type="search" placeholder="Buscar por nombre o teléfono" aria-label="Buscar cliente" value="${esc(F.q)}">
           <select id="cs" aria-label="Ordenar por">${SORTS.map(s => `<option ${s === F.s ? 'selected' : ''}>${s}</option>`).join('')}</select></div>
         <div class="chips">${FILTROS.map(f => `<button class="chip" data-f="${f}" aria-pressed="${f === F.f}">${f}</button>`).join('')}</div>
@@ -50,7 +51,7 @@
     const q = F.q.toLowerCase();
     L = Object.values(ST).filter(o => (o.n + ' ' + o.tel).toLowerCase().includes(q) && ({
       'Todos': true, 'Con saldo': o.saldo > 0, 'Sin saldo': o.saldo <= 0,
-      'Activos': o.last && days(o.last) <= 30, 'Inactivos': !o.last || days(o.last) > 30 })[F.f]);
+      'Activos': o.last && days(o.last) <= DI(), 'Inactivos': !o.last || days(o.last) > DI() })[F.f]);
     L.sort(({ 'Nombre': (a, b) => a.n.localeCompare(b.n), 'Mayor saldo': (a, b) => b.saldo - a.saldo, 'Compró más recientemente': (a, b) => b.last - a.last, 'Mayor compra total': (a, b) => b.compras - a.compras })[F.s]);
     $('#cn').textContent = L.length + ' cliente(s)';
     $('#cl').innerHTML = L.slice(0, 150).map(o => `<div class="card cli" data-n="${esc(o.n)}">
