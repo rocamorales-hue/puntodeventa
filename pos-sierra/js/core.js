@@ -2,7 +2,7 @@
 /* ===== Núcleo: API, estado, navegación y utilidades ===== */
 const URL_API = 'https://script.google.com/macros/s/AKfycbyZsbFkMYhcfYQ8mk9Ca5ani7by_i-cFpplgzcDJyaGlj0SZmC2AdS18WiG1ZdCzZBj/exec';
 
-const VERSION = '1.14';
+const VERSION = '1.15';
 const brand = () => /^#[0-9a-f]{6}$/i.test((S.config || {}).color || '') ? S.config.color : '#a35d17';
 const $ = (s, r = document) => r.querySelector(s);
 const money = n => '$' + (+n || 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -24,8 +24,8 @@ $('#modal').addEventListener('click', e => { if (e.target.id === 'modal') closeM
 const net = { ok: true, last: null, err: 0, loading: false };
 
 /* Aviso de "Procesando…": bloquea toques repetidos mientras se guarda */
-const LABELS = { saveSale: 'Guardando venta…', setPaid: 'Registrando cobro…', deleteSale: 'Borrando ticket…', saveQuote: 'Guardando cotización…', addPayment: 'Guardando abono…', closeWeeklyCut: 'Guardando corte…', adjustStock: 'Actualizando inventario…', setMinStock: 'Guardando mínimo…', saveClient: 'Guardando cliente…', saveProduct: 'Guardando producto…', saveConfig: 'Guardando configuración…', setQuote: 'Actualizando cotización…' };
-const SILENT = { getData: 1, getConfig: 1 };
+const LABELS = { saveSale: 'Guardando venta…', setPaid: 'Registrando cobro…', deleteSale: 'Borrando ticket…', saveQuote: 'Guardando cotización…', addPayment: 'Guardando abono…', closeWeeklyCut: 'Guardando corte…', adjustStock: 'Actualizando inventario…', setMinStock: 'Guardando mínimo…', saveClient: 'Guardando cliente…', saveProduct: 'Guardando producto…', saveConfig: 'Guardando configuración…', setQuote: 'Actualizando cotización…', saveCaja: 'Guardando en caja…', voidCaja: 'Anulando movimiento…' };
+const SILENT = { getData: 1, getConfig: 1, getCaja: 1 };
 let busyN = 0, busyT;
 function busy(d, label) {
   busyN += d;
@@ -68,13 +68,14 @@ const ICONS = {
   inventario: svg('<path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>'),
   productos: svg('<path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/>'),
   corte: svg('<rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M16 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/><path d="M16 18h.01"/>'),
+  caja: svg('<rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/>'),
   reportes: svg('<path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/>'),
   configuracion: svg('<line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/>'),
   cafe: svg('<path d="M10 2v2"/><path d="M14 2v2"/><path d="M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1"/><path d="M6 2v2"/>'),
   lista: svg('<line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/>')
 };
 const NAV = [['vender', 'vender', 'Vender'], ['ventas', 'ventas', 'Ventas'], ['clientes', 'clientes', 'Clientes'], ['mas', 'mas', 'Más']];
-const MORE = [['cotizaciones', 'Cotizaciones'], ['inventario', 'Inventario'], ['productos', 'Productos'], ['corte', 'Corte'], ['reportes', 'Reportes'], ['configuracion', 'Configuración']];
+const MORE = [['cotizaciones', 'Cotizaciones'], ['inventario', 'Inventario'], ['productos', 'Productos'], ['caja', 'Caja'], ['corte', 'Corte'], ['reportes', 'Reportes'], ['configuracion', 'Configuración']];
 
 function go(v) {
   view = v;

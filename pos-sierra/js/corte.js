@@ -32,7 +32,8 @@
       <div class="card kpi"><span class="mu">Cobrado del día</span><b>${money(cobrado)}</b></div>
       <div class="card kpi"><span class="mu">Tickets del día</span><b>${T.length}</b></div>
       <div class="card kpi"><span class="mu">Utilidad bruta cobrada</span><b>${money(util)}</b></div>
-      <div class="card kpi"><span class="mu">Por cobrar (todas las fechas)</span><b>${money(pend)}</b></div></div>
+      <div class="card kpi"><span class="mu">Por cobrar (todas las fechas)</span><b>${money(pend)}</b></div>
+      <button class="card kpi" data-go="caja" style="text-align:left"><span class="mu">Efectivo esperado en caja</span><b>${window.Caja && Caja.esperado() != null ? money(Caja.esperado()) : 'Ver caja →'}</b></button></div>
       <div class="list"><div class="card"><b>Por método de pago</b>${Object.keys(met).map(k => `<div class="tl"><span>${esc(k)}</span><b>${money(met[k])}</b></div>`).join('') || '<p class="mu">No hay cobros este día.</p>'}</div>
       <div class="card"><b>Más vendidos del día</b>${top.map(([k, v]) => `<div class="tl"><span>${esc(k)}</span><b>${v}</b></div>`).join('') || '<p class="mu">No hay ventas este día.</p>'}</div></div>`;
   }
