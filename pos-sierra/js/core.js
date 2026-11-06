@@ -2,6 +2,9 @@
 /* ===== Núcleo: API, estado, navegación y utilidades ===== */
 const URL_API = 'https://script.google.com/macros/s/AKfycbyZsbFkMYhcfYQ8mk9Ca5ani7by_i-cFpplgzcDJyaGlj0SZmC2AdS18WiG1ZdCzZBj/exec';
 
+/* La Caja vive en un proyecto de Apps Script aparte (caja.gs). Pega aquí su URL /exec */
+const URL_CAJA = 'https://script.google.com/macros/s/AKfycbxN76PEr_8LV4NjxEEaAGunekRMQRKrobQ5bYGJURErBJHxRENm_MJroBaJRnJJCZosCg/exec';
+const CAJA_FN = { getCaja: 1, saveCaja: 1, voidCaja: 1 };
 const VERSION = '1.15';
 const brand = () => /^#[0-9a-f]{6}$/i.test((S.config || {}).color || '') ? S.config.color : '#a35d17';
 const $ = (s, r = document) => r.querySelector(s);
@@ -47,7 +50,7 @@ async function rawApi(fn, ...args) {
       return await new Promise((ok, no) => google.script.run.withSuccessHandler(ok).withFailureHandler(no)[fn](...args));
     let key = localStorage.getItem('pos_key') || '';
     if (!key) { key = prompt('Clave del POS') || ''; localStorage.setItem('pos_key', key); }
-    const r = await (await fetch(URL_API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ fn, args, key }) })).json();
+    const r = await (await fetch(CAJA_FN[fn] ? URL_CAJA : URL_API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ fn, args, key }) })).json();
     if (!r.ok) { if (/Clave/.test(r.error)) localStorage.removeItem('pos_key'); throw new Error(r.error); }
     net.ok = true; return r.data;
   } catch (e) { net.ok = !(e && e.name === 'TypeError'); net.err = Date.now(); renderStatus(); setTimeout(renderStatus, 4100); toast(e.message || 'Sin conexión. Revisa tu internet e inténtalo de nuevo.', true); throw e; }
