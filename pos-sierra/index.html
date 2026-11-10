@@ -288,7 +288,7 @@ const URL_API = 'https://script.google.com/macros/s/AKfycbyZsbFkMYhcfYQ8mk9Ca5an
 /* La Caja vive en un proyecto de Apps Script aparte (caja.gs). Pega aquí su URL /exec */
 const URL_CAJA = 'https://script.google.com/macros/s/AKfycbxN76PEr_8LV4NjxEEaAGunekRMQRKrobQ5bYGJURErBJHxRENm_MJroBaJRnJJCZosCg/exec';
 const CAJA_FN = { getCaja: 1, saveCaja: 1, voidCaja: 1 };
-const VERSION = '1.16';
+const VERSION = '1.17';
 const brand = () => /^#[0-9a-f]{6}$/i.test((S.config || {}).color || '') ? S.config.color : '#a35d17';
 const $ = (s, r = document) => r.querySelector(s);
 const money = n => '$' + (+n || 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -626,7 +626,8 @@ window.addEventListener('online', renderStatus); window.addEventListener('offlin
     V.busy = true;
     try {
       const cot = V.cot;
-      const folio = await api('saveSale', { descuento: dsc(), folio: V.ed ? V.ed.folio : undefined, fecha: V.ed ? V.ed.fecha : undefined, cliente: V.cli.trim().toUpperCase(), tipo: V.tipo, nota: V.nota, estado, metodo: estado === 'Pagado' ? metodo : 'Sin registrar', items: V.cart });
+      const sig = JSON.stringify([V.cart, V.cli, V.tipo, V.nota, estado, metodo, dsc(), V.ed && V.ed.folio]); if (V.sig !== sig) { V.sig = sig; V.uid = 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+      const folio = await api('saveSale', { uid: V.uid, descuento: dsc(), folio: V.ed ? V.ed.folio : undefined, fecha: V.ed ? V.ed.fecha : undefined, cliente: V.cli.trim().toUpperCase(), tipo: V.tipo, nota: V.nota, estado, metodo: estado === 'Pagado' ? metodo : 'Sin registrar', items: V.cart });
       if (cot) await api('setQuote', cot, 'Convertida');
       toast('Venta ' + folio + ' guardada'); reset(); await load();
     } finally { V.busy = false; }
@@ -646,7 +647,7 @@ window.addEventListener('online', renderStatus); window.addEventListener('offlin
 function tickets() {
   const m = {};
   S.ventas.forEach(v => {
-    const t = m[v.folio] = m[v.folio] || { folio: v.folio, fecha: v.fecha, cliente: v.cliente, estado: v.estado, metodo: v.metodo, tipo: v.tipo, nota: v.nota, items: [], total: 0, desc: 0 };
+    const t = m[v.folio] = m[v.folio] || { folio: v.folio, fecha: v.fecha, fechaPago: v.fechaPago, cliente: v.cliente, estado: v.estado, metodo: v.metodo, tipo: v.tipo, nota: v.nota, items: [], total: 0, desc: 0 };
     t.items.push(v); t.total += v.total; t.desc += v.desc || 0;
   });
   /* Abonos aplicados a cada ticket pendiente: resta = total - abonado */
@@ -726,7 +727,7 @@ const fdate = t => new Date(t).toLocaleString('es-MX', { day: 'numeric', month: 
         ${t.estado !== 'Pagado' ? `<button class="btn sm primary" data-a="cobrar" data-i="${i}">Cobrar / abonar</button> ` : ''}
         <button class="btn sm ghost" data-a="edit" data-i="${i}">Editar</button>
         <button class="btn sm ghost" data-a="print" data-i="${i}">Imprimir</button>
-        <button class="btn sm ghost danger" data-a="del" data-i="${i}">Borrar</button></span></div></div>`).join('')
+        <button class="btn sm ghost danger" data-a="del" data-i="${i}">Cancelar</button></span></div></div>`).join('')
       || `<p class="mu">No hay ventas con estos filtros.</p>${F.per === 'Hoy' ? '<button class="btn" data-p="Últimas 30">Ver las últimas 30 ventas</button>' : ''}`;
     $('#vm').innerHTML = TK.length > F.lim ? `<button class="btn ghost" data-more="1">Mostrar más (${TK.length - F.lim} restantes)</button>` : '';
   }
@@ -766,8 +767,10 @@ const fdate = t => new Date(t).toLocaleString('es-MX', { day: 'numeric', month: 
     };
   }
   async function del(t) {
-    if (!confirm('¿Borrar el ticket ' + t.folio + '? Esta acción no se puede deshacer.' + (t.abonado > 0 ? '\n\nOjo: tiene abonos por ' + money(t.abonado) + ' que no se devuelven automáticamente.' : ''))) return;
-    await api('deleteSale', t.folio); toast('Ticket ' + t.folio + ' borrado'); load();
+    if (!confirm('¿Cancelar el ticket ' + t.folio + '? Se archiva con su motivo y su folio no se reutiliza.' + (t.abonado > 0 ? '\n\nTiene abonos por ' + money(t.abonado) + ': pasarán a la cuenta general del cliente.' : ''))) return;
+    const motivo = (prompt('Motivo de la cancelación (obligatorio):') || '').trim();
+    if (motivo.length < 3) return toast('Escribe el motivo para cancelar el ticket.', true);
+    await api('deleteSale', t.folio, motivo); toast('Ticket ' + t.folio + ' cancelado'); load();
   }
   function printT(t) {
     const w = window.open('', '', 'width=320,height=600'); if (!w) return toast('Permite las ventanas emergentes para imprimir.', true);
@@ -1264,7 +1267,7 @@ ${c.notas ? `<div class="blk"><h4>Notas</h4><div class="txt">${esc(c.notas)}</di
   /* Línea de tiempo única: todo lo que mueve (o documenta) el efectivo */
   function items() {
     const out = [], A = S.abonos || [];
-    tickets().forEach(t => { const c = cashOfTicket(t, A); if (c > 0) out.push({ ts: tsOf(t.fecha), k: 'venta', ef: c, txt: 'Venta ' + t.folio + (t.cliente ? ' · ' + t.cliente : ''), det: 'Cobro en efectivo' }); });
+    tickets().forEach(t => { const c = cashOfTicket(t, A); if (c > 0) out.push({ ts: tsOf(t.fechaPago || t.fecha), k: 'venta', ef: c, txt: 'Venta ' + t.folio + (t.cliente ? ' · ' + t.cliente : ''), det: 'Cobro en efectivo' }); });
     A.forEach(a => { if (a.metodo === 'Efectivo' && +a.monto > 0) out.push({ ts: tsOf(a.fecha), k: 'abono', ef: +a.monto, txt: 'Abono · ' + (a.cliente || 'Cuenta general') + (a.folio ? ' (' + a.folio + ')' : ''), det: 'Abono de cliente en efectivo' }); });
     allRows().forEach(r => out.push({ ts: r.fecha, k: 'mov', r, ef: efecto(r) }));
     return out.sort((a, b) => a.ts - b.ts);
