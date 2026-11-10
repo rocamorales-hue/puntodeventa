@@ -325,6 +325,9 @@ input:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 
 .quick .btn.primary:not(:first-child){background:var(--surface);color:var(--accent);border:1.5px solid var(--line);box-shadow:none}
 .quick .btn.primary:not(:first-child):hover{border-color:var(--accent);background:var(--sage)}
 @media(max-width:760px){.rail .logo{display:none!important}}
+.card .tl>span:last-child:not(.tag){display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
+#modal .box .tl{flex-wrap:wrap}
+#modal .box .tl>span:last-child:has(button){display:flex;gap:6px}
 
 </style>
 </head>
@@ -339,12 +342,12 @@ input:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 
 <script>
 'use strict';
 /* ===== Núcleo: API, estado, navegación y utilidades ===== */
-const URL_API = 'https://script.google.com/macros/s/AKfycbyZsbFkMYhcfYQ8mk9Ca5ani7by_i-cFpplgzcDJyaGlj0SZmC2AdS18WiG1ZdCzZBj/exec';
+const URL_API = 'https://script.google.com/macros/s/AKfycbzG-98sMMyUdyYvLuCqYktvG-_MSgCDtDGISbI8AhGDUAJmLdt7GyGUccWpeIYAn1Ic/exec';
 
 /* La Caja vive en un proyecto de Apps Script aparte (caja.gs). Pega aquí su URL /exec */
 const URL_CAJA = 'https://script.google.com/macros/s/AKfycbxN76PEr_8LV4NjxEEaAGunekRMQRKrobQ5bYGJURErBJHxRENm_MJroBaJRnJJCZosCg/exec';
 const CAJA_FN = { getCaja: 1, saveCaja: 1, voidCaja: 1 };
-const VERSION = '1.18';
+const VERSION = '1.19';
 const brand = () => /^#[0-9a-f]{6}$/i.test((S.config || {}).color || '') ? S.config.color : '#a35d17';
 const $ = (s, r = document) => r.querySelector(s);
 const money = n => '$' + (+n || 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -765,7 +768,7 @@ const fdate = t => new Date(t).toLocaleString('es-MX', { day: 'numeric', month: 
         if (e.target.closest('[data-more]')) { F.lim += 40; list(); return; }
         const b = e.target.closest('[data-a]'); if (!b) return;
         const t = TK[+b.dataset.i];
-        ({ edit: () => Vender.load(t.items, { cli: t.cliente, nota: t.nota, tipo: t.tipo, desc: t.desc, ed: { folio: t.folio, fecha: t.fecha } }), cobrar: () => cobrar(t), print: () => printT(t), del: () => del(t) })[b.dataset.a]();
+        ({ edit: () => Vender.load(t.items, { cli: t.cliente, nota: t.nota, tipo: t.tipo, desc: t.desc, ed: { folio: t.folio, fecha: t.fecha } }), fix: () => ticketModal(t), cobrar: () => cobrar(t), print: () => printT(t), del: () => del(t) })[b.dataset.a]();
       };
       list();
     }
@@ -782,6 +785,7 @@ const fdate = t => new Date(t).toLocaleString('es-MX', { day: 'numeric', month: 
       <div class="tl"><b class="amt">${money(t.total)}</b><span>
         ${t.estado !== 'Pagado' ? `<button class="btn sm primary" data-a="cobrar" data-i="${i}">Cobrar / abonar</button> ` : ''}
         <button class="btn sm ghost" data-a="edit" data-i="${i}">Editar</button>
+        <button class="btn sm ghost" data-a="fix" data-i="${i}">Corregir</button>
         <button class="btn sm ghost" data-a="print" data-i="${i}">Imprimir</button>
         <button class="btn sm ghost danger" data-a="del" data-i="${i}">Cancelar</button></span></div></div>`).join('')
       || `<p class="mu">No hay ventas con estos filtros.</p>${F.per === 'Hoy' ? '<button class="btn" data-p="Últimas 30">Ver las últimas 30 ventas</button>' : ''}`;
@@ -835,6 +839,7 @@ const fdate = t => new Date(t).toLocaleString('es-MX', { day: 'numeric', month: 
       `\n------------------------\n${t.desc > 0 ? 'Descuento: -' + money(t.desc) + '\n' : ''}TOTAL: ${money(t.total)}\nPago: ${esc(t.metodo || '')}\n${esc((S.config || {}).ticketLeyenda || '¡Gracias!')}</pre>`);
     w.document.close(); w.print();
   }
+  views.ventas.cobrar = cobrar; views.ventas.print = printT;
 })();
 'use strict';
 /* ===== Pantalla Clientes: resumen, filtros, ficha con historial, abonos y cobranza ===== */
@@ -878,7 +883,7 @@ const fdate = t => new Date(t).toLocaleString('es-MX', { day: 'numeric', month: 
         const f = e.target.closest('[data-f]'); if (f) { F.f = f.dataset.f; views.clientes.render(root); return; }
         const a = e.target.closest('[data-a]'), n = e.target.closest('[data-n]');
         if (a && a.dataset.a === 'new') return nuevo();
-        if (a && n) return ({ abono: () => abono(n.dataset.n), stmt: () => stmt(n.dataset.n), wa: () => cobrar(n.dataset.n) })[a.dataset.a]();
+        if (a && n) return ({ abono: () => abono(n.dataset.n), stmt: () => estadoCuenta(n.dataset.n), wa: () => cobrar(n.dataset.n) })[a.dataset.a]();
         if (n) detalle(n.dataset.n);
       };
       list();
@@ -924,7 +929,7 @@ const fdate = t => new Date(t).toLocaleString('es-MX', { day: 'numeric', month: 
       <b>Últimas compras</b>${T.map(t => `<div class="tl mu"><span>${fdate(t.fecha)} · ${esc(t.folio)} · ${esc(t.estado)}</span><b>${money(t.total)}</b></div>`).join('') || '<p class="mu">Sin compras registradas.</p>'}
       ${A.length ? `<b>Últimos abonos</b>${A.map(a => `<div class="tl mu"><span>${fdate(a.fecha)} · ${esc(a.metodo)}</span><b>${money(a.monto)}</b></div>`).join('')}` : ''}
       <div class="cact">${o.saldo > 0 ? '<button class="btn primary" id="da">Registrar abono</button>' : ''}<button class="btn" id="ds">Estado de cuenta</button></div>`);
-    $('#dx').onclick = closeM; $('#ds').onclick = () => stmt(n); if ($('#da')) $('#da').onclick = () => abono(n);
+    $('#dx').onclick = closeM; $('#ds').onclick = () => estadoCuenta(n); if ($('#da')) $('#da').onclick = () => abono(n);
   }
 
   function cobrar(n) {
@@ -932,16 +937,23 @@ const fdate = t => new Date(t).toLocaleString('es-MX', { day: 'numeric', month: 
   }
 
   function abono(n) {
-    const s = ST[n] ? ST[n].saldo : 0;
+    const s = ST[n] ? ST[n].saldo : 0, P = tickets().filter(t => up(t.cliente) === n && t.estado !== 'Pagado').sort((a, b) => a.fecha - b.fecha);
     modal(`<h2>Abono de ${esc(n)}</h2><p class="mu">Saldo actual: <b>${money(s)}</b></p>
+      <label class="fl">Aplicar a<select id="af" aria-label="Aplicar a"><option value="">Los tickets más antiguos primero</option>${P.map(t => `<option value="${esc(t.folio)}">${esc(t.folio)} · ${fdate(t.fecha)} · resta ${money(t.resta)}</option>`).join('')}</select></label>
       <input id="am" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Monto del abono" aria-label="Monto del abono" value="${s > 0 ? s.toFixed(2) : ''}">
+      <div class="mu" id="ah" aria-live="polite"></div>
       <select id="ap" aria-label="Método"><option>Efectivo</option><option value="Débito">Tarjeta</option><option>Transferencia</option></select>
       <button class="btn primary" id="aok">Guardar abono</button><button class="btn ghost" id="ano">Cancelar</button>`);
     $('#am').focus(); $('#ano').onclick = closeM;
+    const sel = () => P.find(t => t.folio === $('#af').value);
+    const hint = () => { const t = sel(), m = +$('#am').value; $('#ah').textContent = t && m > 0 ? (m > t.resta + 0.004 ? 'Es más de lo que resta del ticket (' + money(t.resta) + ').' : m >= t.resta - 0.004 ? 'Liquida el ticket ' + t.folio + '.' : 'Quedarán ' + money(t.resta - m) + ' por cobrar en ' + t.folio + '.') : ''; };
+    $('#af').onchange = () => { const t = sel(); $('#am').value = t ? t.resta.toFixed(2) : (s > 0 ? s.toFixed(2) : ''); hint(); };
+    $('#am').oninput = hint;
     $('#aok').onclick = async () => {
-      const m = +$('#am').value;
+      const m = +$('#am').value, t = sel();
       if (!(m > 0)) return toast('El abono debe ser mayor a cero.', true);
-      await api('addPayment', n, '', m, $('#ap').value, '', ''); closeM(); toast('Abono guardado'); load();
+      if (t && m > t.resta + 0.004) return toast('El abono no puede ser mayor a lo que resta del ticket: ' + money(t.resta) + '.', true);
+      await api('addPayment', n, t ? t.folio : '', m, $('#ap').value, '', ''); closeM(); toast('Abono guardado'); load();
     };
   }
 
@@ -956,6 +968,141 @@ const fdate = t => new Date(t).toLocaleString('es-MX', { day: 'numeric', month: 
       <p>Pendiente: ${money(pend)} · Abonos: ${money(ab)}</p><h2>Saldo a pagar: ${money(Math.max(0, pend - ab))}</h2></body></html>`);
     w.document.close(); w.print();
   }
+  views.clientes.stmt = stmt; views.clientes.abono = abono;
+})();
+'use strict';
+/* ===== Correcciones: datos del ticket, pagos (abonar / corregir / quitar) y estado de cuenta interactivo ===== */
+(() => {
+  const upc = s => String(s || '').trim().toUpperCase();
+  const dtl = ms => new Date(ms - new Date().getTimezoneOffset() * 6e4).toISOString().slice(0, 16);
+  const METS = [['Efectivo', 'Efectivo'], ['Débito', 'Tarjeta'], ['Transferencia', 'Transferencia']];
+  const mlabel = m => (METS.find(x => x[0] === m) || [0, m])[1];
+  const opts = (list, sel) => list.map(([v, t]) => `<option value="${esc(v)}" ${v === sel ? 'selected' : ''}>${esc(t)}</option>`).join('');
+  const abonosDe = f => (S.abonos || []).filter(a => String(a.folio) === String(f)).sort((a, b) => a.fecha - b.fecha);
+
+  /* Dinero de un ticket pagado que no consta como abono (se cobró de golpe): sale del método de pago */
+  function implicitos(t, abs) {
+    const resto = Math.round((t.total - abs.reduce((s, a) => s + a.monto, 0)) * 100) / 100; if (resto <= 0.004) return [];
+    const m = String(t.metodo || ''), por = {};
+    if (m.startsWith('Multipagos')) {
+      const re = /(Efectivo|Débito|Transferencia)\s*\$\s*([\d,]*\.?\d+)/g; let x;
+      while ((x = re.exec(m))) por[x[1]] = (por[x[1]] || 0) + parseFloat(x[2].replace(/,/g, ''));
+      abs.forEach(a => { if (por[a.metodo] != null) por[a.metodo] -= a.monto; });
+    } else if (METS.some(x => x[0] === m)) por[m] = resto;
+    return Object.keys(por).map(k => ({ metodo: k, monto: Math.round(por[k] * 100) / 100 })).filter(p => p.monto > 0.004);
+  }
+  const pagosDe = t => {
+    const abs = abonosDe(t.folio);
+    return abs.map(a => ({ row: a.row, fecha: a.fecha, monto: a.monto, metodo: a.metodo, folio: t.folio, cliente: a.cliente }))
+      .concat(t.estado === 'Pagado' ? implicitos(t, abs).map(p => ({ row: 0, fecha: t.fechaPago || t.fecha, monto: p.monto, metodo: p.metodo, folio: t.folio, cliente: t.cliente })) : []);
+  };
+  const ref = p => p.row ? { row: p.row, folio: p.folio || '', monto: p.monto } : { folio: p.folio, metodo: p.metodo, monto: p.monto };
+
+  /* ---------- Quitar un pago ---------- */
+  async function quitar(p, back) {
+    if (!confirm('¿Quitar este pago de ' + money(p.monto) + ' (' + mlabel(p.metodo) + ')' + (p.folio ? ' del ticket ' + p.folio : '') + '?\n\nSi el ticket estaba pagado, vuelve a quedar con saldo por cobrar.')) return;
+    const motivo = prompt('Motivo (opcional):', 'Corrección') || 'Corrección';
+    await api('voidPayment', ref(p), motivo); toast('Pago quitado'); await load(); back && back();
+  }
+
+  /* ---------- Corregir un pago: monto, método, fecha y a qué ticket se aplica ---------- */
+  function corregir(p, back) {
+    const cli = upc(p.cliente), mios = tickets().filter(t => (t.estado !== 'Pagado' || t.folio === String(p.folio)) && cli && upc(t.cliente) === cli);
+    const dest = [['', 'Cuenta general (sin ticket)']].concat(mios.map(t => [t.folio, t.folio + ' · ' + fdate(t.fecha) + ' · ' + money(t.total)]));
+    if (p.folio && !dest.some(d => d[0] === String(p.folio))) dest.push([String(p.folio), String(p.folio)]);
+    modal(`<h2>Corregir pago</h2>
+      <p class="mu">${esc(p.cliente || 'Mostrador')} · pago original ${money(p.monto)} (${esc(mlabel(p.metodo))})</p>
+      <label class="fl">Monto<input id="pm" type="number" min="0.01" step="0.01" inputmode="decimal" value="${(+p.monto).toFixed(2)}"></label>
+      <label class="fl">Método<select id="pt">${opts(METS, p.metodo)}</select></label>
+      <label class="fl">Aplicado a<select id="pf">${opts(dest, String(p.folio || ''))}</select></label>
+      <label class="fl">Fecha del pago<input id="pd" type="datetime-local" value="${dtl(p.fecha)}"></label>
+      <button class="btn primary" id="pok">Guardar corrección</button><button class="btn ghost" id="pno">Cancelar</button>`);
+    $('#pno').onclick = () => back ? back() : closeM();
+    $('#pok').onclick = async () => {
+      const m = Math.round((+$('#pm').value || 0) * 100) / 100; if (!(m > 0)) return toast('El monto debe ser mayor a cero.', true);
+      const o = Object.assign(ref(p), { nuevoMonto: m, nuevoMetodo: $('#pt').value, nuevoFolio: $('#pf').value });
+      const d = new Date($('#pd').value).getTime(); if (d && Math.abs(d - p.fecha) > 60000) o.nuevaFecha = d;
+      await api('editPayment', o); toast('Pago corregido'); await load(); back && back();
+    };
+  }
+
+  /* ---------- Ticket: datos, productos y pagos ---------- */
+  function ticketModal(t, back) {
+    const pagos = pagosDe(t), pagado = pagos.reduce((s, p) => s + p.monto, 0), pend = t.estado !== 'Pagado';
+    const simple = !pend && !pagos.some(p => p.row) && !String(t.metodo || '').startsWith('Multipagos');
+    const again = () => { const n = tickets().find(x => x.folio === t.folio); n ? ticketModal(n, back) : (back ? back() : closeM()); };
+    modal(`<div class="tl"><h2>Ticket ${esc(t.folio)}</h2><button class="btn sm ghost" id="tx" aria-label="Cerrar">✕</button></div>
+      <div class="mu">${fdate(t.fecha)} · ${esc(t.tipo || '')} · <span class="tag ${pend ? '' : 'ok'}">${esc(t.estado)}</span></div>
+      <div class="card">${t.items.map(x => `<div class="tl"><span>${x.cant}× ${esc(x.producto)}</span><span>${money(x.cant * x.precio)}</span></div>`).join('')}
+        ${t.desc > 0 ? `<div class="tl mu"><span>Descuento</span><span>−${money(t.desc)}</span></div>` : ''}
+        <div class="tl" style="margin-top:6px"><b>Total</b><b class="amt">${money(t.total)}</b></div>
+        ${pend ? `<div class="tl mu"><span>Abonado ${money(t.abonado)}</span><b>Resta ${money(t.resta)}</b></div>` : ''}</div>
+      <b>Datos del ticket</b>
+      <label class="fl">Cliente<input id="tc" list="tcl" value="${esc(t.cliente === 'PUNTO DE VENTA' ? '' : t.cliente)}" placeholder="Mostrador"></label>
+      <datalist id="tcl">${S.clients.map(c => `<option value="${esc(c.nombre)}">`).join('')}</datalist>
+      <div class="row2"><label class="fl">Fecha y hora<input id="td" type="datetime-local" value="${dtl(t.fecha)}"></label>
+        <label class="fl">Servicio<select id="ts">${opts(['Aquí', 'Para llevar', 'Domicilio'].map(x => [x, x]), t.tipo || 'Aquí')}</select></label></div>
+      ${simple ? `<label class="fl">Método de pago<select id="tm">${opts(METS, t.metodo)}</select></label>` : ''}
+      <label class="fl">Nota<input id="tn" value="${esc(t.nota || '')}" maxlength="300"></label>
+      <button class="btn primary" id="tg">Guardar datos</button>
+      <b>Pagos del ticket</b>
+      ${pagos.length ? pagos.map((p, i) => `<div class="tl"><span class="mu">${fdate(p.fecha)} · ${esc(mlabel(p.metodo))}</span><b>${money(p.monto)}</b>
+        <span><button class="btn sm ghost" data-pc="${i}">Corregir</button> <button class="btn sm ghost danger" data-pq="${i}">Quitar</button></span></div>`).join('') : '<p class="mu" style="margin:0">Sin pagos registrados.</p>'}
+      <div class="cact">${pend ? '<button class="btn primary" id="tb">Cobrar / abonar</button>' : '<button class="btn" id="tr">Deshacer cobro</button>'}
+        <button class="btn" id="te">Editar productos</button><button class="btn ghost" id="tp">Imprimir</button></div>`);
+    $('#tx').onclick = () => back ? back() : closeM();
+    $('#tg').onclick = async () => {
+      const o = { folio: t.folio, cliente: $('#tc').value, tipo: $('#ts').value, nota: $('#tn').value, fecha: new Date($('#td').value).getTime() || t.fecha };
+      if ($('#tm')) o.metodo = $('#tm').value;
+      await api('editTicket', o); toast('Ticket actualizado'); await load(); again();
+    };
+    $('#mbox').onclick = e => {
+      const c = e.target.closest('[data-pc]'), q = e.target.closest('[data-pq]');
+      if (c) return corregir(pagos[+c.dataset.pc], again);
+      if (q) return quitar(pagos[+q.dataset.pq], again);
+    };
+    if ($('#tb')) $('#tb').onclick = () => { closeM(); views.ventas.cobrar(t); };
+    if ($('#tr')) $('#tr').onclick = async () => {
+      if (!confirm('¿Deshacer el cobro del ticket ' + t.folio + '?\n\nQuedará pendiente por ' + money(t.total) + ' y se quitarán sus pagos.')) return;
+      const motivo = prompt('Motivo (opcional):', 'Corrección') || 'Corrección';
+      await api('reopenSale', t.folio, motivo); toast('Cobro deshecho: el ticket quedó pendiente'); await load(); again();
+    };
+    $('#te').onclick = () => { closeM(); Vender.load(t.items, { cli: t.cliente, nota: t.nota, tipo: t.tipo, desc: t.desc, ed: { folio: t.folio, fecha: t.fecha } }); };
+    $('#tp').onclick = () => views.ventas.print(t);
+  }
+
+  /* ---------- Estado de cuenta del cliente (en pantalla, con correcciones) ---------- */
+  function estadoCuenta(n, lim) {
+    lim = lim || 15;
+    const T = tickets().filter(t => upc(t.cliente) === n), A = (S.abonos || []).filter(a => upc(a.cliente) === n).sort((a, b) => b.fecha - a.fecha);
+    const pend = T.filter(t => t.estado !== 'Pagado').reduce((s, t) => s + t.resta, 0), gen = A.filter(a => !a.folio).reduce((s, a) => s + a.monto, 0), saldo = Math.round((pend - gen) * 100) / 100;
+    const back = () => estadoCuenta(n, lim);
+    modal(`<div class="tl"><h2>Estado de cuenta</h2><button class="btn sm ghost" id="ex" aria-label="Cerrar">✕</button></div>
+      <div><b>${esc(n)}</b></div>
+      <div class="card"><div class="tl mu"><span>Tickets por cobrar</span><span>${money(pend)}</span></div>
+        ${gen ? `<div class="tl mu"><span>Abonos a cuenta general</span><span>−${money(gen)}</span></div>` : ''}
+        <div class="tl"><b>Saldo</b><b class="amt">${money(Math.max(0, saldo))}</b></div>${saldo < 0 ? `<div class="mu">A favor del cliente: ${money(-saldo)}</div>` : ''}</div>
+      <div class="cact"><button class="btn primary" id="ea">Registrar abono</button><button class="btn ghost" id="ep">Imprimir</button></div>
+      <b>Tickets</b>
+      ${T.slice(0, lim).map((t, i) => `<div class="tl" data-ti="${i}" style="cursor:pointer;padding:6px 0;border-bottom:1px solid var(--line)"><span>${fdate(t.fecha)} · ${esc(t.folio)}<br><span class="tag ${t.estado === 'Pagado' ? 'ok' : ''}">${t.abonado > 0 ? 'Resta ' + money(t.resta) : esc(t.estado)}</span></span><b>${money(t.total)}</b></div>`).join('') || '<p class="mu">Sin tickets.</p>'}
+      ${T.length > lim ? '<button class="btn sm ghost" id="em">Ver más tickets</button>' : ''}
+      <b>Abonos</b>
+      ${A.map((a, i) => `<div class="tl"><span class="mu">${fdate(a.fecha)} · ${esc(mlabel(a.metodo))} · ${a.folio ? esc(a.folio) : 'Cuenta general'}</span><b>${money(a.monto)}</b>
+        <span><button class="btn sm ghost" data-ac="${i}">Corregir</button> <button class="btn sm ghost danger" data-aq="${i}">Quitar</button></span></div>`).join('') || '<p class="mu">Sin abonos.</p>'}
+      <p class="mu" style="margin:0">Toca un ticket para corregir sus datos o sus pagos.</p>`);
+    $('#ex').onclick = closeM;
+    $('#ea').onclick = () => { closeM(); views.clientes.abono(n); };
+    $('#ep').onclick = () => views.clientes.stmt(n);
+    if ($('#em')) $('#em').onclick = () => estadoCuenta(n, lim + 25);
+    $('#mbox').onclick = e => {
+      const c = e.target.closest('[data-ac]'), q = e.target.closest('[data-aq]'), t = e.target.closest('[data-ti]');
+      const P = a => ({ row: a.row, fecha: a.fecha, monto: a.monto, metodo: a.metodo, folio: a.folio, cliente: a.cliente });
+      if (c) return corregir(P(A[+c.dataset.ac]), back);
+      if (q) return quitar(P(A[+q.dataset.aq]), back);
+      if (t) ticketModal(T[+t.dataset.ti], back);
+    };
+  }
+  window.ticketModal = ticketModal; window.estadoCuenta = estadoCuenta;
 })();
 'use strict';
 /* ===== Documento de cotización profesional (se abre listo para "Guardar como PDF") ===== */
