@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#1f3028">
+<meta name="theme-color" content="#2F5D46">
 <meta name="description" content="Punto de venta de Café Sierra Escondida">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="POS Sierra">
@@ -270,6 +270,62 @@ details.more>*:not(summary){margin-top:8px}
 .cj-dif{text-align:center;font-weight:750;min-height:24px;margin:6px 0}
 @media(prefers-color-scheme:dark){.cj-warn{background:#3a2f1c;color:#e3b872}}
 
+/* ===== Tema v1.18 · Sierra clara ===== */
+:root{--bg:#F7F4EE;--surface:#fff;--ink:#1F2A24;--mute:#7A8379;--line:#E9E3D8;--forest:#2F5D46;--sage:#EFEBE2;--accent:#2F5D46;--accent-d:#264d3a;--on-accent:#fff;--amber:#E08A1E;--amber-bg:#FCEFD9;--amber-ink:#8A5208;--ok:#1E5A3A;--ok-bg:#DDEFE3;--bad:#B4443A;--bad-bg:#F8E1DD;--r:16px;--shadow:0 8px 28px rgba(47,93,70,.08)}
+@media(prefers-color-scheme:dark){:root{--bg:#111713;--surface:#1A221D;--ink:#EAEFE9;--mute:#97A39A;--line:#2A342D;--forest:#13201A;--sage:#232E27;--accent:#5FB68A;--accent-d:#74c79b;--on-accent:#0B1A12;--amber:#E9A04A;--amber-bg:#3A2D18;--amber-ink:#EBC183;--ok:#7FD0A1;--ok-bg:#1E3A2B;--bad:#E27F74;--bad-bg:#3E2320;--shadow:0 8px 28px rgba(0,0,0,.4)}}
+body{font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;letter-spacing:-.005em}
+h2{font-size:20px;letter-spacing:-.02em}
+input,select{border-radius:12px;background:var(--surface)}
+input:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 16%,transparent)}
+.card,.prod,.ticket{border-color:var(--line);box-shadow:0 1px 2px rgba(31,42,36,.04)}
+.ticket{border-radius:22px;box-shadow:var(--shadow)}
+.btn{border-radius:14px;font-weight:650}
+.btn.primary{background:var(--accent);color:var(--on-accent);box-shadow:0 2px 8px color-mix(in srgb,var(--accent) 30%,transparent)}
+.btn.primary:hover{background:var(--accent-d)}
+.btn.ghost{background:var(--surface)}
+.rail{background:var(--forest);border-radius:0 24px 24px 0}
+.rail button{color:#C9D8CD;border-radius:16px}
+.rail button[aria-current=page]{background:#fff;color:#2F5D46;box-shadow:0 4px 14px rgba(0,0,0,.18)}
+@media(prefers-color-scheme:dark){.rail button[aria-current=page]{background:var(--accent);color:#0B1A12}}
+.main{padding:26px 30px}
+.chip{background:var(--surface);border-color:var(--line);border-radius:999px}
+.chip[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.prod{border-radius:18px}
+.prod:hover{border-color:var(--accent);box-shadow:var(--shadow);transform:translateY(-1px)}
+.av{border-radius:14px;width:42px;height:42px;font-size:17px}
+.prod .pr{color:var(--ink);font-size:16px;font-weight:750}
+.prod .fav[aria-pressed=true]{color:var(--amber)}
+.prow .fav[aria-pressed=true]{color:var(--amber)}
+.qb{background:var(--amber);color:#2b1a04}
+.seg{background:var(--sage)}
+.seg button[aria-pressed=true]{background:var(--surface);color:var(--accent);box-shadow:0 1px 4px rgba(31,42,36,.14)}
+.qty button{background:var(--sage);border-radius:12px}
+.total b,.t-foot .total b{font-size:40px;font-weight:800;letter-spacing:-.04em;color:var(--ink)}
+@media(max-height:780px){.t-foot .total b{font-size:32px}}
+.linkbtn,details.more summary{color:var(--accent)}
+.stk.low{color:var(--amber-ink)}
+.tag{background:var(--amber-bg);color:var(--amber-ink)}
+.tag.ok{background:var(--ok-bg);color:var(--ok)}
+.cj-big{color:var(--ink);font-size:46px}
+.cj-warn{background:var(--amber-bg);color:var(--amber-ink)}
+.kpi b{font-size:28px;font-weight:800;letter-spacing:-.03em}
+.bar i{background:var(--accent);opacity:1}
+.totalbar{background:var(--accent);border-radius:18px}
+#toast{background:var(--ink);color:var(--bg)}
+#toast.err{background:var(--bad);color:#fff}
+#modal{background:rgba(20,30,24,.45);backdrop-filter:blur(3px)}
+#modal .box{border-radius:24px}
+.big{color:var(--ink)}
+.empty{padding:36px 12px;border:1px dashed var(--line);border-radius:var(--r);background:color-mix(in srgb,var(--surface) 60%,transparent)}
+.spin{border-top-color:var(--accent)}
+.pill .dot{background:var(--ok)}
+.pill[data-s=busy] .dot{background:var(--amber)}
+.rtable th{text-transform:uppercase;font-size:11px;letter-spacing:.05em}
+@media(max-width:760px){.rail{border-radius:20px 20px 0 0}.main{padding:16px 14px 150px}}
+.quick .btn.primary:not(:first-child){background:var(--surface);color:var(--accent);border:1.5px solid var(--line);box-shadow:none}
+.quick .btn.primary:not(:first-child):hover{border-color:var(--accent);background:var(--sage)}
+@media(max-width:760px){.rail .logo{display:none!important}}
+
 </style>
 </head>
 <body>
@@ -283,12 +339,12 @@ details.more>*:not(summary){margin-top:8px}
 <script>
 'use strict';
 /* ===== Núcleo: API, estado, navegación y utilidades ===== */
-const URL_API = 'https://script.google.com/macros/s/AKfycbzG-98sMMyUdyYvLuCqYktvG-_MSgCDtDGISbI8AhGDUAJmLdt7GyGUccWpeIYAn1Ic/exec';
+const URL_API = 'https://script.google.com/macros/s/AKfycbyZsbFkMYhcfYQ8mk9Ca5ani7by_i-cFpplgzcDJyaGlj0SZmC2AdS18WiG1ZdCzZBj/exec';
 
 /* La Caja vive en un proyecto de Apps Script aparte (caja.gs). Pega aquí su URL /exec */
 const URL_CAJA = 'https://script.google.com/macros/s/AKfycbxN76PEr_8LV4NjxEEaAGunekRMQRKrobQ5bYGJURErBJHxRENm_MJroBaJRnJJCZosCg/exec';
 const CAJA_FN = { getCaja: 1, saveCaja: 1, voidCaja: 1 };
-const VERSION = '1.17';
+const VERSION = '1.18';
 const brand = () => /^#[0-9a-f]{6}$/i.test((S.config || {}).color || '') ? S.config.color : '#a35d17';
 const $ = (s, r = document) => r.querySelector(s);
 const money = n => '$' + (+n || 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
