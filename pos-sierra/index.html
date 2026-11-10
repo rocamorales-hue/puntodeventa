@@ -329,6 +329,63 @@ input:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 
 #modal .box .tl{flex-wrap:wrap}
 #modal .box .tl>span:last-child:has(button){display:flex;gap:6px}
 
+/* ===== v1.21 · logo, vistas lista/tarjetas, totales, cashback ===== */
+.rail button.logo{width:60px;height:60px;min-height:60px;padding:0;border-radius:50%;background:#fff;margin:2px 0 16px;box-shadow:0 4px 14px rgba(0,0,0,.25);display:grid;place-items:center;overflow:hidden;transition:transform .15s}
+.rail button.logo:hover{background:#fff;transform:scale(1.06)}
+.rail button.logo img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
+@media(max-width:760px){.rail button.logo{display:none}}
+.vtools{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.vseg{display:inline-grid;grid-auto-flow:column;background:var(--sage);border-radius:12px;padding:3px;gap:3px;flex:none}
+.vseg button{min-height:36px;padding:0 12px;border-radius:10px;font-weight:650;font-size:13px;color:var(--mute);white-space:nowrap}
+.vseg button[aria-pressed=true]{background:var(--surface);color:var(--accent);box-shadow:0 1px 4px rgba(31,42,36,.16)}
+select.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 8%,var(--surface));font-weight:650}
+.vk{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:12px;margin:14px 0}
+.vk.cbk{grid-template-columns:1.4fr repeat(4,1fr)}
+.vk>div{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px 18px;box-shadow:0 1px 2px rgba(31,42,36,.04);min-width:0}
+.vk span{display:block;font-size:13px;color:var(--mute);font-weight:650}
+.vk b{display:block;font-size:30px;font-weight:800;letter-spacing:-.03em;margin-top:2px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.vk small{display:block;color:var(--mute);font-size:12px;margin-top:2px}
+.vk .main{background:var(--accent);border-color:transparent;box-shadow:var(--shadow)}
+.vk .main span,.vk .main small{color:color-mix(in srgb,var(--on-accent) 78%,transparent)}
+.vk .main b{color:var(--on-accent);font-size:38px}
+.vk .warn b{color:var(--amber-ink)}.vk .ok b{color:var(--ok)}
+.vmet{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:-2px 0 12px}
+.vm{display:inline-flex;gap:8px;align-items:baseline;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 14px}
+.vm i{font-style:normal;color:var(--mute);font-size:12px;font-weight:650}.vm b{font-variant-numeric:tabular-nums}
+.vbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:2px 0 10px}
+.tscroll{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:16px}
+.vtab{font-size:14px}.vtab th{position:sticky;top:0;background:var(--surface);padding:12px 10px;white-space:nowrap}
+.vtab td{padding:10px;vertical-align:middle}
+.vtab tbody tr[data-i],.vtab tbody tr[data-n]{cursor:pointer}.vtab tbody tr:hover td{background:var(--sage)}
+.vtab .prods{max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--mute)}
+.tscroll .rtable tfoot td{border-bottom:0;padding-top:10px}
+.cav.sm{width:32px;height:32px;border-radius:10px;font-size:13px}
+.ctabs{display:inline-grid;grid-auto-flow:column;background:var(--sage);border-radius:14px;padding:4px;gap:4px;margin:10px 0 6px}
+.ctabs button{min-height:42px;padding:0 22px;border-radius:11px;font-weight:700;color:var(--mute)}
+.ctabs button[aria-pressed=true]{background:var(--surface);color:var(--accent);box-shadow:0 1px 4px rgba(31,42,36,.16)}
+.ctabs i{font-style:normal;background:var(--amber);color:#2b1a04;border-radius:999px;padding:1px 8px;font-size:12px;margin-left:4px}
+.tag.cb{background:var(--amber-bg);color:var(--amber-ink)}
+.tag.cbp{background:var(--ok-bg);color:var(--ok)}.tag.cbn{background:var(--bad-bg);color:var(--bad)}.tag.cbx{background:var(--sage);color:var(--mute)}
+tr.anul td{opacity:.5;text-decoration:line-through}tr.anul td:last-child{text-decoration:none}
+b.ok{color:var(--ok)}b.bad{color:var(--bad)}
+.cbhead{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:8px 0 2px}
+.cbstate{display:grid;gap:2px;border-left:4px solid var(--line);padding-left:12px}.cbstate.on{border-color:var(--ok)}
+.cbstate span{color:var(--mute);font-size:13px}
+.cbbig{font-size:34px;font-weight:800;letter-spacing:-.03em;margin:12px 0 4px;font-variant-numeric:tabular-nums;color:var(--accent)}
+.cbbig small{font-size:13px;color:var(--mute);font-weight:600;margin-left:8px;letter-spacing:0}
+.cbblock{display:grid;gap:8px;background:var(--amber-bg);border-color:transparent}
+.cbblock .mu{color:var(--amber-ink)}
+.cbline{font-size:13px;background:var(--amber-bg);color:var(--amber-ink);border-radius:10px;padding:8px 12px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.cbsec{display:grid;gap:10px;border-top:1px solid var(--line);padding-top:12px}.cbsec h3{margin:0;font-size:15px}
+.chk{display:flex;gap:8px;align-items:center;font-size:14px}.chk input{width:auto;min-height:0}
+.chkgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px 12px}
+textarea{width:100%;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--surface);color:var(--ink);font:inherit;resize:vertical}
+@media(max-width:900px){.vk,.vk.cbk{grid-template-columns:1fr 1fr}.vk .main{grid-column:1/-1}.vk b{font-size:24px}.vk .main b{font-size:32px}}
+@media(max-width:760px){.hm{display:none}.vtab{font-size:13px}.ctabs button{padding:0 16px}.pagehead{flex-wrap:wrap}.vtools{justify-content:flex-start}}
+
+.card .cact{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.card .cact .btn{flex:0 0 auto}
+
 </style>
 </head>
 <body>
@@ -347,7 +404,8 @@ const URL_API = 'https://script.google.com/macros/s/AKfycbzG-98sMMyUdyYvLuCqYktv
 /* La Caja vive en un proyecto de Apps Script aparte (caja.gs). Pega aquí su URL /exec */
 const URL_CAJA = 'https://script.google.com/macros/s/AKfycbxN76PEr_8LV4NjxEEaAGunekRMQRKrobQ5bYGJURErBJHxRENm_MJroBaJRnJJCZosCg/exec';
 const CAJA_FN = { getCaja: 1, saveCaja: 1, voidCaja: 1 };
-const VERSION = '1.20';
+const VERSION = '1.21';
+const LOGO = 'data:image/png;base64,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';
 const brand = () => /^#[0-9a-f]{6}$/i.test((S.config || {}).color || '') ? S.config.color : '#a35d17';
 const $ = (s, r = document) => r.querySelector(s);
 const money = n => '$' + (+n || 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -362,7 +420,7 @@ function toast(msg, err) {
   const t = $('#toast'); t.textContent = msg; t.className = err ? 'err' : ''; t.hidden = false;
   clearTimeout(toastTimer); toastTimer = setTimeout(() => t.hidden = true, 3200);
 }
-function modal(html) { const m = $('#mbox'); m.onclick = m.oninput = m.onchange = m.onkeydown = null; m.innerHTML = html; $('#modal').style.display = 'flex'; }
+function modal(html) { $('#mbox').style.maxWidth = ''; const m = $('#mbox'); m.onclick = m.oninput = m.onchange = m.onkeydown = null; m.innerHTML = html; $('#modal').style.display = 'flex'; }
 function closeM() { $('#modal').style.display = 'none'; }
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('#modal').style.display === 'flex') closeM(); });
 $('#modal').addEventListener('click', e => { if (e.target.id === 'modal') closeM(); });
@@ -427,7 +485,7 @@ const MORE = [['cotizaciones', 'Cotizaciones'], ['inventario', 'Inventario'], ['
 
 function go(v) {
   view = v;
-  $('#nav').innerHTML = '<div class="logo" aria-hidden="true">' + ICONS.cafe + '</div>' + NAV.map(n =>
+  $('#nav').innerHTML = '<button class="logo" data-go="vender" title="Inicio" aria-label="Ir a Inicio"><img src="' + LOGO + '" alt="Café Sierra Escondida"></button>' + NAV.map(n =>
     `<button data-go="${n[0]}" ${(n[0] === v || (n[0] === 'mas' && MORE.some(m => m[0] === v))) ? 'aria-current="page"' : ''}><i>${ICONS[n[1]]}</i><span>${n[2]}</span></button>`).join('');
   const root = $('#app'); root.innerHTML = '';
   if (views[v]) views[v].render(root);
@@ -465,7 +523,7 @@ window.addEventListener('online', renderStatus); window.addEventListener('offlin
 'use strict';
 /* ===== Pantalla Vender: catálogo, ticket y cobro rápido ===== */
 (() => {
-  const V = { cart: [], cat: 'Todas', q: '', cli: '', tipo: 'Aquí', nota: '', edit: -1, busy: false, ed: null, cot: null, dsc: { t: '$', v: 0 }, favs: store.get('favs', []), mode: store.get('mode', 'lista'), flash: null, vis: [] };
+  const V = { cb: 0, cbCli: '', cart: [], cat: 'Todas', q: '', cli: '', tipo: 'Aquí', nota: '', edit: -1, busy: false, ed: null, cot: null, dsc: { t: '$', v: 0 }, favs: store.get('favs', []), mode: store.get('mode', 'lista'), flash: null, vis: [] };
   const sub = () => V.cart.reduce((s, i) => s + i.cant * i.precio, 0);
   const dsc = () => { const s = sub(), d = V.dsc.t === '%' ? s * V.dsc.v / 100 : V.dsc.v; return Math.min(s, Math.max(0, Math.round(d * 100) / 100)); };
   const total = () => Math.round((sub() - dsc()) * 100) / 100;
@@ -491,6 +549,7 @@ window.addEventListener('online', renderStatus); window.addEventListener('offlin
           <div class="t-fields">
             <input id="cli" list="cl" placeholder="Cliente (opcional)" aria-label="Cliente" value="${esc(V.cli)}" autocomplete="off">
             <datalist id="cl">${S.clients.map(c => `<option value="${esc(c.nombre)}">`).join('')}</datalist>
+            <div id="cbline" class="cbline" hidden></div>
             <button class="linkbtn" data-a="det" id="detbtn">${V.nota || V.tipo !== 'Aquí' ? 'Detalles del pedido ▾' : '＋ Nota o tipo de servicio'}</button>
             <div id="det" ${V.nota || V.tipo !== 'Aquí' ? '' : 'hidden'}>
               <input id="nota" placeholder="Nota (dirección, mesa…)" aria-label="Nota del pedido" value="${esc(V.nota)}">
@@ -531,7 +590,7 @@ window.addEventListener('online', renderStatus); window.addEventListener('offlin
         if (e.key === 'Enter' && V.vis.length) { const k = parse(); H.add(null, { dataset: { v: V.vis[0].nombre } }, k.n); V.q = ''; e.target.value = ''; grid(); }
       };
       if (window.innerWidth > 1000) $('#q').focus();
-      $('#cli').oninput = e => V.cli = e.target.value;
+      $('#cli').oninput = e => { V.cli = e.target.value; cbLine(); };
       $('#nota').oninput = e => V.nota = e.target.value;
       chips(); grid(); cart();
     }
@@ -576,9 +635,17 @@ window.addEventListener('online', renderStatus); window.addEventListener('offlin
     $('#dline').hidden = !(dsc() > 0);
     $('#dbtn').textContent = dsc() > 0 ? 'Editar descuento' : 'Descuento';
     $('#tot').textContent = money(total()); $('#ccount').textContent = count() + ' artículo(s)';
-    $('#bcount').textContent = count() + ' artículo(s) · Ver ticket'; $('#btot').textContent = money(total());
+    $('#bcount').textContent = count() + ' artículo(s) · Ver ticket'; $('#btot').textContent = money(total()); cbLine();
   }
 
+  function cbLine() {
+    const el = $('#cbline'); if (!el) return;
+    const n = V.cli.trim().toUpperCase(), s = window.CB && n ? CB.saldo(n) : 0;
+    if (V.cb > 0 && V.cbCli !== n) V.cb = 0;
+    if (!(s > 0) || V.ed || !V.cart.length) { el.hidden = true; return; }
+    el.hidden = false;
+    el.innerHTML = V.cb > 0 ? 'Cashback aplicado: <b>−' + money(Math.min(V.cb, dsc())) + '</b> <button class="linkbtn" data-a="cbquit">Quitar</button>' : 'Cashback disponible: <b>' + money(s) + '</b> <button class="linkbtn" data-a="cbuse">Usar en este ticket</button>';
+  }
   function warn(n) { const p = S.prods.find(x => x.nombre === n), c = V.cart.find(x => x.nombre === n); if (p && p.stock != null && c && c.cant > p.stock) toast('Solo hay ' + p.stock + ' en existencia de ' + p.nombre + '.', true); }
 
   const H = {
@@ -634,9 +701,15 @@ window.addEventListener('online', renderStatus); window.addEventListener('offlin
       const prev = () => { const d = calc(); $('#dp').textContent = d > sub() + 0.001 ? 'El descuento no puede ser mayor al subtotal.' : 'Total con descuento: ' + money(sub() - Math.min(d, sub())); };
       $('#dv').oninput = prev; $('#dv').focus(); prev();
       $('#dt').onclick = e => { const b = e.target.closest('[data-t]'); if (!b) return; t = b.dataset.t; $('#dt').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); prev(); };
-      $('#dno').onclick = () => { V.dsc = { t: '$', v: 0 }; closeM(); cart(); };
-      $('#dok').onclick = () => { const v = +$('#dv').value || 0; if (v < 0 || (t === '%' && v > 100) || calc() > sub() + 0.001) return toast('Revisa la cantidad del descuento.', true); V.dsc = { t, v }; closeM(); cart(); };
+      $('#dno').onclick = () => { V.dsc = { t: '$', v: 0 }; V.cb = 0; closeM(); cart(); };
+      $('#dok').onclick = () => { const v = +$('#dv').value || 0; if (v < 0 || (t === '%' && v > 100) || calc() > sub() + 0.001) return toast('Revisa la cantidad del descuento.', true); V.dsc = { t, v }; V.cb = 0; closeM(); cart(); };
     },
+    cbuse() {
+      const n = V.cli.trim().toUpperCase(), s = window.CB ? CB.saldo(n) : 0, m = Math.min(s, total());
+      if (!(m > 0)) return toast('No hay nada que descontar.', true);
+      V.dsc = { t: '$', v: Math.round((dsc() + m) * 100) / 100 }; V.cb = m; V.cbCli = n; cart();
+    },
+    cbquit() { V.dsc = { t: '$', v: Math.max(0, Math.round((dsc() - V.cb) * 100) / 100) }; V.cb = 0; cart(); },
     credit() { save('Pagado', 'Crédito cliente'); },
     split() {
       if (!V.cart.length) return toast('El ticket está vacío. Agrega un producto.', true);
@@ -676,7 +749,7 @@ window.addEventListener('online', renderStatus); window.addEventListener('offlin
   };
   function onClick(e) { const b = e.target.closest('[data-a]'); if (b && H[b.dataset.a]) H[b.dataset.a](+b.dataset.i, b); }
 
-  function reset() { V.cart = []; V.cli = ''; V.nota = ''; V.tipo = 'Aquí'; V.edit = -1; V.ed = null; V.cot = null; V.dsc = { t: '$', v: 0 }; }
+  function reset() { V.cart = []; V.cli = ''; V.nota = ''; V.tipo = 'Aquí'; V.cb = 0; V.edit = -1; V.ed = null; V.cot = null; V.dsc = { t: '$', v: 0 }; }
 
   async function save(estado, metodo) {
     if (V.busy) return;
@@ -685,10 +758,13 @@ window.addEventListener('online', renderStatus); window.addEventListener('offlin
     V.busy = true;
     try {
       const cot = V.cot;
+      const cbCli = V.cbCli, cbUsar = V.cb > 0 && cbCli === V.cli.trim().toUpperCase() && !V.ed ? Math.min(V.cb, dsc(), window.CB ? CB.saldo(cbCli) : 0) : 0;
       const sig = JSON.stringify([V.cart, V.cli, V.tipo, V.nota, estado, metodo, dsc(), V.ed && V.ed.folio]); if (V.sig !== sig) { V.sig = sig; V.uid = 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
       const folio = await api('saveSale', { uid: V.uid, descuento: dsc(), folio: V.ed ? V.ed.folio : undefined, fecha: V.ed ? V.ed.fecha : undefined, cliente: V.cli.trim().toUpperCase(), tipo: V.tipo, nota: V.nota, estado, metodo: estado === 'Pagado' ? metodo : 'Sin registrar', items: V.cart });
       if (cot) await api('setQuote', cot, 'Convertida');
-      toast('Venta ' + folio + ' guardada'); reset(); await load();
+      toast('Venta ' + folio + ' guardada'); reset();
+      if (cbUsar > 0) { try { await api('cashbackAdd', { cliente: cbCli, tipo: 'Canje', monto: cbUsar, folio: String(folio), nota: 'Canje en ticket ' + folio }); toast('Venta ' + folio + ' guardada · cashback usado: ' + money(cbUsar)); } catch (e) { toast('La venta se guardó, pero no se pudo descontar el cashback. Quítalo a mano en Clientes › Cashback.', true); } }
+      await load();
     } finally { V.busy = false; }
   }
 
@@ -721,52 +797,98 @@ function tickets() {
 const fdate = t => new Date(t).toLocaleString('es-MX', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
 
 (() => {
-  const D = 864e5, dk = t => new Date(t - new Date().getTimezoneOffset() * 6e4).toISOString().slice(0, 10);
-  const F = { per: 'Hoy', est: 'Todos', met: 'Todos', tipo: 'Todos', ord: 'Más recientes', q: '', a: dk(Date.now()), b: dk(Date.now()), lim: 40 };
-  const PER = ['Hoy', 'Ayer', '7 días', 'Este mes', 'Últimas 30', 'Todo', 'Rango'];
-  const SEL = [
-    ['est', 'Estado', [['Todos', 'Todos'], ['Pendiente', 'Pendientes'], ['Pagado', 'Pagados']]],
+  const D = 864e5, dk = t => new Date(t - new Date().getTimezoneOffset() * 6e4).toISOString().slice(0, 10), HOY = () => dk(Date.now());
+  const F = { per: 'Hoy', est: 'Todos', met: 'Todos', tipo: 'Todos', cat: 'Todas', cli: 'Todos', dsc: 'Todos', ord: 'Más recientes', q: '', a: HOY(), b: HOY(), mes: HOY().slice(0, 7), ty: new Date().getFullYear(), tq: Math.floor(new Date().getMonth() / 3) + 1, lim: 40, vista: store.get('vvista', 'tarjetas') };
+  const PER = ['Hoy', 'Ayer', '7 días', 'Este mes', 'Últimas 30', 'Este año', 'Trimestre', 'Mes', 'Todo', 'Rango'];
+  const TRIM = [[1, 'T1 · Ene–Mar'], [2, 'T2 · Abr–Jun'], [3, 'T3 · Jul–Sep'], [4, 'T4 · Oct–Dic']];
+  const ML = { Débito: 'Tarjeta' }, ml = m => ML[m] || m;
+  const catList = () => ['Todas'].concat([...new Set(S.prods.concat(S.inactivos || []).map(p => p.cat || 'Otros'))].sort());
+  const SEL = () => [
+    ['est', 'Estado', [['Todos', 'Todos'], ['Pendiente', 'Pendientes'], ['Pagado', 'Pagados'], ['Parcial', 'Con abono parcial']]],
     ['met', 'Método de pago', [['Todos', 'Todos'], ['Efectivo', 'Efectivo'], ['Débito', 'Tarjeta'], ['Transferencia', 'Transferencia'], ['Multipagos', 'Multipagos'], ['Crédito cliente', 'Crédito cliente'], ['Sin registrar', 'Sin registrar']]],
-    ['tipo', 'Tipo de servicio', [['Todos', 'Todos'], ['Aquí', 'Aquí'], ['Para llevar', 'Para llevar'], ['Domicilio', 'Domicilio']]],
-    ['ord', 'Orden', [['Más recientes', 'Más recientes'], ['Mayor monto', 'Mayor monto']]]
+    ['cat', 'Categoría', catList().map(c => [c, c])],
+    ['tipo', 'Servicio', [['Todos', 'Todos'], ['Aquí', 'Aquí'], ['Para llevar', 'Para llevar'], ['Domicilio', 'Domicilio']]],
+    ['cli', 'Cliente', [['Todos', 'Todos'], ['Con cliente', 'Con nombre de cliente'], ['Mostrador', 'Mostrador (sin cliente)']]],
+    ['dsc', 'Descuento', [['Todos', 'Todos'], ['Con', 'Con descuento'], ['Sin', 'Sin descuento']]],
+    ['ord', 'Orden', [['Más recientes', 'Más recientes'], ['Más antiguos', 'Más antiguos'], ['Mayor monto', 'Mayor monto'], ['Menor monto', 'Menor monto'], ['Cliente', 'Cliente (A–Z)']]]
   ];
-  let TK = [];
+  let TK = [], AGG = null;
   const met = m => String(m || 'Sin registrar').startsWith('Multipagos') ? 'Multipagos' : (m || 'Sin registrar');
+  const catOf = (() => { let m = null, n = 0; return p => { if (!m || n !== S.prods.length) { m = {}; S.prods.concat(S.inactivos || []).forEach(x => m[x.nombre] = x.cat || 'Otros'); n = S.prods.length; } return m[p] || 'Otros'; }; })();
+  const years = () => { const a = new Date().getFullYear(), m = S.ventas.reduce((s, v) => Math.min(s, v.fecha || Infinity), Infinity); const y0 = isFinite(m) ? new Date(m).getFullYear() : a, o = []; for (let y = a; y >= Math.min(y0, a); y--) o.push(y); return o; };
 
   function inPer(t) {
-    const k = dk(t.fecha), h = dk(Date.now());
+    const k = dk(t.fecha), h = HOY();
     switch (F.per) {
       case 'Hoy': return k === h;
       case 'Ayer': return k === dk(Date.now() - D);
       case '7 días': return k >= dk(Date.now() - 6 * D);
       case 'Este mes': return k.slice(0, 7) === h.slice(0, 7);
+      case 'Este año': return k.slice(0, 4) === h.slice(0, 4);
+      case 'Trimestre': return +k.slice(0, 4) === F.ty && Math.ceil(+k.slice(5, 7) / 3) === F.tq;
+      case 'Mes': return k.slice(0, 7) === F.mes;
       case 'Rango': return k >= F.a && k <= F.b;
       default: return true;
     }
   }
   function filtered() {
     const q = F.q.toLowerCase();
-    let L = tickets().filter(t => inPer(t) && (F.est === 'Todos' || t.estado === F.est) && (F.met === 'Todos' || met(t.metodo) === F.met) && (F.tipo === 'Todos' || (t.tipo || 'Aquí') === F.tipo)
-      && (t.folio + ' ' + t.cliente + ' ' + t.items.map(x => x.producto).join(' ')).toLowerCase().includes(q));
-    if (F.ord === 'Mayor monto') L.sort((a, b) => b.total - a.total);
+    let L = tickets().filter(t => inPer(t) && (F.est === 'Todos' || (F.est === 'Parcial' ? t.estado !== 'Pagado' && t.abonado > 0 : t.estado === F.est)) && (F.met === 'Todos' || met(t.metodo) === F.met) && (F.tipo === 'Todos' || (t.tipo || 'Aquí') === F.tipo)
+      && (F.cat === 'Todas' || t.items.some(x => catOf(x.producto) === F.cat)) && (F.cli === 'Todos' || (F.cli === 'Con cliente' ? !!t.cliente && t.cliente !== 'PUNTO DE VENTA' : !t.cliente || t.cliente === 'PUNTO DE VENTA'))
+      && (F.dsc === 'Todos' || (F.dsc === 'Con' ? t.desc > 0 : !(t.desc > 0))) && (t.folio + ' ' + t.cliente + ' ' + t.nota + ' ' + t.items.map(x => x.producto).join(' ')).toLowerCase().includes(q));
+    const o = { 'Más recientes': (a, b) => b.fecha - a.fecha, 'Más antiguos': (a, b) => a.fecha - b.fecha, 'Mayor monto': (a, b) => b.total - a.total, 'Menor monto': (a, b) => a.total - b.total, 'Cliente': (a, b) => String(a.cliente || '~').localeCompare(String(b.cliente || '~')) || b.fecha - a.fecha }[F.ord];
+    L.sort(o);
     return F.per === 'Últimas 30' ? L.slice(0, 30) : L;
   }
+  const r2 = x => Math.round(x * 100) / 100;
+  /* Cuánto de un ticket se cobró con cada método (pagado directo, pago dividido o abonos) */
+  function porMetodo(t) {
+    const out = {}, add = (k, v) => { if (v > 0.004) out[k] = (out[k] || 0) + v; };
+    if (t.estado === 'Pagado') {
+      const m = String(t.metodo || '');
+      if (m.startsWith('Multipagos')) { const re = /(Efectivo|Débito|Transferencia)\s*\$\s*([\d,]*\.?\d+)/g; let x; while ((x = re.exec(m))) add(x[1], parseFloat(x[2].replace(/,/g, ''))); }
+      else add(m || 'Sin registrar', t.total);
+    } else (S.abonos || []).forEach(a => { if (a.folio && String(a.folio) === t.folio) add(a.metodo, a.monto); });
+    return out;
+  }
+  function totales(L) {
+    const g = { n: L.length, vendido: 0, cobrado: 0, porCobrar: 0, utilidad: 0, costo: 0, desc: 0, met: {}, cred: 0 };
+    L.forEach(t => {
+      const sel = F.cat === 'Todas' ? t.items : t.items.filter(x => catOf(x.producto) === F.cat), tot = sel.reduce((s, x) => s + x.total, 0), f = F.cat === 'Todas' || !t.total ? 1 : tot / t.total;
+      g.vendido += tot; g.desc += (t.desc || 0) * f; g.porCobrar += t.resta * f; g.cobrado += (t.estado === 'Pagado' ? t.total : t.abonado) * f;
+      g.utilidad += sel.reduce((s, x) => s + x.total - x.cant * (x.costo || 0), 0);
+      const pm = porMetodo(t); Object.keys(pm).forEach(k => { g.met[k] = (g.met[k] || 0) + pm[k] * f; });
+    });
+    g.prom = g.n ? g.vendido / g.n : 0; g.margen = g.vendido ? g.utilidad / g.vendido * 100 : 0;
+    return g;
+  }
+  const activos = () => ['est', 'met', 'tipo', 'cat', 'cli', 'dsc'].some(k => F[k] !== (k === 'cat' ? 'Todas' : 'Todos')) || F.q;
 
   views.ventas = {
     render(root) {
-      root.innerHTML = `<h2>Ventas</h2>
-        <input id="fq" type="search" placeholder="Buscar cliente, folio o producto" aria-label="Buscar" value="${esc(F.q)}" style="margin-top:14px">
+      const Y = years();
+      root.innerHTML = `<div class="pagehead"><h2>Ventas</h2><div class="vtools">
+          <div class="vseg" role="group" aria-label="Vista"><button data-v="tarjetas" aria-pressed="${F.vista === 'tarjetas'}">▦ Tarjetas</button><button data-v="lista" aria-pressed="${F.vista === 'lista'}">☰ Lista</button></div>
+          <button class="btn sm ghost" data-x="csv" title="Descargar lo que ves en Excel">⬇ Excel</button></div></div>
+        <input id="fq" type="search" placeholder="Buscar cliente, folio, producto o nota" aria-label="Buscar" value="${esc(F.q)}" style="margin-top:10px">
         <div class="chips">${PER.map(p => `<button class="chip" data-p="${p}" aria-pressed="${p === F.per}">${p}</button>`).join('')}</div>
         ${F.per === 'Rango' ? `<div class="row2" style="margin-bottom:10px"><input type="date" id="va" value="${F.a}" aria-label="Desde"><input type="date" id="vb" value="${F.b}" aria-label="Hasta"></div>` : ''}
-        <div class="form" style="margin-bottom:12px">${SEL.map(([k, l, o]) => `<select data-f="${k}" aria-label="${l}">${o.map(([v, t]) => `<option value="${v}" ${F[k] === v ? 'selected' : ''}>${l}: ${t}</option>`).join('')}</select>`).join('')}</div>
-        <div class="mu" id="vs" aria-live="polite"></div><div class="list" id="vl"></div><div id="vm" style="margin-top:12px"></div>`;
+        ${F.per === 'Trimestre' ? `<div class="row2" style="margin-bottom:10px"><select data-f="tq" aria-label="Trimestre">${TRIM.map(([v, t]) => `<option value="${v}" ${F.tq === v ? 'selected' : ''}>${t}</option>`).join('')}</select><select data-f="ty" aria-label="Año">${Y.map(y => `<option value="${y}" ${F.ty === y ? 'selected' : ''}>${y}</option>`).join('')}</select></div>` : ''}
+        ${F.per === 'Mes' ? `<div style="margin-bottom:10px"><input type="month" data-f="mes" value="${F.mes}" aria-label="Mes"></div>` : ''}
+        <div class="form" style="margin-bottom:12px">${SEL().map(([k, l, o]) => `<select data-f="${k}" aria-label="${l}" class="${F[k] !== (k === 'cat' ? 'Todas' : k === 'ord' ? 'Más recientes' : 'Todos') ? 'on' : ''}">${o.map(([v, t]) => `<option value="${esc(v)}" ${F[k] === v ? 'selected' : ''}>${l}: ${esc(t)}</option>`).join('')}</select>`).join('')}</div>
+        <div id="vk"></div>
+        <div class="vbar"><span class="mu" id="vs" aria-live="polite"></span>${''}<button class="btn sm ghost" data-x="clr" id="vclr" hidden>Limpiar filtros</button></div>
+        <div id="vl"></div><div id="vm" style="margin-top:12px"></div>`;
       $('#fq').oninput = e => { F.q = e.target.value; F.lim = 40; list(); };
       if ($('#va')) { $('#va').onchange = e => { F.a = e.target.value; list(); }; $('#vb').onchange = e => { F.b = e.target.value; list(); }; }
-      root.onchange = e => { const k = e.target.dataset.f; if (k) { F[k] = e.target.value; F.lim = 40; list(); } };
+      root.onchange = e => { const k = e.target.dataset.f; if (!k) return; F[k] = (k === 'tq' || k === 'ty') ? +e.target.value : e.target.value; F.lim = 40; if (k === 'mes') list(); else views.ventas.render(root); };
       root.onclick = e => {
         const p = e.target.closest('[data-p]'); if (p) { F.per = p.dataset.p; F.lim = 40; views.ventas.render(root); return; }
+        const vv = e.target.closest('[data-v]'); if (vv) { F.vista = vv.dataset.v; store.set('vvista', F.vista); views.ventas.render(root); return; }
+        const x = e.target.closest('[data-x]'); if (x) { if (x.dataset.x === 'csv') return csv(); if (x.dataset.x === 'clr') { ['est', 'met', 'tipo', 'cli', 'dsc'].forEach(k => F[k] = 'Todos'); F.cat = 'Todas'; F.q = ''; views.ventas.render(root); return; } }
         if (e.target.closest('[data-more]')) { F.lim += 40; list(); return; }
-        const b = e.target.closest('[data-a]'); if (!b) return;
+        const b = e.target.closest('[data-a]');
+        if (!b) { const r = e.target.closest('tr[data-i]'); if (r) ticketModal(TK[+r.dataset.i]); return; }
         const t = TK[+b.dataset.i];
         ({ edit: () => Vender.load(t.items, { cli: t.cliente, nota: t.nota, tipo: t.tipo, desc: t.desc, ed: { folio: t.folio, fecha: t.fecha } }), fix: () => ticketModal(t), cobrar: () => cobrar(t), print: () => printT(t), del: () => del(t) })[b.dataset.a]();
       };
@@ -774,22 +896,49 @@ const fdate = t => new Date(t).toLocaleString('es-MX', { day: 'numeric', month: 
     }
   };
 
+  function kpis(g) {
+    const mets = Object.keys(g.met).sort((a, b) => g.met[b] - g.met[a]);
+    return `<div class="vk">
+      <div class="main"><span>Total vendido</span><b>${money(g.vendido)}</b><small>${g.n} ticket(s) · promedio ${money(g.prom)}</small></div>
+      <div><span>Cobrado</span><b>${money(g.cobrado)}</b><small>${g.vendido ? Math.round(g.cobrado / g.vendido * 100) : 0}% de lo vendido</small></div>
+      <div class="warn"><span>Por cobrar</span><b>${money(g.porCobrar)}</b><small>${g.porCobrar > 0.004 ? 'pendiente de clientes' : 'todo cobrado'}</small></div>
+      <div class="ok"><span>Utilidad estimada</span><b>${money(g.utilidad)}</b><small>margen ${g.margen.toFixed(0)}%${g.desc > 0 ? ' · descuentos ' + money(g.desc) : ''}</small></div></div>
+      ${mets.length ? `<div class="vmet"><span class="mu">Cobrado por método</span>${mets.map(k => `<span class="vm"><i>${esc(ml(k))}</i><b>${money(g.met[k])}</b></span>`).join('')}</div>` : ''}`;
+  }
+
   function list() {
-    TK = filtered();
-    const tot = TK.reduce((s, t) => s + t.total, 0), pend = TK.reduce((s, t) => s + t.resta, 0);
-    $('#vs').textContent = TK.length + ' ticket(s) · ' + money(tot) + (pend ? ' · por cobrar ' + money(pend) : '');
-    $('#vl').innerHTML = TK.slice(0, F.lim).map((t, i) => `<div class="card">
+    TK = filtered(); AGG = totales(TK);
+    $('#vk').innerHTML = kpis(AGG);
+    $('#vs').textContent = TK.length + ' ticket(s)' + (F.cat !== 'Todas' ? ' con ' + F.cat + ' (totales solo de esa categoría)' : '');
+    $('#vclr').hidden = !activos();
+    const L = TK.slice(0, F.lim);
+    if (!L.length) $('#vl').innerHTML = `<p class="mu">No hay ventas con estos filtros.</p>${F.per === 'Hoy' ? '<button class="btn" data-p="Últimas 30">Ver las últimas 30 ventas</button>' : ''}`;
+    else if (F.vista === 'lista') $('#vl').innerHTML = `<div class="tscroll"><table class="rtable vtab"><thead><tr><th>Folio</th><th>Fecha</th><th>Cliente</th><th class="hm">Productos</th><th class="hm">Pago</th><th>Estado</th><th class="n">Total</th><th></th></tr></thead><tbody>${L.map((t, i) => `<tr data-i="${i}" title="Toca para ver o corregir el ticket">
+        <td><b>${esc(t.folio)}</b></td><td>${fdate(t.fecha)}</td><td>${esc(t.cliente || 'Mostrador')}</td>
+        <td class="hm prods">${t.items.map(x => x.cant + '× ' + esc(x.producto)).join(', ')}</td><td class="hm">${esc(t.metodo && t.metodo !== 'Sin registrar' ? (String(t.metodo).startsWith('Multipagos') ? 'Multipagos' : ml(t.metodo)) : '—')}</td>
+        <td><span class="tag ${t.estado === 'Pagado' ? 'ok' : ''}">${t.abonado > 0 ? 'Resta ' + money(t.resta) : esc(t.estado)}</span></td><td class="n"><b>${money(t.total)}</b></td>
+        <td class="n">${t.estado !== 'Pagado' ? `<button class="btn sm primary" data-a="cobrar" data-i="${i}">Cobrar</button>` : `<button class="btn sm ghost" data-a="fix" data-i="${i}">Corregir</button>`}</td></tr>`).join('')}</tbody></table></div>`;
+    else $('#vl').innerHTML = '<div class="list">' + L.map((t, i) => `<div class="card">
       <div class="tl"><b>${esc(t.folio)} · ${esc(t.cliente || 'Mostrador')}</b><span class="tag ${t.estado === 'Pagado' ? 'ok' : ''}">${t.abonado > 0 ? 'Resta ' + money(t.resta) : esc(t.estado)}</span></div>
       <div class="mu">${fdate(t.fecha)} · ${esc(t.tipo || '')}${t.metodo && t.metodo !== 'Sin registrar' ? ' · ' + esc(t.metodo) : ''}</div>
       <div class="mu" style="margin:4px 0">${t.items.map(x => x.cant + '× ' + esc(x.producto)).join(', ')}${t.desc > 0 ? ' · Descuento −' + money(t.desc) : ''}${t.abonado > 0 ? ' · Abonado ' + money(t.abonado) : ''}</div>
-      <div class="tl"><b class="amt">${money(t.total)}</b><span>
+      <div class="tl"><b class="amt">${money(t.total)}</b></div><div class="cact">
         ${t.estado !== 'Pagado' ? `<button class="btn sm primary" data-a="cobrar" data-i="${i}">Cobrar / abonar</button> ` : ''}
         <button class="btn sm ghost" data-a="edit" data-i="${i}">Editar</button>
         <button class="btn sm ghost" data-a="fix" data-i="${i}">Corregir</button>
         <button class="btn sm ghost" data-a="print" data-i="${i}">Imprimir</button>
-        <button class="btn sm ghost danger" data-a="del" data-i="${i}">Cancelar</button></span></div></div>`).join('')
-      || `<p class="mu">No hay ventas con estos filtros.</p>${F.per === 'Hoy' ? '<button class="btn" data-p="Últimas 30">Ver las últimas 30 ventas</button>' : ''}`;
+        <button class="btn sm ghost danger" data-a="del" data-i="${i}">Cancelar</button></div></div>`).join('') + '</div>';
     $('#vm').innerHTML = TK.length > F.lim ? `<button class="btn ghost" data-more="1">Mostrar más (${TK.length - F.lim} restantes)</button>` : '';
+  }
+
+  /* Descarga lo que se ve (con los filtros) para abrirlo en Excel */
+  function csv() {
+    if (!TK.length) return toast('No hay ventas con estos filtros.', true);
+    const q = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"', fmt = t => new Date(t).toLocaleString('es-MX');
+    const rows = [['Folio', 'Fecha', 'Cliente', 'Servicio', 'Estado', 'Método', 'Productos', 'Descuento', 'Total', 'Abonado', 'Resta', 'Nota']].concat(TK.map(t => [t.folio, fmt(t.fecha), t.cliente || 'Mostrador', t.tipo || '', t.estado, t.metodo || '', t.items.map(x => x.cant + 'x ' + x.producto).join('; '), r2(t.desc || 0), r2(t.total), r2(t.abonado), r2(t.resta), t.nota || '']));
+    const blob = new Blob(['﻿' + rows.map(r => r.map(q).join(',')).join('\r\n')], { type: 'text/csv;charset=utf-8' }), a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = 'ventas_' + HOY() + '.csv'; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+    toast('Descargado: ' + TK.length + ' ticket(s)');
   }
 
   /* Cobrar un ticket pendiente: completo o solo una parte (abono) */
@@ -845,9 +994,11 @@ const fdate = t => new Date(t).toLocaleString('es-MX', { day: 'numeric', month: 
 /* ===== Pantalla Clientes: resumen, filtros, ficha con historial, abonos y cobranza ===== */
 (() => {
   const DI = () => +(S.config || {}).diasInactivo || 30;
-  const D = 864e5, F = { f: 'Todos', s: 'Nombre', q: '' };
-  const FILTROS = ['Todos', 'Con saldo', 'Sin saldo', 'Activos', 'Inactivos'];
-  const SORTS = ['Nombre', 'Mayor saldo', 'Compró más recientemente', 'Mayor compra total'];
+  const D = 864e5, F = { f: 'Todos', s: 'Nombre', q: '', vista: store.get('cvista', 'tarjetas'), tab: 'clientes' };
+  const FILTROS = [['Saldo', ['Todos', 'Con saldo', 'Sin saldo', 'Con abonos sin aplicar']], ['Actividad', ['Activos', 'Inactivos', 'Compraron este mes', 'En riesgo (60-180 días)', 'Nuevos (30 días)', 'Nunca han comprado']],
+    ['Valor', ['Frecuentes (5+ compras)', 'Mejores 20 por compras']], ['Contacto', ['Con teléfono', 'Sin teléfono']], ['Cashback', ['Con cashback', 'Cashback por vencer (30 días)', 'Sin cashback']]];
+  const QUICK = ['Todos', 'Con saldo', 'Sin saldo', 'Activos', 'Inactivos'];
+  const SORTS = ['Nombre', 'Mayor saldo', 'Compró más recientemente', 'Mayor compra total', 'Más compras', 'Mayor cashback'];
   const up = s => String(s || '').trim().toUpperCase();
   const hue = s => { let h = 0; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) % 360; return `hsl(${h} 40% 38%)`; };
   const days = t => t ? Math.floor((Date.now() - t) / D) : null;
@@ -855,31 +1006,50 @@ const fdate = t => new Date(t).toLocaleString('es-MX', { day: 'numeric', month: 
   let ST = {}, L = [];
 
   function stats() {
-    const m = {}, get = n => m[n] || (m[n] = { n, tel: '', email: '', tk: 0, compras: 0, last: 0, pend: 0, ab: 0, saldo: 0 });
+    const m = {}, get = n => m[n] || (m[n] = { n, tel: '', email: '', tk: 0, compras: 0, last: 0, first: 0, pend: 0, ab: 0, saldo: 0, cb: 0, cbv: 0 });
     S.clients.forEach(c => { const o = get(up(c.nombre)); o.tel = c.tel || ''; o.email = c.email || ''; });
-    tickets().forEach(t => { const k = up(t.cliente); if (!k) return; const o = get(k); o.tk++; o.compras += t.total; o.last = Math.max(o.last, t.fecha); if (t.estado !== 'Pagado') o.pend += t.resta; });
+    tickets().forEach(t => { const k = up(t.cliente); if (!k) return; const o = get(k); o.tk++; o.compras += t.total; o.last = Math.max(o.last, t.fecha); o.first = o.first ? Math.min(o.first, t.fecha) : t.fecha; if (t.estado !== 'Pagado') o.pend += t.resta; });
     (S.abonos || []).forEach(a => { const k = up(a.cliente); if (k && !a.folio) get(k).ab += a.monto; });
-    Object.values(m).forEach(o => o.saldo = Math.round((o.pend - o.ab) * 100) / 100);
+    Object.values(m).forEach(o => { o.saldo = Math.round((o.pend - o.ab) * 100) / 100; });
+    if (window.CB) { const r = CB.todos(); Object.keys(r).forEach(k => { if (r[k].saldo !== 0 || r[k].movs) { const o = get(k); o.cb = r[k].saldo; o.cbv = r[k].porVencer; } }); }
     return m;
   }
   const wa = (o, msg) => { const d = String(o.tel).replace(/\D/g, ''); window.open('https://wa.me/' + (d.length === 10 ? '52' + d : d) + '?text=' + encodeURIComponent(msg)); };
+  const pase = (o, top) => ({
+    'Todos': true, 'Con saldo': o.saldo > 0, 'Sin saldo': o.saldo <= 0, 'Con abonos sin aplicar': o.ab > 0.004 && o.pend > 0.004,
+    'Activos': o.last && days(o.last) <= DI(), 'Inactivos': !o.last || days(o.last) > DI(), 'Compraron este mes': o.last && new Date(o.last).toISOString().slice(0, 7) === new Date().toISOString().slice(0, 7),
+    'En riesgo (60-180 días)': o.last && days(o.last) >= 60 && days(o.last) <= 180, 'Nuevos (30 días)': o.first && days(o.first) <= 30, 'Nunca han comprado': !o.tk,
+    'Frecuentes (5+ compras)': o.tk >= 5, 'Mejores 20 por compras': top.has(o.n), 'Con teléfono': !!String(o.tel).trim(), 'Sin teléfono': !String(o.tel).trim(),
+    'Con cashback': o.cb > 0.004, 'Cashback por vencer (30 días)': o.cbv > 0.004, 'Sin cashback': !(o.cb > 0.004) })[F.f];
 
   views.clientes = {
     render(root) {
       ST = stats();
-      const A = Object.values(ST), con = A.filter(o => o.saldo > 0), act = A.filter(o => o.last && days(o.last) <= DI()), sin = A.filter(o => o.ab > 0.004 && o.pend > 0.004);
-      root.innerHTML = `<div class="pagehead"><h2>Clientes</h2><button class="btn primary" data-a="new">＋ Nuevo cliente</button></div>
+      const A = Object.values(ST), con = A.filter(o => o.saldo > 0), act = A.filter(o => o.last && days(o.last) <= DI()), sin = A.filter(o => o.ab > 0.004 && o.pend > 0.004), conCb = A.filter(o => o.cb > 0.004);
+      const tabs = `<div class="ctabs" role="tablist"><button data-t="clientes" aria-pressed="${F.tab === 'clientes'}">Clientes</button><button data-t="cashback" aria-pressed="${F.tab === 'cashback'}">Cashback${conCb.length ? ` <i>${conCb.length}</i>` : ''}</button></div>`;
+      if (F.tab === 'cashback') {
+        root.innerHTML = `<div class="pagehead"><h2>Clientes</h2></div>${tabs}<div id="cbbox"></div>`;
+        root.onclick = e => { const t = e.target.closest('[data-t]'); if (t) { F.tab = t.dataset.t; views.clientes.render(root); } };
+        root.onchange = null; CB.render($('#cbbox')); return;
+      }
+      root.innerHTML = `<div class="pagehead"><h2>Clientes</h2><button class="btn primary" data-a="new">＋ Nuevo cliente</button></div>${tabs}
         <div class="kpis"><div class="card kpi"><span class="mu">Clientes</span><b>${A.length}</b></div>
           <div class="card kpi"><span class="mu">Con saldo pendiente</span><b>${con.length}</b></div>
           <div class="card kpi"><span class="mu">Por cobrar</span><b>${money(con.reduce((s, o) => s + o.saldo, 0))}</b></div>
           <div class="card kpi"><span class="mu">Activos (últimos ${DI()} días)</span><b>${act.length}</b></div></div>
-        ${sin.length ? `<div class="cj-warn" style="margin:0 0 12px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap"><span>${sin.length} cliente(s) tienen ${money(sin.reduce((s, o) => s + Math.min(o.ab, o.pend), 0))} abonados sin aplicar a un ticket. Por eso Clientes y Ventas no coinciden.</span><button class="btn sm primary" data-a="applyall">Aplicar a los tickets</button></div>` : ''}<div class="toolbar"><input id="cq" type="search" placeholder="Buscar por nombre o teléfono" aria-label="Buscar cliente" value="${esc(F.q)}">
-          <select id="cs" aria-label="Ordenar por">${SORTS.map(s => `<option ${s === F.s ? 'selected' : ''}>${s}</option>`).join('')}</select></div>
-        <div class="chips">${FILTROS.map(f => `<button class="chip" data-f="${f}" aria-pressed="${f === F.f}">${f}</button>`).join('')}</div>
-        <div class="mu" id="cn"></div><div class="list" id="cl"></div>`;
+        ${sin.length ? `<div class="cj-warn" style="margin:0 0 12px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap"><span>${sin.length} cliente(s) tienen ${money(sin.reduce((s, o) => s + Math.min(o.ab, o.pend), 0))} abonados sin aplicar a un ticket. Por eso Clientes y Ventas no coinciden.</span><button class="btn sm primary" data-a="applyall">Aplicar a los tickets</button></div>` : ''}
+        <div class="toolbar"><input id="cq" type="search" placeholder="Buscar por nombre o teléfono" aria-label="Buscar cliente" value="${esc(F.q)}">
+          <select id="cf" aria-label="Filtrar clientes" class="${F.f !== 'Todos' ? 'on' : ''}">${FILTROS.map(([g, o]) => `<optgroup label="${g}">${o.map(x => `<option ${x === F.f ? 'selected' : ''}>${x}</option>`).join('')}</optgroup>`).join('')}</select>
+          <select id="cs" aria-label="Ordenar por">${SORTS.map(s => `<option ${s === F.s ? 'selected' : ''}>${s}</option>`).join('')}</select>
+          <div class="vseg" role="group" aria-label="Vista"><button data-v="tarjetas" aria-pressed="${F.vista === 'tarjetas'}">▦ Tarjetas</button><button data-v="lista" aria-pressed="${F.vista === 'lista'}">☰ Lista</button></div></div>
+        <div class="chips">${QUICK.map(f => `<button class="chip" data-f="${f}" aria-pressed="${f === F.f}">${f}</button>`).join('')}</div>
+        <div class="mu" id="cn"></div><div id="cl"></div>`;
       $('#cq').oninput = e => { F.q = e.target.value; list(); };
       $('#cs').onchange = e => { F.s = e.target.value; list(); };
+      $('#cf').onchange = e => { F.f = e.target.value; views.clientes.render(root); };
       root.onclick = e => {
+        const t = e.target.closest('[data-t]'); if (t) { F.tab = t.dataset.t; views.clientes.render(root); return; }
+        const v = e.target.closest('[data-v]'); if (v) { F.vista = v.dataset.v; store.set('cvista', F.vista); views.clientes.render(root); return; }
         const f = e.target.closest('[data-f]'); if (f) { F.f = f.dataset.f; views.clientes.render(root); return; }
         const a = e.target.closest('[data-a]'), n = e.target.closest('[data-n]');
         if (a && a.dataset.a === 'applyall') return aplicarTodos();
@@ -892,21 +1062,30 @@ const fdate = t => new Date(t).toLocaleString('es-MX', { day: 'numeric', month: 
   };
 
   function list() {
-    const q = F.q.toLowerCase();
-    L = Object.values(ST).filter(o => (o.n + ' ' + o.tel).toLowerCase().includes(q) && ({
-      'Todos': true, 'Con saldo': o.saldo > 0, 'Sin saldo': o.saldo <= 0,
-      'Activos': o.last && days(o.last) <= DI(), 'Inactivos': !o.last || days(o.last) > DI() })[F.f]);
-    L.sort(({ 'Nombre': (a, b) => a.n.localeCompare(b.n), 'Mayor saldo': (a, b) => b.saldo - a.saldo, 'Compró más recientemente': (a, b) => b.last - a.last, 'Mayor compra total': (a, b) => b.compras - a.compras })[F.s]);
+    const q = F.q.toLowerCase(), top = new Set(Object.values(ST).sort((a, b) => b.compras - a.compras).slice(0, 20).map(o => o.n));
+    L = Object.values(ST).filter(o => (o.n + ' ' + o.tel).toLowerCase().includes(q) && pase(o, top));
+    L.sort(({ 'Nombre': (a, b) => a.n.localeCompare(b.n), 'Mayor saldo': (a, b) => b.saldo - a.saldo, 'Compró más recientemente': (a, b) => b.last - a.last, 'Mayor compra total': (a, b) => b.compras - a.compras, 'Más compras': (a, b) => b.tk - a.tk, 'Mayor cashback': (a, b) => b.cb - a.cb })[F.s]);
     $('#cn').textContent = L.length + ' cliente(s)';
-    $('#cl').innerHTML = L.slice(0, 150).map(o => `<div class="card cli" data-n="${esc(o.n)}">
+    const cbtag = o => o.cb > 0.004 ? `<span class="tag cb" title="Cashback disponible">Cashback ${money(o.cb)}</span>` : '';
+    if (!L.length) { $('#cl').innerHTML = '<p class="mu">No hay clientes con estos filtros.</p>'; return; }
+    if (F.vista === 'lista') {
+      $('#cl').innerHTML = `<div class="tscroll"><table class="rtable vtab"><thead><tr><th>Cliente</th><th class="hm">Teléfono</th><th class="n">Saldo</th><th class="n hm">Cashback</th><th class="hm">Última compra</th><th class="n hm">Compras</th><th class="n">Total comprado</th><th></th></tr></thead><tbody>${L.slice(0, 300).map(o => `<tr data-n="${esc(o.n)}">
+        <td><div class="chead"><div class="cav sm" style="background:${hue(o.n)}">${esc(o.n[0] || '?')}</div><b>${esc(o.n)}</b></div></td><td class="hm">${esc(o.tel) || '—'}</td>
+        <td class="n">${o.saldo > 0 ? `<span class="tag">Debe ${money(o.saldo)}</span>` : '<span class="mu">—</span>'}</td><td class="n hm">${o.cb > 0.004 ? money(o.cb) : '<span class="mu">—</span>'}</td>
+        <td class="hm">${o.last ? ago(o.last).replace('Compró ', '') : '—'}</td><td class="n hm">${o.tk}</td><td class="n"><b>${money(o.compras)}</b></td>
+        <td class="n">${o.saldo > 0 ? `<button class="btn sm primary" data-a="abono" data-n="${esc(o.n)}">Abonar</button> ` : ''}<button class="btn sm ghost" data-a="stmt" data-n="${esc(o.n)}">Estado de cuenta</button></td></tr>`).join('')}</tbody></table></div>`;
+      return;
+    }
+    $('#cl').innerHTML = '<div class="list">' + L.slice(0, 150).map(o => `<div class="card cli" data-n="${esc(o.n)}">
       <div class="chead"><div class="cav" style="background:${hue(o.n)}">${esc(o.n[0] || '?')}</div>
         <div style="flex:1;min-width:0"><b>${esc(o.n)}</b><div class="mu">${esc(o.tel) || 'Sin teléfono'}</div></div>
         <span class="tag ${o.saldo > 0 ? '' : 'ok'}">${o.saldo > 0 ? 'Debe ' + money(o.saldo) : 'Sin saldo'}</span></div>
-      <div class="mu" style="margin:10px 0">${ago(o.last)} · ${o.tk} compra(s) · ${money(o.compras)} en total</div>${o.ab > 0.004 && o.pend > 0.004 ? `<div class="mu" style="color:var(--amber-ink);margin:-4px 0 8px">Tiene ${money(o.ab)} abonados sin aplicar a tickets</div>` : ''}
+      <div class="mu" style="margin:10px 0">${ago(o.last)} · ${o.tk} compra(s) · ${money(o.compras)} en total</div>
+      ${o.ab > 0.004 && o.pend > 0.004 ? `<div class="mu" style="color:var(--amber-ink);margin:-4px 0 8px">Tiene ${money(o.ab)} abonados sin aplicar a tickets</div>` : ''}
+      ${cbtag(o) ? `<div style="margin:-2px 0 10px">${cbtag(o)}</div>` : ''}
       <div class="cact">${o.saldo > 0 ? `<button class="btn sm primary" data-a="abono" data-n="${esc(o.n)}">Abonar</button>` : ''}
         ${o.saldo > 0 && o.tel ? `<button class="btn sm ghost" data-a="wa" data-n="${esc(o.n)}">Recordar saldo</button>` : ''}
-        <button class="btn sm ghost" data-a="stmt" data-n="${esc(o.n)}">Estado de cuenta</button></div></div>`).join('')
-      || '<p class="mu">No hay clientes con estos filtros.</p>';
+        <button class="btn sm ghost" data-a="stmt" data-n="${esc(o.n)}">Estado de cuenta</button></div></div>`).join('') + '</div>';
   }
 
   function nuevo() {
@@ -926,11 +1105,11 @@ const fdate = t => new Date(t).toLocaleString('es-MX', { day: 'numeric', month: 
     const o = ST[n]; if (!o) return;
     const T = tickets().filter(t => up(t.cliente) === n).slice(0, 8), A = (S.abonos || []).filter(a => up(a.cliente) === n).sort((a, b) => b.fecha - a.fecha).slice(0, 5);
     modal(`<div class="chead"><div class="cav" style="background:${hue(n)}">${esc(n[0])}</div><div style="flex:1"><h2>${esc(n)}</h2><div class="mu">${esc(o.tel) || 'Sin teléfono'}${o.email ? ' · ' + esc(o.email) : ''}</div></div><button class="btn sm ghost" id="dx" aria-label="Cerrar">✕</button></div>
-      <div class="kpis" style="margin:0;grid-template-columns:1fr 1fr"><div class="card kpi"><span class="mu">Saldo</span><b>${money(Math.max(0, o.saldo))}</b></div><div class="card kpi"><span class="mu">Compras totales</span><b>${money(o.compras)}</b></div></div>
+      <div class="kpis" style="margin:0;grid-template-columns:1fr 1fr"><div class="card kpi"><span class="mu">Saldo</span><b>${money(Math.max(0, o.saldo))}</b></div><div class="card kpi"><span class="mu">Compras totales</span><b>${money(o.compras)}</b></div></div>${window.CB ? CB.block(n) : ''}
       <b>Últimas compras</b>${T.map(t => `<div class="tl mu"><span>${fdate(t.fecha)} · ${esc(t.folio)} · ${esc(t.estado)}</span><b>${money(t.total)}</b></div>`).join('') || '<p class="mu">Sin compras registradas.</p>'}
       ${A.length ? `<b>Últimos abonos</b>${A.map(a => `<div class="tl mu"><span>${fdate(a.fecha)} · ${esc(a.metodo)}</span><b>${money(a.monto)}</b></div>`).join('')}` : ''}
       <div class="cact">${o.saldo > 0 ? '<button class="btn primary" id="da">Registrar abono</button>' : ''}<button class="btn" id="ds">Estado de cuenta</button></div>`);
-    $('#dx').onclick = closeM; $('#ds').onclick = () => estadoCuenta(n); if ($('#da')) $('#da').onclick = () => abono(n);
+    $('#dx').onclick = closeM; if (window.CB) CB.bind(); $('#ds').onclick = () => estadoCuenta(n); if ($('#da')) $('#da').onclick = () => abono(n);
   }
 
   function cobrar(n) {
@@ -1111,6 +1290,238 @@ const fdate = t => new Date(t).toLocaleString('es-MX', { day: 'numeric', month: 
   }
   window.aplicarTodos = aplicarTodos;
   window.ticketModal = ticketModal; window.estadoCuenta = estadoCuenta;
+})();
+'use strict';
+/* ===== Cashback: saldo por cliente, pone/quita/canje, recompensas, cortes y reglas ===== */
+(() => {
+  const DEF = {
+    activo: true, pct: 3, minTicket: 0, tope: 0, vigenciaDias: 180, inicio: 0, usarNiveles: false,
+    niveles: [{ nombre: 'Bronce', min: 0, pct: 3 }, { nombre: 'Plata', min: 15000, pct: 4 }, { nombre: 'Oro', min: 40000, pct: 5 }],
+    bienvenida: 0, ticketGrande: { min: 0, bono: 0 }, meta: { cada: 0, bono: 0 }, excluirCats: [],
+    manuales: [{ nombre: 'Cumpleaños', monto: 50 }, { nombre: 'Referido', monto: 100 }, { nombre: 'Cortesía', monto: 0 }]
+  };
+  const D = 864e5, up = s => String(s || '').trim().toUpperCase(), r2 = x => Math.round(x * 100) / 100;
+  const ymd = t => new Date(t - new Date().getTimezoneOffset() * 6e4).toISOString().slice(0, 10);
+  const hue = s => { let h = 0; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) % 360; return `hsl(${h} 40% 38%)`; };
+  const cfg = () => { let c = {}; try { c = JSON.parse((S.config || {}).CASHBACK_CFG || '{}'); } catch (e) { c = {}; } return Object.assign({}, DEF, c, { ticketGrande: Object.assign({}, DEF.ticketGrande, c.ticketGrande), meta: Object.assign({}, DEF.meta, c.meta) }); };
+  const movs = () => (S.cashback && S.cashback.movs) || [];
+  const TIPOS = [['Pone', 'Poner'], ['Quita', 'Quitar'], ['Canje', 'Canjear'], ['Bono', 'Recompensa']];
+  const CBF = { q: '', f: 'Con saldo', vista: store.get('cbvista', 'tarjetas'), prev: null };
+  let cache = null, cacheKey = null;
+
+  /* Saldo y totales por cliente (se recalcula solo cuando cambian los datos) */
+  function todos() {
+    if (cache && cacheKey === S.cashback) return cache;
+    const m = {}, now = Date.now(), lim = now + 30 * D, M = movs();
+    M.forEach(x => {
+      const k = up(x.cliente); if (!k) return; const o = m[k] = m[k] || { saldo: 0, ganado: 0, canjeado: 0, vencido: 0, pos: 0, neg: 0, movs: 0, ultimo: 0 };
+      o.saldo = r2(o.saldo + x.monto); o.movs++;
+      if (x.anulada || x.tipo === 'Anulación') return;
+      o.ultimo = Math.max(o.ultimo, x.fecha);
+      if (x.monto > 0) { o.ganado += x.monto; if (x.vence && x.vence <= lim) o.pos += x.monto; } else { o.neg += -x.monto; if (x.tipo === 'Canje') o.canjeado += -x.monto; if (x.tipo === 'Vencido') o.vencido += -x.monto; }
+    });
+    Object.values(m).forEach(o => { o.porVencer = Math.max(0, Math.min(o.saldo, r2(o.pos - o.neg))); });
+    cache = m; cacheKey = S.cashback; return m;
+  }
+  const saldo = n => (todos()[up(n)] || { saldo: 0 }).saldo;
+  function nivel(n) {
+    const c = cfg(); if (!c.usarNiveles) return '';
+    const g = tickets().filter(t => up(t.cliente) === up(n) && t.estado === 'Pagado' && (t.fechaPago || t.fecha) > Date.now() - 365 * D).reduce((s, t) => s + t.total, 0);
+    let nv = ''; c.niveles.forEach(x => { if (g >= x.min) nv = x.nombre; }); return nv;
+  }
+  const signo = x => x.monto > 0 ? '+' + money(x.monto) : '−' + money(-x.monto);
+  const tagCls = x => x.tipo === 'Anulación' ? 'cbx' : x.monto > 0 ? 'cbp' : 'cbn';
+  const editable = x => !x.anulada && (['Pone', 'Quita', 'Canje'].includes(x.tipo) || (x.tipo === 'Bono' && !x.clave));
+  const wide = () => { $('#mbox').style.maxWidth = '660px'; };
+  const clientesLista = () => [...new Set(S.clients.map(c => up(c.nombre)).concat(Object.keys(todos())))].filter(Boolean);
+
+  /* ---------- Pestaña Cashback ---------- */
+  function render(box) {
+    const c = cfg(), T = todos(), now = Date.now(), M = movs().filter(x => !x.anulada && x.tipo !== 'Anulación' && x.fecha >= now - 30 * D);
+    const rows = clientesLista().map(n => { const o = T[n] || { saldo: 0, ganado: 0, canjeado: 0, vencido: 0, porVencer: 0, movs: 0 }, cl = S.clients.find(x => up(x.nombre) === n); return Object.assign({ n, nivel: nivel(n), tel: cl ? cl.tel : '' }, o); });
+    const circ = rows.reduce((s, o) => s + Math.max(0, o.saldo), 0), conSaldo = rows.filter(o => o.saldo > 0.004).length, gan30 = M.filter(x => x.monto > 0).reduce((s, x) => s + x.monto, 0), can30 = M.filter(x => x.tipo === 'Canje').reduce((s, x) => s - x.monto, 0), pv = rows.reduce((s, o) => s + o.porVencer, 0);
+    const niveles = c.usarNiveles ? c.niveles.map(n => n.nombre) : [];
+    box.innerHTML = `<div class="cbhead"><div class="cbstate ${c.activo ? 'on' : ''}"><b>${c.activo ? 'Programa activo' : 'Programa apagado'}</b><span>${c.activo ? c.pct + '% por compra' + (c.usarNiveles ? ' · con niveles' : '') + ' · ' + (c.vigenciaDias ? 'vigencia ' + c.vigenciaDias + ' días' : 'sin vencimiento') : 'No genera cashback nuevo'}</span></div>
+        <div class="cact"><button class="btn primary" data-cb="corte">Hacer corte</button><button class="btn" data-cb="cortes">Cortes</button><button class="btn" data-cb="config">⚙ Recompensas y reglas</button></div></div>
+      <div class="vk cbk"><div class="main"><span>Cashback en circulación</span><b>${money(circ)}</b><small>${conSaldo} cliente(s) con saldo</small></div>
+        <div class="ok"><span>Ganado (30 días)</span><b>${money(gan30)}</b><small>compras, bonos y ajustes</small></div>
+        <div><span>Canjeado (30 días)</span><b>${money(can30)}</b><small>usado por clientes</small></div>
+        <div class="warn"><span>Por vencer (30 días)</span><b>${money(pv)}</b><small>conviene avisarles</small></div>
+        <div><span>Por generar</span><b id="cbgen">…</b><small>en el próximo corte</small></div></div>
+      <div class="toolbar"><input id="cbq" type="search" placeholder="Buscar cliente" aria-label="Buscar cliente" value="${esc(CBF.q)}">
+        <select id="cbf" aria-label="Filtrar">${['Con saldo', 'Todos los clientes', 'Por vencer (30 días)', 'Con movimientos'].concat(niveles.map(n => 'Nivel: ' + n)).map(x => `<option ${x === CBF.f ? 'selected' : ''}>${x}</option>`).join('')}</select>
+        <div class="vseg" role="group" aria-label="Vista"><button data-cv="tarjetas" aria-pressed="${CBF.vista === 'tarjetas'}">▦ Tarjetas</button><button data-cv="lista" aria-pressed="${CBF.vista === 'lista'}">☰ Lista</button></div></div>
+      <div class="mu" id="cbn" style="margin-top:8px"></div><div id="cbl"></div>`;
+    $('#cbq', box).oninput = e => { CBF.q = e.target.value; lista(box, rows); };
+    $('#cbf', box).onchange = e => { CBF.f = e.target.value; lista(box, rows); };
+    box.onclick = e => {
+      const v = e.target.closest('[data-cv]'); if (v) { CBF.vista = v.dataset.cv; store.set('cbvista', CBF.vista); render(box); return; }
+      const b = e.target.closest('[data-cb]'); if (b) return act(b.dataset.cb, b.dataset.n);
+      const r = e.target.closest('tr[data-n]'); if (r) hist(r.dataset.n);
+    };
+    lista(box, rows);
+    api('cashbackPreview', {}).then(r => { const el = $('#cbgen', box); if (el && r) el.textContent = r.activo === false ? '—' : money(r.ganado); CBF.prev = r; }).catch(() => { const el = $('#cbgen', box); if (el) el.textContent = '—'; });
+  }
+  function lista(box, rows) {
+    const q = CBF.q.toLowerCase(), f = CBF.f;
+    const L = rows.filter(o => o.n.toLowerCase().includes(q) && (f === 'Todos los clientes' || (f === 'Con saldo' ? o.saldo > 0.004 : f === 'Por vencer (30 días)' ? o.porVencer > 0.004 : f === 'Con movimientos' ? o.movs > 0 : f.startsWith('Nivel: ') ? o.nivel === f.slice(7) : true))).sort((a, b) => b.saldo - a.saldo || a.n.localeCompare(b.n));
+    $('#cbn', box).textContent = L.length + ' cliente(s)';
+    const acts = o => `<button class="btn sm primary" data-cb="pone" data-n="${esc(o.n)}">Poner</button> ${o.saldo > 0.004 ? `<button class="btn sm" data-cb="canje" data-n="${esc(o.n)}">Canjear</button> <button class="btn sm ghost" data-cb="quita" data-n="${esc(o.n)}">Quitar</button> ` : ''}<button class="btn sm ghost" data-cb="hist" data-n="${esc(o.n)}">Historial</button>`;
+    if (!L.length) { $('#cbl', box).innerHTML = '<p class="mu">No hay clientes con estos filtros. Haz un corte para abonar el cashback de las compras, o usa "Poner" en un cliente.</p>'; return; }
+    if (CBF.vista === 'lista') { $('#cbl', box).innerHTML = `<div class="tscroll"><table class="rtable vtab"><thead><tr><th>Cliente</th><th class="hm">Nivel</th><th class="n">Saldo</th><th class="n hm">Ganado</th><th class="n hm">Canjeado</th><th class="n hm">Por vencer</th><th></th></tr></thead><tbody>${L.slice(0, 300).map(o => `<tr data-n="${esc(o.n)}"><td><div class="chead"><div class="cav sm" style="background:${hue(o.n)}">${esc(o.n[0] || '?')}</div><b>${esc(o.n)}</b></div></td><td class="hm">${o.nivel ? `<span class="tag cb">${esc(o.nivel)}</span>` : '—'}</td><td class="n"><b>${money(o.saldo)}</b></td><td class="n hm">${money(o.ganado || 0)}</td><td class="n hm">${money(o.canjeado || 0)}</td><td class="n hm">${o.porVencer > 0.004 ? money(o.porVencer) : '—'}</td><td class="n">${acts(o)}</td></tr>`).join('')}</tbody></table></div>`; return; }
+    $('#cbl', box).innerHTML = '<div class="list">' + L.slice(0, 150).map(o => `<div class="card cli cbcard"><div class="chead"><div class="cav" style="background:${hue(o.n)}">${esc(o.n[0] || '?')}</div><div style="flex:1;min-width:0"><b>${esc(o.n)}</b><div class="mu">${o.nivel ? 'Nivel ' + esc(o.nivel) : esc(o.tel) || 'Sin teléfono'}</div></div></div>
+      <div class="cbbig">${money(o.saldo)}<small>disponible</small></div>
+      <div class="mu">Ganado ${money(o.ganado || 0)} · Canjeado ${money(o.canjeado || 0)}${o.porVencer > 0.004 ? ` · <span style="color:var(--amber-ink)">por vencer ${money(o.porVencer)}</span>` : ''}</div>
+      <div class="cact" style="margin-top:10px">${acts(o)}</div></div>`).join('') + '</div>';
+  }
+  function act(a, n) {
+    if (a === 'corte') return corte(); if (a === 'cortes') return cortes(); if (a === 'config') return config();
+    if (a === 'hist') return hist(n); if (['pone', 'quita', 'canje', 'bono'].includes(a)) return mov(n, { pone: 'Pone', quita: 'Quita', canje: 'Canje', bono: 'Bono' }[a]);
+  }
+
+  /* ---------- Poner / Quitar / Canjear / Recompensa ---------- */
+  function mov(n, tipo0) {
+    let tipo = tipo0 || 'Pone'; const c = cfg(), s = saldo(n);
+    const AYUDA = { Pone: 'Suma cashback a mano: ajuste, cortesía, compensación…', Quita: 'Resta cashback por corrección o ajuste.', Canje: 'El cliente usa su cashback (descuento, producto, etc.).', Bono: 'Premio de tu lista: cumpleaños, referido…' };
+    modal(`<div class="tl"><h2>Cashback · ${esc(n)}</h2><button class="btn sm ghost" id="mx" aria-label="Cerrar">✕</button></div>
+      <div class="tl"><span class="mu">Saldo actual</span><b class="amt">${money(s)}</b></div>
+      <div class="seg" id="mt" style="grid-template-columns:repeat(4,1fr)">${TIPOS.map(([v, t]) => `<button data-t="${v}" aria-pressed="${v === tipo}">${t}</button>`).join('')}</div>
+      <div class="mu" id="ma"></div><div id="mr"></div>
+      <label class="fl">Monto<input id="mm" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="0.00"></label>
+      <label class="fl" id="mfw">Ticket donde lo usó (opcional)<input id="mf" placeholder="Ej. V-2615" maxlength="20"></label>
+      <label class="fl">Nota<input id="mn" maxlength="200" placeholder="Opcional"></label>
+      <div class="mu" id="mh" aria-live="polite"></div>
+      <button class="btn primary" id="mok">Guardar</button><button class="btn ghost" id="mno">Cancelar</button>`);
+    const sign = () => (tipo === 'Pone' || tipo === 'Bono') ? 1 : -1;
+    const hint = () => { const m = +$('#mm').value || 0, nuevo = r2(s + sign() * m); $('#mh').textContent = m > 0 ? (sign() < 0 && m > s + 0.004 ? 'El cliente solo tiene ' + money(s) + '.' : 'Saldo después: ' + money(nuevo)) : ''; };
+    const pinta = () => {
+      $('#mt').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.t === tipo)); $('#ma').textContent = AYUDA[tipo]; $('#mfw').hidden = tipo !== 'Canje';
+      $('#mr').innerHTML = tipo === 'Bono' ? `<label class="fl">Recompensa<select id="mrs"><option value="">Elige una…</option>${c.manuales.map((m, i) => `<option value="${i}">${esc(m.nombre)}${m.monto ? ' — ' + money(m.monto) : ''}</option>`).join('')}<option value="x">Otra (escribo el monto)</option></select></label>` : '';
+      if ($('#mrs')) $('#mrs').onchange = e => { const m = c.manuales[+e.target.value]; if (m) { $('#mm').value = m.monto || ''; $('#mn').value = m.nombre; hint(); } };
+      hint();
+    };
+    $('#mt').onclick = e => { const b = e.target.closest('[data-t]'); if (b) { tipo = b.dataset.t; pinta(); } };
+    $('#mm').oninput = hint; $('#mx').onclick = $('#mno').onclick = () => hist(n); pinta(); $('#mm').focus();
+    $('#mok').onclick = async () => {
+      const m = r2(+$('#mm').value); if (!(m > 0)) return toast('Escribe el monto.', true);
+      if (sign() < 0 && m > s + 0.004) return toast('El cliente solo tiene ' + money(s) + ' de cashback.', true);
+      let nota = $('#mn').value.trim(); if (tipo === 'Bono' && !nota) return toast('Elige o escribe qué recompensa es.', true);
+      await api('cashbackAdd', { cliente: n, tipo, monto: m, nota: (tipo === 'Bono' ? 'Recompensa: ' : '') + nota, folio: tipo === 'Canje' ? $('#mf').value.trim().toUpperCase() : '' });
+      toast(({ Pone: 'Se pusieron ', Quita: 'Se quitaron ', Canje: 'Canje de ', Bono: 'Recompensa de ' })[tipo] + money(m)); await load(); hist(n);
+    };
+  }
+
+  /* ---------- Historial de un cliente ---------- */
+  function hist(n, lim) {
+    lim = lim || 40; const s = saldo(n), o = todos()[up(n)] || {}, M = movs().filter(x => up(x.cliente) === up(n)).sort((a, b) => b.fecha - a.fecha || b.row - a.row), nv = nivel(n);
+    wide();
+    modal(`<div class="tl"><div><h2>Cashback · ${esc(n)}</h2>${nv ? `<span class="tag cb">Nivel ${esc(nv)}</span>` : ''}</div><button class="btn sm ghost" id="hx" aria-label="Cerrar">✕</button></div>
+      <div class="vk cbk" style="grid-template-columns:repeat(3,1fr);margin:0"><div class="main"><span>Disponible</span><b>${money(s)}</b></div><div><span>Ganado</span><b>${money(o.ganado || 0)}</b></div><div><span>Canjeado</span><b>${money(o.canjeado || 0)}</b></div></div>
+      ${o.porVencer > 0.004 ? `<div class="cj-warn">${money(o.porVencer)} vencen en los próximos 30 días.</div>` : ''}
+      <div class="cact"><button class="btn primary" data-m="Pone">Poner</button><button class="btn" data-m="Canje">Canjear</button><button class="btn ghost" data-m="Quita">Quitar</button><button class="btn ghost" data-m="Bono">Recompensa</button></div>
+      <div class="tscroll"><table class="rtable"><thead><tr><th>Fecha</th><th>Movimiento</th><th class="n">Monto</th><th></th></tr></thead><tbody>${M.slice(0, lim).map(x => `<tr ${x.anulada ? 'class="anul"' : ''}><td>${fdate(x.fecha)}</td>
+        <td><span class="tag ${tagCls(x)}">${esc(x.tipo)}</span> <span class="mu">${esc(x.folio ? x.folio + ' · ' : '')}${esc(x.nota)}</span>${x.vence && !x.anulada && x.monto > 0 ? `<div class="mu">vence ${new Date(x.vence).toLocaleDateString('es-MX')}</div>` : ''}${x.corte ? `<div class="mu">${esc(x.corte)}</div>` : ''}</td>
+        <td class="n"><b class="${x.monto > 0 ? 'ok' : 'bad'}">${signo(x)}</b></td>
+        <td class="n">${x.anulada || x.tipo === 'Anulación' ? '<span class="mu">' + (x.anulada ? 'anulado' : '') + '</span>' : `${editable(x) ? `<button class="btn sm ghost" data-e="${x.row}">Corregir</button> ` : ''}<button class="btn sm ghost danger" data-v="${x.row}">Anular</button>`}</td></tr>`).join('') || '<tr><td colspan="4" class="mu">Sin movimientos todavía.</td></tr>'}</tbody></table></div>
+      ${M.length > lim ? '<button class="btn sm ghost" data-more="1">Ver más movimientos</button>' : ''}`);
+    $('#hx').onclick = closeM;
+    $('#mbox').onclick = async e => {
+      const m = e.target.closest('[data-m]'); if (m) return mov(n, m.dataset.m);
+      if (e.target.closest('[data-more]')) return hist(n, lim + 40);
+      const ed = e.target.closest('[data-e]'), an = e.target.closest('[data-v]');
+      if (ed) return corregir(M.find(x => x.row === +ed.dataset.e), n);
+      if (an) {
+        const x = M.find(y => y.row === +an.dataset.v);
+        if (!confirm('¿Anular este movimiento (' + x.tipo + ' ' + signo(x) + ')?\n\nSe registra un contra-asiento; el movimiento queda en el historial.')) return;
+        await api('cashbackVoid', { row: x.row }, prompt('Motivo (opcional):', 'Corrección') || 'Corrección'); toast('Movimiento anulado'); await load(); hist(n, lim);
+      }
+    };
+  }
+  function corregir(x, n) {
+    modal(`<h2>Corregir movimiento</h2><p class="mu">${esc(x.tipo)} del ${fdate(x.fecha)}</p>
+      <label class="fl">Monto<input id="em" type="number" min="0.01" step="0.01" inputmode="decimal" value="${Math.abs(x.monto).toFixed(2)}"></label>
+      <label class="fl">Nota<input id="en" maxlength="200" value="${esc(x.nota.replace(/^Corregido \(antes [^)]*\)\.\s*/, ''))}"></label>
+      <button class="btn primary" id="eok">Guardar corrección</button><button class="btn ghost" id="eno">Cancelar</button>`);
+    $('#eno').onclick = () => hist(n);
+    $('#eok').onclick = async () => { const m = r2(+$('#em').value); if (!(m > 0)) return toast('Escribe el monto.', true); await api('cashbackEdit', { row: x.row, monto: m, nota: $('#en').value }); toast('Movimiento corregido'); await load(); hist(n); };
+  }
+
+  /* ---------- Corte ---------- */
+  function corte() {
+    const c = cfg(); wide();
+    modal(`<div class="tl"><h2>Corte de cashback</h2><button class="btn sm ghost" id="cx" aria-label="Cerrar">✕</button></div>
+      <p class="mu" style="margin:0">Abona el cashback de los tickets ya pagados que todavía no lo han generado y aplica tus bonos. Antes de guardar ves la vista previa.</p>
+      <div class="row2"><label class="fl">Tickets cobrados hasta<input type="date" id="ch" value="${ymd(Date.now())}"></label><label class="fl">Desde (opcional)<input type="date" id="cd" value="${c.inicio ? ymd(c.inicio) : ''}"></label></div>
+      <label class="chk"><input type="checkbox" id="cv"> Vencer también el cashback caducado ${c.vigenciaDias ? '(vigencia de ' + c.vigenciaDias + ' días)' : '(no hay vigencia configurada)'}</label>
+      <label class="fl">Nota del corte<input id="cn" maxlength="200" placeholder="Ej. Corte de octubre"></label>
+      <button class="btn" id="cp">Ver vista previa</button><div id="cpv"></div><button class="btn primary" id="ca" hidden>Aplicar corte</button>`);
+    $('#cx').onclick = closeM;
+    const opts = () => ({ hasta: new Date($('#ch').value + 'T23:59:59').getTime(), desde: $('#cd').value ? new Date($('#cd').value + 'T00:00:00').getTime() : 0, vencer: $('#cv').checked, nota: $('#cn').value.trim() });
+    ['#ch', '#cd', '#cv'].forEach(s => { $(s).onchange = () => { $('#ca').hidden = true; $('#cpv').innerHTML = ''; }; });
+    $('#cp').onclick = async () => {
+      const o = opts(); if (isNaN(o.hasta)) return toast('Elige la fecha final.', true);
+      const r = await api('cashbackPreview', o);
+      $('#cpv').innerHTML = !r.movimientos ? '<p class="mu">No hay nada que abonar ni vencer con estos criterios.</p>' : `<div class="tscroll"><table class="rtable"><thead><tr><th>Cliente</th><th class="hm">Nivel</th><th class="n">Tickets</th><th class="n">Ganado</th><th class="n">Bonos</th><th class="n">Vence</th><th class="n">Neto</th></tr></thead><tbody>${r.clientes.map(x => `<tr><td>${esc(x.cliente)}</td><td class="hm">${esc(x.nivel || '—')}</td><td class="n">${x.tickets}</td><td class="n">${money(x.ganado)}</td><td class="n">${x.bonos ? money(x.bonos) : '—'}</td><td class="n">${x.vencido ? '−' + money(x.vencido) : '—'}</td><td class="n"><b>${money(x.total)}</b></td></tr>`).join('')}</tbody><tfoot><tr><td colspan="3"><b>${r.clientes.length} cliente(s)</b></td><td class="n" colspan="2"><b>+${money(r.ganado)}</b></td><td class="n"><b>${r.vencido ? '−' + money(r.vencido) : '—'}</b></td><td></td></tr></tfoot></table></div>`;
+      $('#ca').hidden = !r.movimientos;
+    };
+    $('#ca').onclick = async () => {
+      if (!confirm('¿Aplicar el corte? Se registran los movimientos en el cashback de cada cliente. Después puedes revertirlo desde "Cortes".')) return;
+      const r = await api('cashbackCorte', opts()); toast('Corte ' + r.id + ': ' + money(r.ganado) + ' a ' + r.clientes + ' cliente(s)'); await load();
+    };
+  }
+  function cortes() {
+    const C = ((S.cashback && S.cashback.cortes) || []).slice().sort((a, b) => b.fecha - a.fecha); wide();
+    modal(`<div class="tl"><h2>Cortes de cashback</h2><button class="btn sm ghost" id="kx" aria-label="Cerrar">✕</button></div>
+      <div class="tscroll"><table class="rtable"><thead><tr><th>Corte</th><th>Fecha</th><th class="hm">Hasta</th><th class="n">Clientes</th><th class="n">Ganado</th><th class="n hm">Vencido</th><th></th></tr></thead><tbody>${C.map(x => `<tr><td><b>${esc(x.id)}</b><div class="mu">${esc(x.nota)}</div></td><td>${fdate(x.fecha)}</td><td class="hm">${x.hasta ? new Date(x.hasta).toLocaleDateString('es-MX') : '—'}</td><td class="n">${x.clientes}</td><td class="n">${money(x.ganado)}</td><td class="n hm">${x.vencido ? money(x.vencido) : '—'}</td>
+        <td class="n">${x.estado === 'Aplicado' ? `<button class="btn sm ghost danger" data-r="${esc(x.id)}">Revertir</button>` : '<span class="tag cbx">Revertido</span>'}</td></tr>`).join('') || '<tr><td colspan="7" class="mu">Todavía no hay cortes.</td></tr>'}</tbody></table></div>
+      <button class="btn primary" id="kn">Hacer un corte nuevo</button>`);
+    $('#kx').onclick = closeM; $('#kn').onclick = corte;
+    $('#mbox').onclick = async e => {
+      const r = e.target.closest('[data-r]'); if (!r) return;
+      if (!confirm('¿Revertir el corte ' + r.dataset.r + '?\n\nSe anula lo que abonó a cada cliente (queda en su historial). Los tickets volverán a generar cashback en el siguiente corte.')) return;
+      await api('cashbackRevertCorte', r.dataset.r, prompt('Motivo (opcional):', 'Corte revertido') || 'Corte revertido'); toast('Corte revertido'); await load(); cortes();
+    };
+  }
+
+  /* ---------- Recompensas y reglas ---------- */
+  function config() {
+    const c = cfg(), cats = [...new Set(S.prods.concat(S.inactivos || []).map(p => p.cat || 'Otros'))].sort(); wide();
+    const num = (id, v, st) => `<input id="${id}" type="number" min="0" step="${st || '0.01'}" inputmode="decimal" value="${v || ''}" placeholder="0">`;
+    modal(`<div class="tl"><h2>Recompensas y reglas</h2><button class="btn sm ghost" id="gx" aria-label="Cerrar">✕</button></div>
+      <label class="chk"><input type="checkbox" id="g_on" ${c.activo ? 'checked' : ''}> <b>Programa de cashback activo</b></label>
+      <div class="cbsec"><h3>1 · Porcentaje por compra</h3><div class="row2"><label class="fl">Cashback (% del ticket)${num('g_pct', c.pct)}</label><label class="fl">Compra mínima por ticket ($)${num('g_min', c.minTicket)}</label></div>
+        <div class="row2"><label class="fl">Tope por ticket ($, 0 = sin tope)${num('g_tope', c.tope)}</label><label class="fl">Vigencia (días, 0 = no vence)${num('g_vig', c.vigenciaDias, '1')}</label></div>
+        <label class="fl">Empezar a contar desde (vacío = todo el historial)<input type="date" id="g_ini" value="${c.inicio ? ymd(c.inicio) : ''}"></label></div>
+      <div class="cbsec"><h3>2 · Niveles de cliente</h3><label class="chk"><input type="checkbox" id="g_niv" ${c.usarNiveles ? 'checked' : ''}> Cada nivel gana un % distinto según lo comprado en los últimos 12 meses</label>
+        <label class="fl">Un nivel por línea: nombre | compras mínimas $ | % de cashback<textarea id="g_nl" rows="4">${c.niveles.map(n => `${n.nombre} | ${n.min} | ${n.pct}`).join('\n')}</textarea></label></div>
+      <div class="cbsec"><h3>3 · Bonos automáticos</h3>
+        <label class="fl">Bono de bienvenida: $ en su primera compra${num('g_bien', c.bienvenida)}</label>
+        <div class="row2"><label class="fl">Ticket grande desde ($)${num('g_tgm', c.ticketGrande.min)}</label><label class="fl">Bono por ticket grande ($)${num('g_tgb', c.ticketGrande.bono)}</label></div>
+        <div class="row2"><label class="fl">Meta: cada N compras${num('g_mc', c.meta.cada, '1')}</label><label class="fl">Bono por meta ($)${num('g_mb', c.meta.bono)}</label></div></div>
+      <div class="cbsec"><h3>4 · Recompensas manuales</h3><label class="fl">Una por línea: nombre = monto (0 = lo escribes al darla)<textarea id="g_man" rows="4">${c.manuales.map(m => `${m.nombre} = ${m.monto}`).join('\n')}</textarea></label></div>
+      <div class="cbsec"><h3>Categorías que NO generan cashback</h3><div class="chkgrid">${cats.map(k => `<label class="chk"><input type="checkbox" data-ex="${esc(k)}" ${c.excluirCats.includes(k) ? 'checked' : ''}> ${esc(k)}</label>`).join('')}</div></div>
+      <button class="btn primary" id="gok">Guardar reglas</button><button class="btn ghost" id="gno">Cancelar</button>`);
+    $('#gx').onclick = $('#gno').onclick = closeM;
+    $('#gok').onclick = async () => {
+      const v = id => +$(id).value || 0;
+      const niveles = $('#g_nl').value.split('\n').map(l => l.split('|').map(x => x.trim())).filter(p => p[0]).map(p => ({ nombre: p[0], min: +String(p[1] || 0).replace(/[^\d.]/g, '') || 0, pct: +String(p[2] || 0).replace(/[^\d.]/g, '') || 0 }));
+      const manuales = $('#g_man').value.split('\n').map(l => { const i = l.lastIndexOf('='); return i < 0 ? { nombre: l.trim(), monto: 0 } : { nombre: l.slice(0, i).trim(), monto: +l.slice(i + 1).replace(/[^\d.]/g, '') || 0 }; }).filter(m => m.nombre);
+      const o = { activo: $('#g_on').checked, pct: v('#g_pct'), minTicket: v('#g_min'), tope: v('#g_tope'), vigenciaDias: v('#g_vig'), inicio: $('#g_ini').value ? new Date($('#g_ini').value + 'T00:00:00').getTime() : 0, usarNiveles: $('#g_niv').checked, niveles, bienvenida: v('#g_bien'), ticketGrande: { min: v('#g_tgm'), bono: v('#g_tgb') }, meta: { cada: v('#g_mc'), bono: v('#g_mb') }, manuales, excluirCats: [...document.querySelectorAll('#mbox [data-ex]')].filter(x => x.checked).map(x => x.dataset.ex) };
+      if (o.pct > 100) return toast('El porcentaje no puede pasar de 100.', true);
+      await api('saveCashbackCfg', o); closeM(); toast('Reglas de cashback guardadas'); load();
+    };
+  }
+
+  /* ---------- Bloque para la ficha del cliente ---------- */
+  function block(n) {
+    const c = cfg(), o = todos()[up(n)]; if (!c.activo && !o) return '';
+    const s = o ? o.saldo : 0, nv = nivel(n);
+    return `<div class="card cbblock"><div class="tl"><span class="mu">Cashback ${nv ? '· nivel ' + esc(nv) : ''}</span><b class="amt">${money(s)}</b></div>${o && o.porVencer > 0.004 ? `<div class="mu" style="color:var(--amber-ink)">${money(o.porVencer)} por vencer en 30 días</div>` : ''}
+      <div class="cact"><button class="btn sm primary" data-cb="pone" data-n="${esc(n)}">Poner</button>${s > 0.004 ? `<button class="btn sm" data-cb="canje" data-n="${esc(n)}">Canjear</button><button class="btn sm ghost" data-cb="quita" data-n="${esc(n)}">Quitar</button>` : ''}<button class="btn sm ghost" data-cb="hist" data-n="${esc(n)}">Historial</button></div></div>`;
+  }
+  function bind() { document.querySelectorAll('#mbox [data-cb]').forEach(b => { b.onclick = () => act(b.dataset.cb, b.dataset.n); }); }
+
+  window.CB = { cfg, todos, saldo, nivel, render, block, bind, mov, hist, corte, cortes, config };
 })();
 'use strict';
 /* ===== Documento de cotización profesional (se abre listo para "Guardar como PDF") ===== */
