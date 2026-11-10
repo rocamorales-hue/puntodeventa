@@ -347,7 +347,7 @@ const URL_API = 'https://script.google.com/macros/s/AKfycbzG-98sMMyUdyYvLuCqYktv
 /* La Caja vive en un proyecto de Apps Script aparte (caja.gs). Pega aquí su URL /exec */
 const URL_CAJA = 'https://script.google.com/macros/s/AKfycbxN76PEr_8LV4NjxEEaAGunekRMQRKrobQ5bYGJURErBJHxRENm_MJroBaJRnJJCZosCg/exec';
 const CAJA_FN = { getCaja: 1, saveCaja: 1, voidCaja: 1 };
-const VERSION = '1.19';
+const VERSION = '1.20';
 const brand = () => /^#[0-9a-f]{6}$/i.test((S.config || {}).color || '') ? S.config.color : '#a35d17';
 const $ = (s, r = document) => r.querySelector(s);
 const money = n => '$' + (+n || 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -867,13 +867,13 @@ const fdate = t => new Date(t).toLocaleString('es-MX', { day: 'numeric', month: 
   views.clientes = {
     render(root) {
       ST = stats();
-      const A = Object.values(ST), con = A.filter(o => o.saldo > 0), act = A.filter(o => o.last && days(o.last) <= DI());
+      const A = Object.values(ST), con = A.filter(o => o.saldo > 0), act = A.filter(o => o.last && days(o.last) <= DI()), sin = A.filter(o => o.ab > 0.004 && o.pend > 0.004);
       root.innerHTML = `<div class="pagehead"><h2>Clientes</h2><button class="btn primary" data-a="new">＋ Nuevo cliente</button></div>
         <div class="kpis"><div class="card kpi"><span class="mu">Clientes</span><b>${A.length}</b></div>
           <div class="card kpi"><span class="mu">Con saldo pendiente</span><b>${con.length}</b></div>
           <div class="card kpi"><span class="mu">Por cobrar</span><b>${money(con.reduce((s, o) => s + o.saldo, 0))}</b></div>
           <div class="card kpi"><span class="mu">Activos (últimos ${DI()} días)</span><b>${act.length}</b></div></div>
-        <div class="toolbar"><input id="cq" type="search" placeholder="Buscar por nombre o teléfono" aria-label="Buscar cliente" value="${esc(F.q)}">
+        ${sin.length ? `<div class="cj-warn" style="margin:0 0 12px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap"><span>${sin.length} cliente(s) tienen ${money(sin.reduce((s, o) => s + Math.min(o.ab, o.pend), 0))} abonados sin aplicar a un ticket. Por eso Clientes y Ventas no coinciden.</span><button class="btn sm primary" data-a="applyall">Aplicar a los tickets</button></div>` : ''}<div class="toolbar"><input id="cq" type="search" placeholder="Buscar por nombre o teléfono" aria-label="Buscar cliente" value="${esc(F.q)}">
           <select id="cs" aria-label="Ordenar por">${SORTS.map(s => `<option ${s === F.s ? 'selected' : ''}>${s}</option>`).join('')}</select></div>
         <div class="chips">${FILTROS.map(f => `<button class="chip" data-f="${f}" aria-pressed="${f === F.f}">${f}</button>`).join('')}</div>
         <div class="mu" id="cn"></div><div class="list" id="cl"></div>`;
@@ -882,6 +882,7 @@ const fdate = t => new Date(t).toLocaleString('es-MX', { day: 'numeric', month: 
       root.onclick = e => {
         const f = e.target.closest('[data-f]'); if (f) { F.f = f.dataset.f; views.clientes.render(root); return; }
         const a = e.target.closest('[data-a]'), n = e.target.closest('[data-n]');
+        if (a && a.dataset.a === 'applyall') return aplicarTodos();
         if (a && a.dataset.a === 'new') return nuevo();
         if (a && n) return ({ abono: () => abono(n.dataset.n), stmt: () => estadoCuenta(n.dataset.n), wa: () => cobrar(n.dataset.n) })[a.dataset.a]();
         if (n) detalle(n.dataset.n);
@@ -901,7 +902,7 @@ const fdate = t => new Date(t).toLocaleString('es-MX', { day: 'numeric', month: 
       <div class="chead"><div class="cav" style="background:${hue(o.n)}">${esc(o.n[0] || '?')}</div>
         <div style="flex:1;min-width:0"><b>${esc(o.n)}</b><div class="mu">${esc(o.tel) || 'Sin teléfono'}</div></div>
         <span class="tag ${o.saldo > 0 ? '' : 'ok'}">${o.saldo > 0 ? 'Debe ' + money(o.saldo) : 'Sin saldo'}</span></div>
-      <div class="mu" style="margin:10px 0">${ago(o.last)} · ${o.tk} compra(s) · ${money(o.compras)} en total</div>
+      <div class="mu" style="margin:10px 0">${ago(o.last)} · ${o.tk} compra(s) · ${money(o.compras)} en total</div>${o.ab > 0.004 && o.pend > 0.004 ? `<div class="mu" style="color:var(--amber-ink);margin:-4px 0 8px">Tiene ${money(o.ab)} abonados sin aplicar a tickets</div>` : ''}
       <div class="cact">${o.saldo > 0 ? `<button class="btn sm primary" data-a="abono" data-n="${esc(o.n)}">Abonar</button>` : ''}
         ${o.saldo > 0 && o.tel ? `<button class="btn sm ghost" data-a="wa" data-n="${esc(o.n)}">Recordar saldo</button>` : ''}
         <button class="btn sm ghost" data-a="stmt" data-n="${esc(o.n)}">Estado de cuenta</button></div></div>`).join('')
@@ -1082,6 +1083,7 @@ const fdate = t => new Date(t).toLocaleString('es-MX', { day: 'numeric', month: 
       <div class="card"><div class="tl mu"><span>Tickets por cobrar</span><span>${money(pend)}</span></div>
         ${gen ? `<div class="tl mu"><span>Abonos a cuenta general</span><span>−${money(gen)}</span></div>` : ''}
         <div class="tl"><b>Saldo</b><b class="amt">${money(Math.max(0, saldo))}</b></div>${saldo < 0 ? `<div class="mu">A favor del cliente: ${money(-saldo)}</div>` : ''}</div>
+      ${gen > 0.004 && pend > 0.004 ? `<div class="cj-warn">Hay ${money(gen)} abonados sin ticket: bajan el saldo del cliente, pero sus tickets siguen mostrando el total. <button class="btn sm primary" id="eap" style="margin-top:8px">Aplicar a los tickets</button></div>` : ''}
       <div class="cact"><button class="btn primary" id="ea">Registrar abono</button><button class="btn ghost" id="ep">Imprimir</button></div>
       <b>Tickets</b>
       ${T.slice(0, lim).map((t, i) => `<div class="tl" data-ti="${i}" style="cursor:pointer;padding:6px 0;border-bottom:1px solid var(--line)"><span>${fdate(t.fecha)} · ${esc(t.folio)}<br><span class="tag ${t.estado === 'Pagado' ? 'ok' : ''}">${t.abonado > 0 ? 'Resta ' + money(t.resta) : esc(t.estado)}</span></span><b>${money(t.total)}</b></div>`).join('') || '<p class="mu">Sin tickets.</p>'}
@@ -1091,6 +1093,7 @@ const fdate = t => new Date(t).toLocaleString('es-MX', { day: 'numeric', month: 
         <span><button class="btn sm ghost" data-ac="${i}">Corregir</button> <button class="btn sm ghost danger" data-aq="${i}">Quitar</button></span></div>`).join('') || '<p class="mu">Sin abonos.</p>'}
       <p class="mu" style="margin:0">Toca un ticket para corregir sus datos o sus pagos.</p>`);
     $('#ex').onclick = closeM;
+    if ($('#eap')) $('#eap').onclick = async () => { const r = await api('applyCredit', n); toast(r && r.aplicado ? 'Aplicado ' + money(r.aplicado) + ' a ' + r.tickets.length + ' ticket(s)' : 'No había nada que aplicar'); await load(); estadoCuenta(n, lim); };
     $('#ea').onclick = () => { closeM(); views.clientes.abono(n); };
     $('#ep').onclick = () => views.clientes.stmt(n);
     if ($('#em')) $('#em').onclick = () => estadoCuenta(n, lim + 25);
@@ -1102,6 +1105,11 @@ const fdate = t => new Date(t).toLocaleString('es-MX', { day: 'numeric', month: 
       if (t) ticketModal(T[+t.dataset.ti], back);
     };
   }
+  async function aplicarTodos() {
+    if (!confirm('Se aplicarán los abonos sin ticket a los tickets pendientes más antiguos de cada cliente.\nEl dinero cobrado no cambia, solo se asigna a sus tickets.\n\n¿Continuar?')) return;
+    const r = await api('applyCredit', ''); toast(r && r.aplicado ? 'Aplicado ' + money(r.aplicado) + ' a ' + r.tickets.length + ' ticket(s)' : 'No había nada que aplicar'); load();
+  }
+  window.aplicarTodos = aplicarTodos;
   window.ticketModal = ticketModal; window.estadoCuenta = estadoCuenta;
 })();
 'use strict';
