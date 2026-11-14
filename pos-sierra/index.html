@@ -385,6 +385,14 @@ textarea{width:100%;border:1px solid var(--line);border-radius:12px;padding:10px
 
 .card .cact{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .card .cact .btn{flex:0 0 auto}
+/* ===== v1.25: autocompletado, Uber Eats, Rentas ===== */
+.sgbox{position:absolute;z-index:200;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden;max-height:260px;overflow-y:auto}
+.sgbox button{display:block;width:100%;text-align:left;padding:10px 12px;font:inherit;background:transparent;border:0;border-bottom:1px solid var(--line);color:var(--ink);cursor:pointer;min-height:42px}
+.sgbox button:last-child{border-bottom:0}.sgbox button:hover,.sgbox button.on{background:var(--sage)}
+.uberbtn{width:100%;margin-top:8px;background:var(--surface);border:1.5px solid var(--accent);color:var(--accent);font-weight:700}
+.uberbtn:hover{background:var(--sage)}
+.ubar{position:sticky;bottom:10px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--surface);border:1px solid var(--accent);border-radius:16px;padding:12px 16px;box-shadow:var(--shadow);margin-top:12px;z-index:5}
+.ubar[hidden]{display:none}
 
 </style>
 </head>
@@ -404,10 +412,36 @@ const URL_API = 'https://script.google.com/macros/s/AKfycbzG-98sMMyUdyYvLuCqYktv
 /* La Caja vive en un proyecto de Apps Script aparte (caja.gs). Pega aquí su URL /exec */
 const URL_CAJA = 'https://script.google.com/macros/s/AKfycbxN76PEr_8LV4NjxEEaAGunekRMQRKrobQ5bYGJURErBJHxRENm_MJroBaJRnJJCZosCg/exec';
 const CAJA_FN = { getCaja: 1, saveCaja: 1, voidCaja: 1 };
-const VERSION = '1.24';
+const VERSION = '1.25';
 const LOGO = 'data:image/png;base64,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';
 const brand = () => /^#[0-9a-f]{6}$/i.test((S.config || {}).color || '') ? S.config.color : '#a35d17';
 const $ = (s, r = document) => r.querySelector(s);
+/* Texto sin acentos ni mayúsculas, para buscar: "cafe" encuentra "Café" y al revés */
+String.prototype.nrm = function () { return this.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase(); };
+const nrm = s => String(s == null ? '' : s).nrm();
+/* Autocompletado propio (el de <datalist> distingue acentos): escribe y sugiere sin importar acentos */
+function suggest(inp, items, onPick) {
+  if (!inp || inp._sg) return; inp._sg = 1; inp.removeAttribute('list'); inp.setAttribute('autocomplete', 'off');
+  const box = document.createElement('div'); box.className = 'sgbox'; box.hidden = true; let sel = -1, cur = [];
+  const host = inp.parentNode; if (getComputedStyle(host).position === 'static') host.style.position = 'relative';
+  host.appendChild(box);
+  const place = () => { box.style.left = inp.offsetLeft + 'px'; box.style.top = (inp.offsetTop + inp.offsetHeight + 2) + 'px'; box.style.width = inp.offsetWidth + 'px'; };
+  const draw = () => {
+    const q = nrm(inp.value.trim()); if (!q) { box.hidden = true; return; }
+    const all = items().map(String); const a = all.filter(x => nrm(x).startsWith(q)), b = all.filter(x => !nrm(x).startsWith(q) && nrm(x).includes(q));
+    cur = a.concat(b).filter((x, i, l) => l.indexOf(x) === i).slice(0, 8); sel = -1;
+    if (!cur.length || (cur.length === 1 && cur[0] === inp.value)) { box.hidden = true; return; }
+    box.innerHTML = cur.map((x, i) => '<button type="button" data-i="' + i + '">' + esc(x) + '</button>').join(''); place(); box.hidden = false;
+  };
+  const pick = x => { inp.value = x; box.hidden = true; inp.dispatchEvent(new Event('input', { bubbles: true })); inp.dispatchEvent(new Event('change', { bubbles: true })); onPick && onPick(x); };
+  inp.addEventListener('input', draw); inp.addEventListener('focus', draw); inp.addEventListener('blur', () => setTimeout(() => { box.hidden = true; }, 160));
+  inp.addEventListener('keydown', e => {
+    if (box.hidden) return;
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); sel = (sel + (e.key === 'ArrowDown' ? 1 : -1) + cur.length) % cur.length; [...box.children].forEach((c, i) => c.classList.toggle('on', i === sel)); }
+    else if (e.key === 'Enter' && sel >= 0) { e.preventDefault(); pick(cur[sel]); } else if (e.key === 'Escape') box.hidden = true;
+  });
+  box.addEventListener('mousedown', e => { const b = e.target.closest('[data-i]'); if (b) { e.preventDefault(); pick(cur[+b.dataset.i]); } });
+}
 const money = n => '$' + (+n || 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const store = {
@@ -477,11 +511,13 @@ const ICONS = {
   caja: svg('<rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/>'),
   reportes: svg('<path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/>'),
   configuracion: svg('<line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/>'),
+  rentas: svg('<path d="M3 11h14v4a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5z"/><path d="M17 11h1a3 3 0 0 1 0 6h-1"/><path d="M7 3v3"/><path d="M11 3v3"/>'),
+  uber: svg('<path d="M5 17a2 2 0 1 0 4 0 2 2 0 0 0-4 0Z"/><path d="M15 17a2 2 0 1 0 4 0 2 2 0 0 0-4 0Z"/><path d="M7 15 10 6h4l2 4h3"/><path d="M12 6V3"/>'),
   cafe: svg('<path d="M10 2v2"/><path d="M14 2v2"/><path d="M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1"/><path d="M6 2v2"/>'),
   lista: svg('<line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/>')
 };
 const NAV = [['vender', 'vender', 'Vender'], ['ventas', 'ventas', 'Ventas'], ['clientes', 'clientes', 'Clientes'], ['mas', 'mas', 'Más']];
-const MORE = [['cotizaciones', 'Cotizaciones'], ['inventario', 'Inventario'], ['productos', 'Productos'], ['caja', 'Caja'], ['corte', 'Corte'], ['reportes', 'Reportes'], ['configuracion', 'Configuración']];
+const MORE = [['cotizaciones', 'Cotizaciones'], ['rentas', 'Rentas'], ['uber', 'Uber Eats'], ['inventario', 'Inventario'], ['productos', 'Productos'], ['caja', 'Caja'], ['corte', 'Corte'], ['reportes', 'Reportes'], ['configuracion', 'Configuración']];
 
 function go(v) {
   view = v;
@@ -565,6 +601,7 @@ window.addEventListener('online', renderStatus); window.addEventListener('offlin
               <button class="btn primary" data-a="pay" data-m="Débito">Tarjeta</button>
               <button class="btn primary" data-a="pay" data-m="Transferencia">Transferencia</button>
             </div>
+            <button class="btn uberbtn" data-a="uber">Uber Eats · queda por cobrar</button>
             <details class="more"><summary>Más formas de cobrar y opciones</summary>
               <div class="row2 r3"><button class="btn" data-a="cash">Efectivo + cambio</button><button class="btn" data-a="split">Dividir pago</button><button class="btn" data-a="credit">A crédito</button></div>
               <div class="row2"><button class="btn ghost" data-a="pend">Dejar pendiente</button><button class="btn ghost" data-a="quote">Guardar cotización</button></div>
@@ -590,7 +627,7 @@ window.addEventListener('online', renderStatus); window.addEventListener('offlin
         if (e.key === 'Enter' && V.vis.length) { const k = parse(); H.add(null, { dataset: { v: V.vis[0].nombre } }, k.n); V.q = ''; e.target.value = ''; grid(); }
       };
       if (window.innerWidth > 1000) $('#q').focus();
-      $('#cli').oninput = e => { V.cli = e.target.value; cbLine(); };
+      $('#cli').oninput = e => { V.cli = e.target.value; cbLine(); }; suggest($('#cli'), () => S.clients.map(c => c.nombre));
       $('#nota').oninput = e => V.nota = e.target.value;
       chips(); grid(); cart();
     }
@@ -606,8 +643,8 @@ window.addEventListener('online', renderStatus); window.addEventListener('offlin
   const inCart = n => { const c = V.cart.find(x => x.nombre === n); return c ? c.cant : 0; };
 
   function grid() {
-    const pop = popularity(), q = parse().t.toLowerCase().trim();
-    const list = S.prods.filter(p => (V.cat === 'Todas' || (V.cat === '★ Favoritos' ? V.favs.includes(p.nombre) : p.cat === V.cat)) && p.nombre.toLowerCase().includes(q))
+    const pop = popularity(), q = parse().t.nrm().trim();
+    const list = S.prods.filter(p => (V.cat === 'Todas' || (V.cat === '★ Favoritos' ? V.favs.includes(p.nombre) : p.cat === V.cat)) && p.nombre.nrm().includes(q))
       .sort((a, b) => (V.favs.includes(b.nombre) - V.favs.includes(a.nombre)) || ((pop[b.nombre] || 0) - (pop[a.nombre] || 0))).slice(0, 150);
     V.vis = list;
     const stk = p => p.stock == null ? '' : `<span class="stk ${p.stock <= 0 ? 'out' : p.stock <= p.min ? 'low' : ''}">${p.stock <= 0 ? 'Agotado' : p.stock + ' disp.'}</span>`;
@@ -687,6 +724,11 @@ window.addEventListener('online', renderStatus); window.addEventListener('offlin
     close() { $('#ticket').classList.remove('open'); },
     pay(_, b) { save('Pagado', b.dataset.m); },
     pend() { save('Pendiente'); },
+    uber() {
+      if (!V.cart.length) return toast('El ticket está vacío. Agrega un producto.', true);
+      if (V.cb > 0) { V.cb = 0; cbLine(); }
+      Uber.dialog(total(), (neto, ref) => save('Pendiente', 'Uber Eats', { uber: { neto, ref } }));
+    },
     async quote() {
       if (!V.cart.length) return toast('El ticket está vacío. Agrega un producto.', true);
       const n = V.cli.trim().toUpperCase();
@@ -756,20 +798,24 @@ window.addEventListener('online', renderStatus); window.addEventListener('offlin
 
   function reset() { V.cart = []; V.cli = ''; V.nota = ''; V.tipo = 'Aquí'; V.cb = 0; V.edit = -1; V.ed = null; V.cot = null; V.dsc = { t: '$', v: 0 }; }
 
-  async function save(estado, metodo) {
+  async function save(estado, metodo, extra) {
     if (V.busy) return;
     if (!V.cart.length) return toast('El ticket está vacío. Agrega un producto.', true);
     if (metodo === 'Crédito cliente' && !V.cli.trim()) return toast('Escribe el nombre del cliente para registrar el crédito.', true);
+    const uber = extra && extra.uber; let renta = null;
+    if (!V.ed && window.Renta && Renta.hay(V.cart)) { renta = await Renta.pedir(V.cart, V.cli); if (!renta) return; V.cli = renta.nombre; }
     V.busy = true;
     try {
       const cot = V.cot;
       const cbCli = V.cbCli, cbUsar = V.cb > 0 && cbCli === V.cli.trim().toUpperCase() && !V.ed ? Math.min(V.cb, dsc(), window.CB ? CB.saldo(cbCli) : 0) : 0;
-      const sig = JSON.stringify([V.cart, V.cli, V.tipo, V.nota, estado, metodo, dsc(), V.ed && V.ed.folio]); if (V.sig !== sig) { V.sig = sig; V.uid = 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
-      const folio = await api('saveSale', { uid: V.uid, descuento: dsc(), folio: V.ed ? V.ed.folio : undefined, fecha: V.ed ? V.ed.fecha : undefined, cliente: V.cli.trim().toUpperCase(), tipo: V.tipo, nota: V.nota, estado, metodo: estado === 'Pagado' ? metodo : 'Sin registrar', items: V.cart });
+      const sig = JSON.stringify([V.cart, V.cli, V.tipo, V.nota, estado, metodo, dsc(), V.ed && V.ed.folio, extra, renta]); if (V.sig !== sig) { V.sig = sig; V.uid = 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+      const folio = await api('saveSale', { uid: V.uid, descuento: dsc(), folio: V.ed ? V.ed.folio : undefined, fecha: V.ed ? V.ed.fecha : undefined, cliente: uber ? 'UBER EATS' : V.cli.trim().toUpperCase(), tipo: V.tipo, nota: uber ? ['Uber Eats' + (uber.ref ? ' ' + uber.ref : ''), V.cli.trim() ? 'Cliente: ' + V.cli.trim() : '', V.nota].filter(Boolean).join(' · ') : V.nota, estado, metodo: estado === 'Pagado' || uber ? metodo : 'Sin registrar', items: V.cart, uber: uber || undefined, renta: renta || undefined });
       if (cot) await api('setQuote', cot, 'Convertida');
       toast('Venta ' + folio + ' guardada'); reset();
       if (cbUsar > 0) { try { await api('cashbackAdd', { cliente: cbCli, tipo: 'Canje', monto: cbUsar, folio: String(folio), nota: 'Canje en ticket ' + folio }); toast('Venta ' + folio + ' guardada · cashback usado: ' + money(cbUsar)); } catch (e) { toast('La venta se guardó, pero no se pudo descontar el cashback. Quítalo a mano en Clientes › Cashback.', true); } }
+      if (renta && !S.clients.some(c => c.nombre.trim().toUpperCase() === renta.nombre)) { try { await api('saveClient', { nombre: renta.nombre, tel: renta.tel }); } catch (e) {} }
       await load();
+      if (renta) Renta.listo(folio);
     } finally { V.busy = false; }
   }
 
@@ -810,7 +856,7 @@ const fdate = t => new Date(t).toLocaleString('es-MX', { day: 'numeric', month: 
   const catList = () => ['Todas'].concat([...new Set(S.prods.concat(S.inactivos || []).map(p => p.cat || 'Otros'))].sort());
   const SEL = () => [
     ['est', 'Estado', [['Todos', 'Todos'], ['Pendiente', 'Pendientes'], ['Pagado', 'Pagados'], ['Parcial', 'Con abono parcial']]],
-    ['met', 'Método de pago', [['Todos', 'Todos'], ['Efectivo', 'Efectivo'], ['Débito', 'Tarjeta'], ['Transferencia', 'Transferencia'], ['Multipagos', 'Multipagos'], ['Crédito cliente', 'Crédito cliente'], ['Sin registrar', 'Sin registrar']]],
+    ['met', 'Método de pago', [['Todos', 'Todos'], ['Efectivo', 'Efectivo'], ['Débito', 'Tarjeta'], ['Transferencia', 'Transferencia'], ['Multipagos', 'Multipagos'], ['Crédito cliente', 'Crédito cliente'], ['Uber Eats', 'Uber Eats'], ['Sin registrar', 'Sin registrar']]],
     ['cat', 'Categoría', catList().map(c => [c, c])],
     ['tipo', 'Servicio', [['Todos', 'Todos'], ['Aquí', 'Aquí'], ['Para llevar', 'Para llevar'], ['Domicilio', 'Domicilio']]],
     ['cli', 'Cliente', [['Todos', 'Todos'], ['Con cliente', 'Con nombre de cliente'], ['Mostrador', 'Mostrador (sin cliente)']]],
@@ -837,10 +883,10 @@ const fdate = t => new Date(t).toLocaleString('es-MX', { day: 'numeric', month: 
     }
   }
   function filtered() {
-    const q = F.q.toLowerCase();
+    const q = F.q.nrm();
     let L = tickets().filter(t => inPer(t) && (F.est === 'Todos' || (F.est === 'Parcial' ? t.estado !== 'Pagado' && t.abonado > 0 : t.estado === F.est)) && (F.met === 'Todos' || met(t.metodo) === F.met) && (F.tipo === 'Todos' || (t.tipo || 'Aquí') === F.tipo)
       && (F.cat === 'Todas' || t.items.some(x => catOf(x.producto) === F.cat)) && (F.cli === 'Todos' || (F.cli === 'Con cliente' ? !!t.cliente && t.cliente !== 'PUNTO DE VENTA' : !t.cliente || t.cliente === 'PUNTO DE VENTA'))
-      && (F.dsc === 'Todos' || (F.dsc === 'Con' ? t.desc > 0 : !(t.desc > 0))) && (t.folio + ' ' + t.cliente + ' ' + t.nota + ' ' + t.items.map(x => x.producto).join(' ')).toLowerCase().includes(q));
+      && (F.dsc === 'Todos' || (F.dsc === 'Con' ? t.desc > 0 : !(t.desc > 0))) && (t.folio + ' ' + t.cliente + ' ' + t.nota + ' ' + t.items.map(x => x.producto).join(' ')).nrm().includes(q));
     const o = { 'Más recientes': (a, b) => b.fecha - a.fecha, 'Más antiguos': (a, b) => a.fecha - b.fecha, 'Mayor monto': (a, b) => b.total - a.total, 'Menor monto': (a, b) => a.total - b.total, 'Cliente': (a, b) => String(a.cliente || '~').localeCompare(String(b.cliente || '~')) || b.fecha - a.fecha }[F.ord];
     L.sort(o);
     return F.per === 'Últimas 30' ? L.slice(0, 30) : L;
@@ -874,7 +920,7 @@ const fdate = t => new Date(t).toLocaleString('es-MX', { day: 'numeric', month: 
       const Y = years();
       root.innerHTML = `<div class="pagehead"><h2>Ventas</h2><div class="vtools">
           <div class="vseg" role="group" aria-label="Vista"><button data-v="tarjetas" aria-pressed="${F.vista === 'tarjetas'}">▦ Tarjetas</button><button data-v="lista" aria-pressed="${F.vista === 'lista'}">☰ Lista</button></div>
-          <button class="btn sm ghost" data-x="csv" title="Descargar lo que ves en Excel">⬇ Excel</button></div></div>
+          <button class="btn sm ghost" data-go="uber">Uber Eats</button><button class="btn sm ghost" data-x="csv" title="Descargar lo que ves en Excel">⬇ Excel</button></div></div>
         <input id="fq" type="search" placeholder="Buscar cliente, folio, producto o nota" aria-label="Buscar" value="${esc(F.q)}" style="margin-top:10px">
         <div class="chips">${PER.map(p => `<button class="chip" data-p="${p}" aria-pressed="${p === F.per}">${p}</button>`).join('')}</div>
         ${F.per === 'Rango' ? `<div class="row2" style="margin-bottom:10px"><input type="date" id="va" value="${F.a}" aria-label="Desde"><input type="date" id="vb" value="${F.b}" aria-label="Hasta"></div>` : ''}
@@ -1068,8 +1114,8 @@ const fdate = t => new Date(t).toLocaleString('es-MX', { day: 'numeric', month: 
   };
 
   function list() {
-    const q = F.q.toLowerCase(), top = new Set(Object.values(ST).sort((a, b) => b.compras - a.compras).slice(0, 20).map(o => o.n));
-    L = Object.values(ST).filter(o => (o.n + ' ' + o.tel).toLowerCase().includes(q) && pase(o, top));
+    const q = F.q.nrm(), top = new Set(Object.values(ST).sort((a, b) => b.compras - a.compras).slice(0, 20).map(o => o.n));
+    L = Object.values(ST).filter(o => (o.n + ' ' + o.tel).nrm().includes(q) && pase(o, top));
     L.sort(({ 'Nombre': (a, b) => a.n.localeCompare(b.n), 'Mayor saldo': (a, b) => b.saldo - a.saldo, 'Compró más recientemente': (a, b) => b.last - a.last, 'Mayor compra total': (a, b) => b.compras - a.compras, 'Más compras': (a, b) => b.tk - a.tk, 'Mayor cashback': (a, b) => b.cb - a.cb })[F.s]);
     $('#cn').textContent = L.length + ' cliente(s)';
     const cbtag = o => o.cb > 0.004 ? `<span class="tag cb" title="Cashback disponible">Cashback ${money(o.cb)}</span>` : '';
@@ -1132,7 +1178,7 @@ const fdate = t => new Date(t).toLocaleString('es-MX', { day: 'numeric', month: 
       <div id="fp" class="mu"></div>
       <div class="cj-warn">Esto no se puede deshacer. Si el cliente que se queda no tiene teléfono o correo, se completan con los de ${esc(n)}.</div>
       <button class="btn primary" id="fok">Fusionar</button><button class="btn ghost" id="fno">Cancelar</button>`);
-    $('#fx').onclick = $('#fno').onclick = closeM;
+    $('#fx').onclick = $('#fno').onclick = closeM; suggest($('#fd'), () => todos);
     $('#fd').oninput = () => { const d = up($('#fd').value), p = ST[d]; $('#fp').innerHTML = p ? `<b>${esc(d)}</b> quedará con ${p.tk + (o.tk || 0)} compra(s)${p.saldo + (o.saldo || 0) > 0 ? ' y saldo de ' + money(Math.max(0, p.saldo + (o.saldo || 0))) : ''}.` : ''; };
     $('#fok').onclick = async () => {
       const d = up($('#fd').value); if (!d || !ST[d] || d === n) return toast('Elige el cliente que se queda.', true);
@@ -1199,7 +1245,8 @@ const fdate = t => new Date(t).toLocaleString('es-MX', { day: 'numeric', month: 
   const upc = s => String(s || '').trim().toUpperCase();
   const dtl = ms => new Date(ms - new Date().getTimezoneOffset() * 6e4).toISOString().slice(0, 16);
   const METS = [['Efectivo', 'Efectivo'], ['Débito', 'Tarjeta'], ['Transferencia', 'Transferencia']];
-  const mlabel = m => (METS.find(x => x[0] === m) || [0, m])[1];
+  const METS2 = METS.concat([['Uber Eats', 'Uber Eats'], ['Comisión Uber', 'Comisión Uber']]);
+  const mlabel = m => (METS2.find(x => x[0] === m) || [0, m])[1];
   const opts = (list, sel) => list.map(([v, t]) => `<option value="${esc(v)}" ${v === sel ? 'selected' : ''}>${esc(t)}</option>`).join('');
   const abonosDe = f => (S.abonos || []).filter(a => String(a.folio) === String(f)).sort((a, b) => a.fecha - b.fecha);
 
@@ -1236,7 +1283,7 @@ const fdate = t => new Date(t).toLocaleString('es-MX', { day: 'numeric', month: 
     modal(`<h2>Corregir pago</h2>
       <p class="mu">${esc(p.cliente || 'Mostrador')} · pago original ${money(p.monto)} (${esc(mlabel(p.metodo))})</p>
       <label class="fl">Monto<input id="pm" type="number" min="0.01" step="0.01" inputmode="decimal" value="${(+p.monto).toFixed(2)}"></label>
-      <label class="fl">Método<select id="pt">${opts(METS, p.metodo)}</select></label>
+      <label class="fl">Método<select id="pt">${opts(METS2, p.metodo)}</select></label>
       <label class="fl">Aplicado a<select id="pf">${opts(dest, String(p.folio || ''))}</select></label>
       <label class="fl">Fecha del pago<input id="pd" type="datetime-local" value="${dtl(p.fecha)}"></label>
       <button class="btn primary" id="pok">Guardar corrección</button><button class="btn ghost" id="pno">Cancelar</button>`);
@@ -1273,7 +1320,7 @@ const fdate = t => new Date(t).toLocaleString('es-MX', { day: 'numeric', month: 
         <span><button class="btn sm ghost" data-pc="${i}">Corregir</button> <button class="btn sm ghost danger" data-pq="${i}">Quitar</button></span></div>`).join('') : '<p class="mu" style="margin:0">Sin pagos registrados.</p>'}
       <div class="cact">${pend ? '<button class="btn primary" id="tb">Cobrar / abonar</button>' : '<button class="btn" id="tr">Deshacer cobro</button>'}
         <button class="btn" id="te">Editar productos</button><button class="btn ghost" id="tp">Imprimir</button><button class="btn ghost" id="tw">WhatsApp</button></div>`);
-    $('#tx').onclick = () => back ? back() : closeM();
+    $('#tx').onclick = () => back ? back() : closeM(); suggest($('#tc'), () => S.clients.map(c => c.nombre));
     $('#tg').onclick = async () => {
       const o = { folio: t.folio, cliente: $('#tc').value, tipo: $('#ts').value, nota: $('#tn').value, fecha: new Date($('#td').value).getTime() || t.fecha };
       if ($('#tm')) o.metodo = $('#tm').value;
@@ -1410,8 +1457,8 @@ const fdate = t => new Date(t).toLocaleString('es-MX', { day: 'numeric', month: 
     lista(box, rows);
   }
   function lista(box, rows) {
-    const q = CBF.q.toLowerCase(), f = CBF.f;
-    const L = rows.filter(o => o.n.toLowerCase().includes(q) && (f === 'Todos los clientes' || (f === 'Activos' ? o.activo : f === 'Sin cashback activo' ? !o.activo : f === 'Con saldo' ? o.saldo > 0.004 : f === 'Por vencer (30 días)' ? o.porVencer > 0.004 : f === 'Con movimientos' ? o.movs > 0 : f.startsWith('Nivel: ') ? o.nivel === f.slice(7) : true))).sort((a, b) => b.saldo - a.saldo || a.n.localeCompare(b.n));
+    const q = CBF.q.nrm(), f = CBF.f;
+    const L = rows.filter(o => o.n.nrm().includes(q) && (f === 'Todos los clientes' || (f === 'Activos' ? o.activo : f === 'Sin cashback activo' ? !o.activo : f === 'Con saldo' ? o.saldo > 0.004 : f === 'Por vencer (30 días)' ? o.porVencer > 0.004 : f === 'Con movimientos' ? o.movs > 0 : f.startsWith('Nivel: ') ? o.nivel === f.slice(7) : true))).sort((a, b) => b.saldo - a.saldo || a.n.localeCompare(b.n));
     $('#cbn', box).textContent = L.length + ' cliente(s)';
     const acts = o => !o.activo ? `<button class="btn sm primary" data-cb="activar" data-n="${esc(o.n)}">Activar cashback</button> ${o.movs ? `<button class="btn sm ghost" data-cb="hist" data-n="${esc(o.n)}">Historial</button>` : ''}` : `<button class="btn sm primary" data-cb="pone" data-n="${esc(o.n)}">Poner</button> ${o.saldo > 0.004 ? `<button class="btn sm" data-cb="canje" data-n="${esc(o.n)}">Canjear</button> <button class="btn sm ghost" data-cb="quita" data-n="${esc(o.n)}">Quitar</button> <button class="btn sm ghost" data-cb="wa" data-n="${esc(o.n)}">WhatsApp</button> ` : ''}<button class="btn sm ghost" data-cb="hist" data-n="${esc(o.n)}">Historial</button>`;
     if (!L.length) { $('#cbl', box).innerHTML = '<p class="mu">No hay clientes con estos filtros. Usa "＋ Activar cliente" para darle su clave de cashback; desde ahí se le va abonando en cada compra pagada.</p>'; return; }
@@ -1450,7 +1497,7 @@ const fdate = t => new Date(t).toLocaleString('es-MX', { day: 'numeric', month: 
       <label class="fl">Cliente<input id="an" list="adl" autocomplete="off" placeholder="Escribe para buscar…"></label><datalist id="adl">${libres.map(n => `<option value="${esc(n)}">`).join('')}</datalist>
       <label class="fl">Nota (opcional)<input id="at" maxlength="200" placeholder="Ej. Cliente frecuente"></label>
       <button class="btn primary" id="aok">Activar y generar clave</button><button class="btn ghost" id="ano">Cancelar</button>`);
-    $('#ax').onclick = $('#ano').onclick = closeM; $('#an').focus();
+    $('#ax').onclick = $('#ano').onclick = closeM; suggest($('#an'), () => libres); $('#an').focus();
     $('#aok').onclick = () => { const n = up($('#an').value); if (!n) return toast('Elige el cliente.', true); if (!S.clients.some(c => up(c.nombre) === n)) return toast('Ese cliente no existe. Créalo primero en Clientes.', true); if (activo(n)) return toast('Ese cliente ya tiene cashback activo.', true); activar(n, $('#at').value.trim()); };
   }
 
@@ -1656,8 +1703,8 @@ const fdate = t => new Date(t).toLocaleString('es-MX', { day: 'numeric', month: 
   };
 
   /* Revisar y enviar */
-  function previa(n, texto, volver) {
-    const tel = telDe(n);
+  function previa(n, texto, volver, telExtra) {
+    const tel = telDe(n) || telExtra || '';
     modal(`<div class="tl"><h2>Enviar por WhatsApp</h2><button class="btn sm ghost" id="wx" aria-label="Cerrar">✕</button></div>
       <div class="mu">${nombreCli(n) ? esc(nombreCli(n)) : 'Sin cliente'} · ${tel ? esc(tel) : '<b>sin teléfono</b>'}</div>
       ${tel ? '' : '<label class="fl">Teléfono (10 dígitos)<input id="wt" type="tel" inputmode="tel" placeholder="662 123 4567"></label><div class="mu">Si lo dejas vacío, WhatsApp te deja elegir el contacto.</div>'}
@@ -1703,6 +1750,327 @@ const fdate = t => new Date(t).toLocaleString('es-MX', { day: 'numeric', month: 
     cashback: n => previa(n, armar.cashback(n)),
     menu, editor, previa, armar
   };
+})();
+/* ===== Uber Eats: venta por cobrar, depósitos y comisión ===== */
+(() => {
+  const r2 = x => Math.round(x * 100) / 100;
+  const dk = t => new Date(t - new Date().getTimezoneOffset() * 6e4).toISOString().slice(0, 10);
+  const F = { f: 'Por cobrar', q: '' }, SEL = new Set();
+  const lista = () => (S.uber || []).filter(x => x.estado !== 'Cancelado');
+  const corta = ms => ms ? new Date(ms).toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
+
+  /* Cuadro al cobrar en Vender */
+  function dialog(total, onOk) {
+    const pct0 = Math.min(100, Math.max(1, +store.get('uberPct', 70) || 70));
+    modal(`<h2>Venta por Uber Eats</h2>
+      <div class="mu">Total a tu precio normal</div><div class="big">${money(total)}</div>
+      <label class="fl">Lo que Uber Eats nos va a pagar (neto)<input id="un" type="number" min="0" step="0.01" inputmode="decimal" value="${r2(total * pct0 / 100).toFixed(2)}"></label>
+      <div id="ui" class="mu" aria-live="polite"></div>
+      <label class="fl">Pedido o referencia de Uber (opcional)<input id="ur" maxlength="60" placeholder="Ej. #A1B2C"></label>
+      <p class="mu" style="margin:0">Se guarda a precio normal y queda <b>por cobrar a Uber Eats</b> hasta que registres su depósito en Más → Uber Eats.</p>
+      <button class="btn primary" id="uok">Guardar venta Uber Eats</button><button class="btn ghost" id="uno">Cancelar</button>`);
+    const upd = () => { const n = +$('#un').value || 0, c = r2(total - n); $('#ui').innerHTML = n > 0 && n <= total ? 'Uber se queda con <b>' + money(c) + '</b> (' + (total ? Math.round(c / total * 1000) / 10 : 0) + '%) · tú recibes <b>' + money(n) + '</b>' : '<span style="color:var(--bad)">Escribe lo que Uber te va a pagar (no más del total).</span>'; };
+    $('#un').oninput = upd; upd(); $('#un').select(); $('#uno').onclick = closeM;
+    $('#uok').onclick = () => {
+      const n = r2(+$('#un').value || 0); if (!(n > 0) || n > total + 0.004) return toast('Escribe lo que Uber te va a pagar (no más del total).', true);
+      store.set('uberPct', Math.round(n / total * 100)); closeM(); onOk(n, $('#ur').value.trim());
+    };
+  }
+
+  const del = x => (x.estado === 'Por cobrar' ? { neto: x.neto, com: x.comision } : { neto: x.netoCobrado, com: x.comision });
+  function resumen() {
+    const L = lista(), mes = dk(Date.now()).slice(0, 7), por = L.filter(x => x.estado === 'Por cobrar'), cob = L.filter(x => x.estado === 'Cobrado' && dk(x.fechaCobro || x.fecha).slice(0, 7) === mes);
+    const vend = L.filter(x => dk(x.fecha).slice(0, 7) === mes);
+    const vm = vend.reduce((s, x) => s + x.total, 0), cm = cob.reduce((s, x) => s + x.comision, 0), cm2 = vend.reduce((s, x) => s + x.comision, 0);
+    return { por, nPor: por.length, ePor: por.reduce((s, x) => s + x.neto, 0), cob, nCob: cob.length, tCob: cob.reduce((s, x) => s + x.netoCobrado, 0), vend, vm, cm, pct: vm ? cm2 / vm * 100 : 0, antig: por.length ? Math.max(...por.map(x => (Date.now() - x.fecha) / 864e5)) : 0 };
+  }
+
+  views.uber = {
+    render(root) {
+      const R = resumen();
+      root.innerHTML = `<div class="pagehead"><h2>Uber Eats</h2></div>
+        <p class="mu" style="margin:4px 0 0">Los pedidos de Uber se venden a tu precio normal y quedan por cobrar hasta que Uber deposita. Aquí registras cada depósito y ves cuánto se lleva Uber.</p>
+        <div class="vk" style="margin-top:12px">
+          <div class="main"><span>Por cobrar a Uber</span><b>${money(R.ePor)}</b><small>${R.nPor} pedido(s)${R.nPor ? ' · el más viejo hace ' + Math.floor(R.antig) + ' día(s)' : ''}</small></div>
+          <div class="ok"><span>Cobrado este mes</span><b>${money(R.tCob)}</b><small>${R.nCob} pedido(s)</small></div>
+          <div class="warn"><span>Comisión este mes</span><b>${money(R.vend.reduce((s, x) => s + x.comision, 0))}</b><small>${R.pct.toFixed(1)}% de lo vendido</small></div>
+          <div><span>Vendido por Uber este mes</span><b>${money(R.vm)}</b><small>${R.vend.length} pedido(s)</small></div></div>
+        <div class="chips">${['Por cobrar', 'Cobrados', 'Todos'].map(x => `<button class="chip" data-f="${x}" aria-pressed="${F.f === x}">${x}</button>`).join('')}</div>
+        <input id="uq" type="search" placeholder="Buscar folio o referencia" aria-label="Buscar" value="${esc(F.q)}" style="margin:8px 0">
+        <div id="ul"></div><div id="ub" class="ubar" hidden></div>`;
+      $('#uq').oninput = e => { F.q = e.target.value; pintar(); };
+      root.onclick = e => {
+        const c = e.target.closest('[data-f]'); if (c) { F.f = c.dataset.f; SEL.clear(); return views.uber.render(root); }
+        const k = e.target.closest('[data-k]'); if (k) { k.checked ? SEL.add(k.dataset.k) : SEL.delete(k.dataset.k); return barra(); }
+        const a = e.target.closest('[data-all]'); if (a) { const v = vis().filter(x => x.estado === 'Por cobrar').map(x => x.folio); a.checked ? v.forEach(f => SEL.add(f)) : v.forEach(f => SEL.delete(f)); return pintar(); }
+        const t = e.target.closest('[data-t]'); if (t) { const tk = tickets().find(x => x.folio === t.dataset.t); if (tk) ticketModal(tk, () => { closeM(); views.uber.render(root); }); return; }
+        if (e.target.closest('#udep')) return deposito();
+      };
+      pintar();
+    }
+  };
+  const vis = () => {
+    const q = nrm(F.q); return lista().filter(x => (F.f === 'Todos' || (F.f === 'Por cobrar' ? x.estado === 'Por cobrar' : x.estado === 'Cobrado')) && nrm(x.folio + ' ' + x.ref).includes(q)).sort((a, b) => (F.f === 'Por cobrar' ? a.fecha - b.fecha : b.fecha - a.fecha));
+  };
+  function pintar() {
+    const L = vis(), por = L.filter(x => x.estado === 'Por cobrar');
+    SEL.forEach(f => { if (!por.some(x => x.folio === f)) SEL.delete(f); });
+    $('#ul').innerHTML = L.length ? `${por.length ? `<label class="chk" style="margin:4px 0 8px"><input type="checkbox" data-all="1" ${por.every(x => SEL.has(x.folio)) ? 'checked' : ''}> Seleccionar todos los que se ven</label>` : ''}<div class="list">` + L.slice(0, 200).map(x => {
+      const d = del(x), cobr = x.estado === 'Cobrado';
+      return `<div class="card"><div class="tl"><span>${!cobr ? `<input type="checkbox" data-k="${esc(x.folio)}" ${SEL.has(x.folio) ? 'checked' : ''} aria-label="Elegir ${esc(x.folio)}" style="width:20px;min-height:20px;margin-right:8px;vertical-align:middle">` : ''}<b>${esc(x.folio)}</b> <span class="mu">${corta(x.fecha)}${x.ref ? ' · ' + esc(x.ref) : ''}</span></span><span class="tag ${cobr ? 'ok' : ''}">${cobr ? 'Cobrado ' + corta(x.fechaCobro) : 'Por cobrar'}</span></div>
+        <div class="tl"><span class="mu">Venta ${money(x.total)} · comisión ${money(d.com)}</span><b class="amt">${money(d.neto)}</b></div>
+        <div class="cact"><button class="btn sm ghost" data-t="${esc(x.folio)}">Ver ticket</button></div></div>`;
+    }).join('') + '</div>' : '<p class="mu">' + (F.f === 'Por cobrar' ? 'No hay pedidos de Uber por cobrar. Para venderlos usa el botón «Uber Eats» en Vender.' : 'No hay pedidos con estos filtros.') + '</p>';
+    barra();
+  }
+  function barra() {
+    const b = $('#ub'); if (!b) return; const s = lista().filter(x => SEL.has(x.folio) && x.estado === 'Por cobrar');
+    b.hidden = !s.length; if (s.length) b.innerHTML = `<span><b>${s.length}</b> seleccionado(s) · Uber nos paga <b>${money(s.reduce((a, x) => a + x.neto, 0))}</b></span><button class="btn primary" id="udep">Registrar depósito</button>`;
+    document.querySelectorAll('[data-all]').forEach(a => { const por = vis().filter(x => x.estado === 'Por cobrar'); a.checked = por.length > 0 && por.every(x => SEL.has(x.folio)); });
+  }
+
+  /* Registrar un depósito de Uber (uno o varios pedidos) */
+  function deposito() {
+    const s = lista().filter(x => SEL.has(x.folio) && x.estado === 'Por cobrar').sort((a, b) => a.fecha - b.fecha); if (!s.length) return toast('Elige los pedidos que Uber depositó.', true);
+    const hoy = dk(Date.now());
+    modal(`<div class="tl"><h2>Depósito de Uber Eats</h2><button class="btn sm ghost" id="dx" aria-label="Cerrar">✕</button></div>
+      <p class="mu" style="margin:0">Confirma lo que Uber depositó por cada pedido (viene en tu reporte de Uber Eats). La diferencia contra tu precio normal se registra como comisión.</p>
+      <div class="row2"><label class="fl">Fecha del depósito<input id="df" type="date" value="${hoy}" max="${hoy}"></label><label class="fl">Referencia<input id="dr" maxlength="60" placeholder="Ej. Semana 45"></label></div>
+      <div class="tscroll"><table><thead><tr><th>Pedido</th><th class="n">Venta</th><th class="n">Uber pagó</th><th class="n hm">Comisión</th></tr></thead><tbody>
+      ${s.map(x => `<tr><td><b>${esc(x.folio)}</b><div class="mu">${corta(x.fecha)}${x.ref ? ' · ' + esc(x.ref) : ''}</div></td><td class="n">${money(x.total)}</td><td class="n"><input class="dn" data-f="${esc(x.folio)}" data-t="${x.total}" type="number" min="0.01" max="${x.total}" step="0.01" inputmode="decimal" value="${x.neto.toFixed(2)}" style="width:96px;text-align:right"></td><td class="n hm dc">—</td></tr>`).join('')}</tbody></table></div>
+      <div class="vk" style="grid-template-columns:1fr 1fr;margin:10px 0"><div class="main"><span>Total depositado</span><b id="dt">$0.00</b></div><div class="warn"><span>Comisión</span><b id="dco">$0.00</b></div></div>
+      <label class="fl">Depósito que ves en el banco (opcional, para cuadrar)<input id="db" type="number" min="0" step="0.01" inputmode="decimal"></label><div id="dd" class="mu" aria-live="polite"></div>
+      <button class="btn primary" id="dok">Registrar depósito</button><button class="btn ghost" id="dno">Cancelar</button>`);
+    const upd = () => {
+      if (!$('#dt')) return;
+      let t = 0, c = 0; document.querySelectorAll('.dn').forEach(i => { const n = +i.value || 0, tt = +i.dataset.t; t += n; c += Math.max(0, tt - n); i.closest('tr').querySelector('.dc').textContent = money(Math.max(0, tt - n)); });
+      $('#dt').textContent = money(t); $('#dco').textContent = money(c);
+      const b = $('#db').value; $('#dd').innerHTML = b === '' ? '' : Math.abs(+b - t) < 0.005 ? '<span style="color:var(--ok)">✓ Cuadra con el banco.</span>' : '<span style="color:var(--bad)">Diferencia de ' + money(+b - t) + ' contra el banco.</span>';
+    };
+    $('#mbox').oninput = upd; upd(); $('#dx').onclick = $('#dno').onclick = closeM;
+    $('#dok').onclick = async () => {
+      const items = [...document.querySelectorAll('.dn')].map(i => ({ folio: i.dataset.f, neto: r2(+i.value || 0) }));
+      if (items.some(i => !(i.neto > 0))) return toast('Cada pedido necesita lo que Uber pagó.', true);
+      const f = new Date($('#df').value + 'T12:00:00').getTime() || Date.now();
+      try { const r = await api('uberDeposito', { fecha: f, ref: $('#dr').value.trim(), items }); closeM(); SEL.clear(); toast('Depósito registrado: ' + money(r.depositado) + ' · comisión ' + money(r.comision)); await load(); }
+      catch (e) { toast(e.message || 'No se pudo registrar el depósito.', true); }
+    };
+  }
+  window.Uber = { dialog };
+})();
+/* ===== Rentas de equipo (cafeteras): datos de quien renta, contrato imprimible, seguimiento y devolución ===== */
+(() => {
+  const D = 864e5, r2 = x => Math.round(x * 100) / 100;
+  const dtl = ms => new Date(ms - new Date().getTimezoneOffset() * 6e4).toISOString().slice(0, 16);
+  const m2 = n => '$' + (+n || 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const dl = t => t ? new Date(t).toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' }) : '—';
+  const dh = t => t ? new Date(t).toLocaleString('es-MX', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—';
+  const cap = s => String(s || '').toLowerCase().replace(/(^|\s)\S/g, c => c.toUpperCase());
+  const up = s => String(s || '').trim().toUpperCase();
+  const F = { f: 'Activas', q: '' };
+
+  /* ¿Este artículo es una renta? (categoría o nombre con "renta" / "alquiler", con o sin acento) */
+  const catDe = n => { const p = (S.prods || []).concat(S.inactivos || []).find(x => x.nombre === n); return p ? p.cat : ''; };
+  const esRenta = n => /\b(renta|rentas|rentar|alquiler)\b/.test(nrm(n + ' ' + catDe(n)));
+  const hay = cart => (cart || []).some(i => esRenta(i.nombre));
+  const dias = r => Math.max(1, Math.ceil(((r.devolucion || 0) - (r.salida || 0)) / D) || 1);
+  const diaria = r => r2((r.renta || 0) / dias(r));
+  const ultima = n => (S.rentas || []).filter(x => up(x.cliente) === up(n)).sort((a, b) => b.fecha - a.fecha)[0];
+  const estadoDe = r => {
+    if (r.estado !== 'Activa') return { k: r.estado, t: r.estado, c: r.estado === 'Devuelta' ? 'ok' : 'cbx' };
+    const d = (Date.now() - r.devolucion) / D;
+    if (r.devolucion && Date.now() > r.devolucion) return { k: 'Vencida', t: 'Vencida · ' + Math.max(1, Math.floor(d)) + ' día(s)', c: 'cbn' };
+    if (r.devolucion && r.devolucion - Date.now() < D) return { k: 'Por vencer', t: 'Vence hoy / mañana', c: '' };
+    return { k: 'Activa', t: 'En renta', c: 'cbp' };
+  };
+
+  /* ---------- Datos de la renta (al cobrar en Vender) ---------- */
+  function pedir(cart, cli) {
+    return new Promise(res => {
+      const items = cart.filter(i => esRenta(i.nombre)), monto = r2(items.reduce((s, i) => s + i.cant * i.precio, 0)), nDias = Math.max(1, ...items.map(i => Math.ceil(+i.cant) || 1));
+      const ahora = Date.now(), eq = items[0].nombre, memo = store.get('rentaMemo', {})[eq] || {}, nom0 = up(cli);
+      const cl = (S.clients || []).find(c => up(c.nombre) === nom0) || {}, ult = ultima(nom0) || {};
+      modal(`<div class="tl"><h2>Datos de la renta</h2><button class="btn sm ghost" id="rx" aria-label="Cerrar">✕</button></div>
+        <p class="mu" style="margin:0">${esc(items.map(i => i.cant + '× ' + i.nombre).join(', '))} · renta ${money(monto)}. Con estos datos se genera el contrato.</p>
+        <label class="fl">Nombre completo de quien renta<input id="rn" value="${esc(cap(nom0))}" autocomplete="off" placeholder="Como aparece en su INE"></label>
+        <label class="fl">Número de INE (clave de elector)<input id="ri" value="${esc(ult.ine || '')}" autocomplete="off" placeholder="Clave de elector o número del reverso"></label>
+        <div class="row2"><label class="fl">Teléfono<input id="rt" type="tel" inputmode="tel" value="${esc(cl.tel || ult.tel || '')}" placeholder="662 123 4567"></label>
+          <label class="fl">Equipo<input id="re" value="${esc(eq)}"></label></div>
+        <label class="fl">Domicilio<input id="rd" value="${esc(ult.domicilio || '')}" placeholder="Calle, número, colonia"></label>
+        <div class="row2"><label class="fl">Serie o etiqueta del equipo<input id="rs" placeholder="Ej. CF-02"></label>
+          <label class="fl">Valor del equipo (reposición)<input id="rv" type="number" min="0" step="0.01" inputmode="decimal" value="${memo.valor || ''}" placeholder="0.00"></label></div>
+        <div class="row2"><label class="fl">Entrega<input id="rf" type="datetime-local" value="${dtl(ahora)}"></label>
+          <label class="fl">Devolución<input id="rg" type="datetime-local" value="${dtl(ahora + nDias * D)}"></label></div>
+        <div class="row2"><label class="fl">Depósito en garantía<input id="rp" type="number" min="0" step="0.01" inputmode="decimal" value="${memo.deposito || ''}" placeholder="0.00"></label>
+          <label class="fl">Accesorios incluidos<input id="ra" value="${esc(memo.accesorios || '')}" placeholder="Ej. jarra, filtro, cable"></label></div>
+        <label class="fl">Estado al entregar<input id="rc" value="${esc(memo.cond || 'Bueno, limpio y funcionando')}"></label>
+        <label class="fl">Notas (opcional)<input id="rq" maxlength="300"></label>
+        <p class="mu" style="margin:0">Pide la INE en original y verifica que coincida con los datos. El depósito no se suma a la venta: queda registrado en el contrato.</p>
+        <button class="btn primary" id="rok">Continuar y cobrar</button><button class="btn ghost" id="rno">Cancelar</button>`);
+      suggest($('#rn'), () => (S.clients || []).map(c => c.nombre));
+      const fill = () => { const u = ultima($('#rn').value); if (u) { if (!$('#ri').value) $('#ri').value = u.ine; if (!$('#rd').value) $('#rd').value = u.domicilio; if (!$('#rt').value) $('#rt').value = u.tel; } };
+      $('#rn').addEventListener('change', fill); $('#rn').focus();
+      $('#rx').onclick = $('#rno').onclick = () => { closeM(); res(null); };
+      $('#rok').onclick = () => {
+        const nombre = up($('#rn').value), ine = $('#ri').value.trim(), sal = new Date($('#rf').value).getTime() || ahora, dev = new Date($('#rg').value).getTime() || 0;
+        if (!nombre) return toast('Escribe el nombre de quien renta.', true);
+        if (!ine) return toast('Falta el número de la INE.', true);
+        if (!dev) return toast('Elige la fecha y hora de devolución.', true);
+        if (dev < sal) return toast('La devolución no puede ser antes de la entrega.', true);
+        const d = { nombre, ine, tel: $('#rt').value.trim(), domicilio: $('#rd').value.trim(), equipo: $('#re').value.trim(), serie: $('#rs').value.trim(), valor: +$('#rv').value || 0, salida: sal, devolucion: dev, deposito: +$('#rp').value || 0, accesorios: $('#ra').value.trim(), condEntrega: $('#rc').value.trim(), notas: $('#rq').value.trim(), renta: monto };
+        const mm = store.get('rentaMemo', {}); mm[eq] = { valor: d.valor, deposito: d.deposito, accesorios: d.accesorios, cond: d.condEntrega }; store.set('rentaMemo', mm);
+        closeM(); res(d);
+      };
+    });
+  }
+
+  /* ---------- Contrato ---------- */
+  function build(r) {
+    const k = S.config || {}, col = brand(), nom = esc(k.nombre || 'Café Sierra Escondida'), arr = esc(k.razonSocial || k.nombre || 'Café Sierra Escondida');
+    const ciudad = esc(k.ciudad || 'Hermosillo, Sonora'), logo = /^data:image\//.test(k.logo || '') ? `<img src="${k.logo}" alt="Logo" style="max-height:58px;max-width:190px;margin-bottom:6px">` : '';
+    const line = (a, b) => b ? `<div>${a}${esc(b)}</div>` : '', n = dias(r), tk = (typeof tickets === 'function' ? tickets() : []).find(t => t.folio === r.folio);
+    const valor = r.valor > 0 ? `el valor de reposición de <b>${m2(r.valor)}</b>` : 'el valor comercial del equipo';
+    const dep = r.deposito > 0 ? `EL ARRENDATARIO entrega <b>${m2(r.deposito)}</b> como depósito en garantía del cuidado y la devolución del equipo. Se le regresa al devolver el equipo completo, limpio y en buen estado; de él podrá descontarse el importe de daños, faltantes o cargos por retraso. Si éstos son mayores que el depósito, EL ARRENDATARIO cubrirá la diferencia.` : 'En esta renta no se solicita depósito en garantía; aun así, EL ARRENDATARIO responde por lo establecido en las cláusulas de daños y retraso.';
+    const cl = [
+      ['OBJETO', `EL ARRENDADOR entrega en renta a EL ARRENDATARIO el equipo descrito en este contrato, y éste lo recibe en el estado que se indica, a su entera satisfacción.`],
+      ['PLAZO', `La renta comienza en la fecha y hora de entrega y termina en la devolución prevista (${n} día${n === 1 ? '' : 's'}). Para ampliarla, EL ARRENDATARIO deberá avisar con anticipación y pagar la renta adicional, sujeto a disponibilidad del equipo.`],
+      ['RENTA Y PAGO', `La renta total es de <b>${m2(r.renta)}</b> y se paga por adelantado al recibir el equipo${tk ? ' (ticket ' + esc(tk.folio) + ')' : ''}.`],
+      ['DEPÓSITO EN GARANTÍA', dep],
+      ['USO Y CUIDADO', `EL ARRENDATARIO usará el equipo únicamente para su uso normal, siguiendo las instrucciones de operación. No podrá prestarlo, subarrendarlo, modificarlo ni repararlo por su cuenta, y avisará de inmediato de cualquier falla.`],
+      ['DAÑO, PÉRDIDA O ROBO', `EL ARRENDATARIO responde por los daños distintos al desgaste normal, por los faltantes y por la pérdida o el robo del equipo. En estos casos pagará el costo de reparación o, si no es posible repararlo, ${valor}.`],
+      ['DEVOLUCIÓN Y RETRASO', `EL ARRENDATARIO devolverá el equipo en la fecha y hora pactadas, limpio y con todos sus accesorios. Por cada día o fracción de retraso pagará una renta adicional de <b>${m2(diaria(r))}</b> por día.`],
+      ['TERMINACIÓN', `EL ARRENDADOR podrá recuperar el equipo de inmediato si éste se usa de forma indebida o si EL ARRENDATARIO incumple este contrato.`],
+      ['JURISDICCIÓN', `Para la interpretación y cumplimiento de este contrato, las partes se someten a las leyes y a los tribunales de ${ciudad}, renunciando a cualquier otro fuero que pudiera corresponderles.`]
+    ];
+    return `<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><title>Contrato ${esc(r.contrato)}</title><style>
+@page{size:letter;margin:14mm}*{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{font:12px/1.45 Arial,Helvetica,sans-serif;color:#1f2937;margin:0 auto;max-width:800px;padding:16px}
+.bar{background:#fbf4e4;border:1px solid #f1e2c3;border-radius:8px;padding:10px 12px;margin-bottom:14px;display:flex;gap:12px;align-items:center;justify-content:space-between}
+.bar button{background:${col};color:#fff;border:0;border-radius:8px;padding:9px 14px;font-weight:700;cursor:pointer}
+header{display:flex;justify-content:space-between;gap:20px;padding-bottom:10px;border-bottom:4px solid ${col}}
+.emp{font-size:11px;color:#4b5563}.emp b{font-size:16px;color:#111827;display:block}
+.ttl{text-align:right}.ttl h1{margin:0;font-size:21px;letter-spacing:.05em;color:${col}}.ttl .f{font-size:12.5px;margin-top:3px}
+p{margin:8px 0}table{width:100%;border-collapse:collapse;margin:8px 0}td,th{padding:6px 8px;border:1px solid #e5e7eb;text-align:left;vertical-align:top}th{background:#f3f4f6;width:30%;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#4b5563}
+h4{margin:12px 0 2px;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:${col}}ol{padding-left:18px;margin:6px 0}li{margin:5px 0}
+.firmas{display:grid;grid-template-columns:1fr 1fr;gap:50px;margin-top:46px;break-inside:avoid}.firmas div{border-top:1px solid #6b7280;padding-top:5px;text-align:center;font-size:11px}
+.dev{margin-top:20px;border:1px dashed #9ca3af;border-radius:8px;padding:10px 12px;break-inside:avoid}.dev h4{margin-top:0}.ln{display:inline-block;border-bottom:1px solid #6b7280;min-width:170px;height:14px}
+.pie{margin-top:12px;text-align:center;color:#6b7280;font-size:10.5px}
+@media print{.bar{display:none}body{padding:0;max-width:none}}
+</style></head><body>
+<div class="bar"><span>Para guardar el PDF elige <b>«Guardar como PDF»</b> en el cuadro de impresión.</span><button onclick="window.print()">Imprimir / Guardar PDF</button></div>
+<header><div class="emp">${logo}<b>${nom}</b>${line('', k.razonSocial)}${line('RFC: ', k.rfc)}${line('', [k.direccion, k.cp, k.ciudad].filter(Boolean).join(', '))}${line('Tel. ', k.telefono)}</div>
+<div class="ttl"><h1>CONTRATO DE RENTA<br>DE EQUIPO</h1><div class="f"><b>Contrato:</b> ${esc(r.contrato)}</div><div class="f"><b>Fecha:</b> ${dl(r.fecha)}</div></div></header>
+<p>En ${ciudad}, a ${dl(r.fecha)}, celebran este contrato de renta de equipo, por una parte <b>${arr}</b> (en adelante «EL ARRENDADOR») y por la otra <b>${esc(cap(r.cliente))}</b>, con identificación oficial (INE) número <b>${esc(r.ine)}</b>${r.domicilio ? ', con domicilio en ' + esc(r.domicilio) : ''}${r.tel ? ', teléfono ' + esc(r.tel) : ''} (en adelante «EL ARRENDATARIO»), conforme a las siguientes cláusulas:</p>
+<h4>Equipo rentado</h4><table><tr><th>Equipo</th><td>${esc(r.equipo)}</td></tr>${r.serie ? `<tr><th>Serie / etiqueta</th><td>${esc(r.serie)}</td></tr>` : ''}${r.accesorios ? `<tr><th>Accesorios incluidos</th><td>${esc(r.accesorios)}</td></tr>` : ''}<tr><th>Estado al entregar</th><td>${esc(r.condEntrega || 'Bueno y funcionando')}</td></tr>${r.valor > 0 ? `<tr><th>Valor de reposición</th><td>${m2(r.valor)}</td></tr>` : ''}</table>
+<h4>Periodo y pago</h4><table><tr><th>Entrega</th><td>${dh(r.salida)}</td></tr><tr><th>Devolución prevista</th><td>${dh(r.devolucion)}</td></tr><tr><th>Renta total</th><td>${m2(r.renta)}</td></tr><tr><th>Depósito en garantía</th><td>${r.deposito > 0 ? m2(r.deposito) : 'No aplica'}</td></tr></table>
+<h4>Cláusulas</h4><ol>${cl.map(([t, x]) => `<li><b>${t}.</b> ${x}</li>`).join('')}</ol>
+${r.notas ? `<p><b>Observaciones:</b> ${esc(r.notas)}</p>` : ''}
+<p>EL ARRENDATARIO declara que los datos proporcionados son verdaderos, que presentó su identificación oficial vigente y que leyó y aceptó este contrato.</p>
+<div class="firmas"><div>${esc(k.firmaNombre || 'EL ARRENDADOR')}<br>EL ARRENDADOR</div><div>${esc(cap(r.cliente))}<br>EL ARRENDATARIO</div></div>
+<div class="dev"><h4>Recibo de devolución</h4><div>Fecha y hora de devolución: <span class="ln"></span> &nbsp; Equipo completo: ☐ Sí ☐ No</div>
+<div style="margin-top:10px">Estado del equipo: <span class="ln" style="min-width:300px"></span></div><div style="margin-top:10px">Depósito devuelto: <span class="ln"></span> &nbsp; Cargos: <span class="ln" style="min-width:110px"></span></div>
+<div class="firmas" style="margin-top:34px"><div>Recibe EL ARRENDADOR</div><div>Entrega EL ARRENDATARIO</div></div></div>
+<div class="pie">${nom} · Conserve una copia de este contrato.</div></body></html>`;
+  }
+  function imprimir(r) {
+    const w = window.open('', '_blank'); if (!w) return toast('El navegador bloqueó la ventana. Permite las ventanas emergentes de esta página e inténtalo de nuevo.', true);
+    w.document.write(build(r)); w.document.close(); setTimeout(() => { try { w.focus(); w.print(); } catch (e) {} }, 700);
+  }
+  function listo(folio) {
+    const r = (S.rentas || []).find(x => x.folio === String(folio)); if (!r) return;
+    modal(`<div style="text-align:center"><h2>Renta registrada</h2><div class="cbbig" style="justify-content:center;margin:12px 0">${esc(r.contrato)}</div>
+      <p class="mu">${esc(cap(r.cliente))} · ${esc(r.equipo)}<br>Devolución: ${dh(r.devolucion)}${r.deposito > 0 ? '<br>Depósito en garantía: ' + money(r.deposito) : ''}</p></div>
+      <button class="btn primary" id="lp">Imprimir contrato</button><button class="btn ghost" id="lc">Cerrar</button>`);
+    $('#lp').onclick = () => imprimir(r); $('#lc').onclick = closeM;
+  }
+
+  /* ---------- Devolver y editar ---------- */
+  function devolver(r) {
+    const retraso = r.devolucion && Date.now() > r.devolucion ? Math.ceil((Date.now() - r.devolucion) / D) : 0, sug = r2(retraso * diaria(r));
+    modal(`<div class="tl"><h2>Devolución del equipo</h2><button class="btn sm ghost" id="vx" aria-label="Cerrar">✕</button></div>
+      <p class="mu" style="margin:0"><b>${esc(r.contrato)}</b> · ${esc(cap(r.cliente))} · ${esc(r.equipo)}${r.serie ? ' (' + esc(r.serie) + ')' : ''}<br>Dejó en garantía: <b>${money(r.deposito)}</b>${retraso ? '<br><span style="color:var(--bad)">Retraso: ' + retraso + ' día(s) × ' + money(diaria(r)) + ' = ' + money(sug) + '</span>' : ''}</p>
+      <label class="fl">Fecha y hora de devolución<input id="vf" type="datetime-local" value="${dtl(Date.now())}"></label>
+      <label class="fl">Estado del equipo<select id="vc"><option>Completo y en buen estado</option><option>Con desgaste normal</option><option>Con daños</option><option>Faltan accesorios</option></select></label>
+      <div class="row2"><label class="fl">Cargos (daño, retraso…)<input id="vg" type="number" min="0" step="0.01" inputmode="decimal" value="${sug || ''}" placeholder="0.00"></label>
+        <label class="fl">Depósito que se devuelve<input id="vd" type="number" min="0" step="0.01" inputmode="decimal" value="${Math.max(0, r.deposito - sug).toFixed(2)}"></label></div>
+      <div id="vs" class="mu" aria-live="polite"></div>
+      <label class="fl">Observaciones<input id="vn" maxlength="200"></label>
+      <button class="btn primary" id="vok">Registrar devolución</button><button class="btn ghost" id="vno">Cancelar</button>`);
+    const upd = () => { const d = +$('#vd').value || 0, c = +$('#vg').value || 0, ret = r2(r.deposito - d); $('#vs').innerHTML = d > r.deposito + 0.004 ? '<span style="color:var(--bad)">No puedes devolver más de lo que dejó en garantía.</span>' : r.deposito > 0 ? 'Devuelves <b>' + money(d) + '</b> y te quedas con <b>' + money(ret) + '</b> del depósito.' + (c > ret + 0.004 ? ' Los cargos pasan del depósito: cobra la diferencia de ' + money(c - ret) + ' al cliente.' : '') : (c > 0 ? 'Cobra los cargos (' + money(c) + ') al cliente.' : ''); };
+    $('#vg').oninput = () => { const c = +$('#vg').value || 0; $('#vd').value = Math.max(0, r.deposito - c).toFixed(2); upd(); }; $('#vd').oninput = upd; upd();
+    $('#vx').onclick = $('#vno').onclick = closeM;
+    $('#vok').onclick = async () => {
+      const d = r2(+$('#vd').value || 0); if (d > r.deposito + 0.004) return toast('No puedes devolver más de lo que dejó en garantía.', true);
+      try { await api('rentaDevolver', { contrato: r.contrato, fecha: new Date($('#vf').value).getTime() || Date.now(), condicion: $('#vc').value, cargos: r2(+$('#vg').value || 0), depositoDevuelto: d, nota: $('#vn').value.trim() }); closeM(); toast('Devolución registrada'); await load(); }
+      catch (e) { toast(e.message || 'No se pudo registrar.', true); }
+    };
+  }
+  function editar(r) {
+    modal(`<div class="tl"><h2>Editar renta</h2><button class="btn sm ghost" id="ex" aria-label="Cerrar">✕</button></div>
+      <p class="mu" style="margin:0"><b>${esc(r.contrato)}</b> · ${esc(cap(r.cliente))}</p>
+      <div class="row2"><label class="fl">INE<input id="ei" value="${esc(r.ine)}"></label><label class="fl">Teléfono<input id="et" type="tel" value="${esc(r.tel)}"></label></div>
+      <label class="fl">Domicilio<input id="ed" value="${esc(r.domicilio)}"></label>
+      <div class="row2"><label class="fl">Equipo<input id="ee" value="${esc(r.equipo)}"></label><label class="fl">Serie<input id="es" value="${esc(r.serie)}"></label></div>
+      <div class="row2"><label class="fl">Devolución prevista<input id="eg" type="datetime-local" value="${r.devolucion ? dtl(r.devolucion) : ''}"></label><label class="fl">Depósito en garantía<input id="ep" type="number" min="0" step="0.01" value="${r.deposito}"></label></div>
+      <div class="row2"><label class="fl">Valor del equipo<input id="ev" type="number" min="0" step="0.01" value="${r.valor}"></label><label class="fl">Renta total<input id="er" type="number" min="0" step="0.01" value="${r.renta}"></label></div>
+      <label class="fl">Accesorios<input id="ea" value="${esc(r.accesorios)}"></label><label class="fl">Notas<input id="en" maxlength="300" value="${esc(r.notas)}"></label>
+      <button class="btn primary" id="eok">Guardar</button>${r.estado === 'Devuelta' ? '<button class="btn" id="ere">Reabrir (marcar como en renta)</button>' : ''}<button class="btn ghost" id="eno">Cancelar</button>`);
+    $('#ex').onclick = $('#eno').onclick = closeM;
+    const guardar = async extra => {
+      const dev = new Date($('#eg').value).getTime() || 0;
+      try { await api('rentaEditar', Object.assign({ contrato: r.contrato, ine: $('#ei').value, tel: $('#et').value, domicilio: $('#ed').value, equipo: $('#ee').value, serie: $('#es').value, devolucion: dev, deposito: +$('#ep').value || 0, valor: +$('#ev').value || 0, renta: +$('#er').value || 0, accesorios: $('#ea').value, notas: $('#en').value }, extra || {})); closeM(); toast('Renta actualizada'); await load(); }
+      catch (e) { toast(e.message || 'No se pudo guardar.', true); }
+    };
+    $('#eok').onclick = () => guardar(); if ($('#ere')) $('#ere').onclick = () => guardar({ reabrir: true });
+  }
+  function recordar(r) {
+    const e = estadoDe(r), neg = ((S.config || {}).nombre || 'Café Sierra Escondida'), nom = cap(r.cliente).split(' ')[0] || 'amigo(a)';
+    const txt = 'Hola ' + nom + ', te escribimos de ' + neg + ' sobre la renta de ' + r.equipo + ' (contrato ' + r.contrato + '). ' + (e.k === 'Vencida' ? 'La devolución estaba programada para el ' + dh(r.devolucion) + ' y ya pasó. ' : 'La devolución está programada para el ' + dh(r.devolucion) + '. ') + '¿Cuándo podemos pasar por el equipo o a qué hora lo traes? ¡Gracias!';
+    WA.previa(r.cliente, txt, null, r.tel);
+  }
+
+  /* ---------- Pantalla Rentas ---------- */
+  const FILT = ['Activas', 'Vencidas', 'Por vencer', 'Devueltas', 'Todas'];
+  const vis = () => {
+    const q = nrm(F.q); return (S.rentas || []).filter(r => {
+      const e = estadoDe(r), ok = F.f === 'Todas' ? true : F.f === 'Activas' ? r.estado === 'Activa' : F.f === 'Vencidas' ? e.k === 'Vencida' : F.f === 'Por vencer' ? e.k === 'Por vencer' : r.estado === 'Devuelta';
+      return ok && nrm(r.contrato + ' ' + r.cliente + ' ' + r.equipo + ' ' + r.serie + ' ' + r.ine + ' ' + r.folio).includes(q);
+    }).sort((a, b) => F.f === 'Devueltas' || F.f === 'Todas' ? b.fecha - a.fecha : (a.devolucion || 0) - (b.devolucion || 0));
+  };
+  views.rentas = {
+    render(root) {
+      const A = (S.rentas || []).filter(r => r.estado === 'Activa'), V = A.filter(r => estadoDe(r).k === 'Vencida'), mes = new Date().toISOString().slice(0, 7);
+      const mesR = (S.rentas || []).filter(r => r.estado !== 'Cancelada' && new Date(r.fecha - new Date().getTimezoneOffset() * 6e4).toISOString().slice(0, 7) === mes);
+      root.innerHTML = `<div class="pagehead"><h2>Rentas</h2><div class="vtools"><button class="btn sm primary" data-go="vender">＋ Nueva renta</button></div></div>
+        <p class="mu" style="margin:4px 0 0">Para rentar un equipo, agrégalo en Vender (el artículo de renta) y cobra: te pide los datos y genera el contrato.</p>
+        <div class="vk" style="margin-top:12px">
+          <div class="main"><span>Equipos en renta</span><b>${A.length}</b><small>${A.filter(r => estadoDe(r).k === 'Por vencer').length} vencen hoy o mañana</small></div>
+          <div class="${V.length ? 'warn' : ''}"><span>Vencidas</span><b>${V.length}</b><small>sin devolver a tiempo</small></div>
+          <div><span>Depósitos en garantía</span><b>${money(A.reduce((s, r) => s + r.deposito, 0))}</b><small>de rentas activas</small></div>
+          <div><span>Rentas del mes</span><b>${money(mesR.reduce((s, r) => s + r.renta, 0))}</b><small>${mesR.length} contrato(s)</small></div></div>
+        <div class="chips">${FILT.map(x => `<button class="chip" data-f="${x}" aria-pressed="${F.f === x}">${x}</button>`).join('')}</div>
+        <input id="rq" type="search" placeholder="Buscar cliente, contrato, equipo, serie o INE" aria-label="Buscar" value="${esc(F.q)}" style="margin:8px 0"><div id="rl"></div>`;
+      $('#rq').oninput = e => { F.q = e.target.value; pintar(); };
+      root.onclick = e => {
+        const c = e.target.closest('[data-f]'); if (c) { F.f = c.dataset.f; return views.rentas.render(root); }
+        const b = e.target.closest('[data-r]'); if (!b) return; const r = (S.rentas || []).find(x => x.contrato === b.dataset.c); if (!r) return;
+        ({ print: () => imprimir(r), dev: () => devolver(r), edit: () => editar(r), wa: () => recordar(r), tk: () => { const t = tickets().find(x => x.folio === r.folio); if (t) ticketModal(t, closeM); } })[b.dataset.r]();
+      };
+      pintar();
+    }
+  };
+  function pintar() {
+    const L = vis();
+    $('#rl').innerHTML = L.length ? '<div class="list">' + L.slice(0, 200).map(r => {
+      const e = estadoDe(r), btn = (a, t, cls) => `<button class="btn sm ${cls || 'ghost'}" data-r="${a}" data-c="${esc(r.contrato)}">${t}</button>`;
+      return `<div class="card"><div class="tl"><span><b>${esc(r.contrato)}</b> · ${esc(cap(r.cliente))}</span><span class="tag ${e.c}">${esc(e.t)}</span></div>
+        <div class="mu">${esc(r.equipo)}${r.serie ? ' · ' + esc(r.serie) : ''}</div>
+        <div class="tl mu"><span>${dh(r.salida)} → ${dh(r.devolucion)}</span><span>${r.estado === 'Devuelta' ? 'Devuelta ' + dh(r.devueltaEl) : ''}</span></div>
+        <div class="tl"><span class="mu">Renta ${money(r.renta)}${r.deposito > 0 ? ' · depósito ' + money(r.deposito) + (r.estado === 'Devuelta' ? ' (devuelto ' + money(r.depositoDevuelto) + ')' : '') : ''}${r.cargos > 0 ? ' · cargos ' + money(r.cargos) : ''}</span></div>
+        <div class="cact">${r.estado === 'Activa' ? btn('dev', 'Devolución', 'primary') : ''}${btn('print', 'Contrato')}${r.estado === 'Activa' ? btn('wa', 'WhatsApp') : ''}${btn('edit', 'Editar')}${btn('tk', 'Ticket')}</div></div>`;
+    }).join('') + '</div>' : '<p class="mu">' + ((S.rentas || []).length ? 'No hay rentas con estos filtros.' : 'Todavía no hay rentas. Vende el artículo de renta en Vender y se registra aquí.') + '</p>';
+  }
+  window.Renta = { hay, pedir, listo, imprimir, esRenta };
 })();
 'use strict';
 /* ===== Documento de cotización profesional (se abre listo para "Guardar como PDF") ===== */
@@ -1826,8 +2194,8 @@ ${c.notas ? `<div class="blk"><h4>Notas</h4><div class="txt">${esc(c.notas)}</di
   };
 
   function list() {
-    const q = F.q.toLowerCase(), map = { Vigentes: 'Vigente', Convertidas: 'Convertida', Vencidas: 'Vencida', Canceladas: 'Cancelada' };
-    L = [...S.cots].reverse().filter(c => (F.f === 'Todas' || est(c) === map[F.f]) && (c.folio + ' ' + c.cliente + ' ' + c.items.map(x => x.nombre || x.producto).join(' ')).toLowerCase().includes(q));
+    const q = F.q.nrm(), map = { Vigentes: 'Vigente', Convertidas: 'Convertida', Vencidas: 'Vencida', Canceladas: 'Cancelada' };
+    L = [...S.cots].reverse().filter(c => (F.f === 'Todas' || est(c) === map[F.f]) && (c.folio + ' ' + c.cliente + ' ' + c.items.map(x => x.nombre || x.producto).join(' ')).nrm().includes(q));
     $('#cn').textContent = L.length + ' cotización(es)';
     $('#cl').innerHTML = L.map((c, i) => {
       const e = est(c), d = Math.ceil((c.vigencia - Date.now()) / D);
@@ -1878,7 +2246,7 @@ ${c.notas ? `<div class="blk"><h4>Notas</h4><div class="txt">${esc(c.notas)}</di
   };
 
   function list() {
-    L = S.prods.filter(p => (p.nombre + p.cat).toLowerCase().includes(F.q.toLowerCase()) && (F.f === 'Todos' || st(p) === F.f)).slice(0, 150);
+    L = S.prods.filter(p => (p.nombre + p.cat).nrm().includes(F.q.nrm()) && (F.f === 'Todos' || st(p) === F.f)).slice(0, 150);
     $('#il').innerHTML = L.map((p, i) => `<div class="card"><div class="tl"><b>${esc(p.nombre)}</b><span class="tag ${st(p) === 'Disponible' ? 'ok' : ''}">${st(p)}</span></div>
       <div class="mu">${esc(p.cat)}${p.stock == null ? '' : ' · Mínimo ' + p.min}</div>
       <div class="tl" style="margin-top:6px"><b class="amt">${p.stock == null ? '—' : p.stock}</b><span>
@@ -1938,8 +2306,8 @@ ${c.notas ? `<div class="blk"><h4>Notas</h4><div class="txt">${esc(c.notas)}</di
   };
 
   function list() {
-    const q = F.q.toLowerCase(), base = F.f === 'Inactivos' ? (S.inactivos || []) : S.prods;
-    L = base.filter(p => (p.nombre + ' ' + p.cat).toLowerCase().includes(q) && (F.cat === 'Todas' || p.cat === F.cat) && ({
+    const q = F.q.nrm(), base = F.f === 'Inactivos' ? (S.inactivos || []) : S.prods;
+    L = base.filter(p => (p.nombre + ' ' + p.cat).nrm().includes(q) && (F.cat === 'Todas' || p.cat === F.cat) && ({
       'Todos': true, 'Inactivos': true, 'Sin costo': !(p.costo > 0), 'Margen bajo': p.precio > 0 && mg(p) < (+(S.config || {}).margenMin || 30), 'Sin ventas (30 días)': !V30[p.nombre] })[F.f]);
     L.sort(({ 'Nombre': (a, b) => a.nombre.localeCompare(b.nombre), 'Precio (mayor)': (a, b) => b.precio - a.precio, 'Margen (menor)': (a, b) => mg(a) - mg(b), 'Más vendidos (30 días)': (a, b) => (V30[b.nombre] || 0) - (V30[a.nombre] || 0) })[F.s]);
     $('#pn').textContent = L.length + ' producto(s)';
